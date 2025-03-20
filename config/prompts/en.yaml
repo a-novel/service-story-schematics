@@ -1,0 +1,99 @@
+# ======================================================================================================================
+# Loglines
+# ======================================================================================================================
+generateLoglines:
+  system:
+    themed: |
+      List engaging and original ideas for a new fictional story, based on the user input.
+
+      Return a JSON array of {{.Count}} loglines. Each logline has 2 keys: a "name" key and a "content" key,
+      both strings. Wrap the array in a "loglines" key.
+    random: |
+      List engaging and original ideas for a new fictional story, based on random themes.
+
+      Return a JSON array of {{.Count}} loglines. Each logline has 2 keys: a "name" key and a "content" key,
+      both strings. Wrap the array in a "loglines" key.
+expandLogline: |
+  Expand on the story idea provided by the user.
+
+  Return a JSON object that represents the extended logline. The output has a "name" key and a "content" key,
+  both strings.
+
+# ======================================================================================================================
+# Story Plan
+# ======================================================================================================================
+storyPlan: |
+  {{.Description}}
+
+  Here's a detailed breakdown with minimum scenes and key points for each beat:
+  {{range .Beats}}
+  {{.Name}} {{.GetScenesCount}}
+  JSON Key: {{.Key}}
+  Key points:{{range .KeyPoints}}
+    - {{.}}{{end}}
+  Purpose: {{.Purpose}}
+  {{end}}
+  This concludes the breakdown. Below are important things for you to consider.
+
+  Focus on Essentials:
+  Ensure each scene serves a clear purpose and advances the plot.
+
+  Avoid Redundancy:
+  Eliminate unnecessary scenes that don't contribute to character development or plot progression.
+
+  Balance Pacing:
+  Allocate scenes strategically to maintain engagement throughout the story.
+
+  Character Development:
+  Ensure each scene contributes to character growth and progression.
+
+# ======================================================================================================================
+# Beats Sheet
+# ======================================================================================================================
+generateBeatsSheet: |
+  You are a writer, tasked with applying the "{{.Plan.Name}}" story plan to the user input.
+
+  {{.StoryPlan}}
+
+  Return a valid JSON object, with story beats listed under the "beats" key. 
+  Each element in the "beats" array has 3 keys:
+    - "key": the jsonKey value for the given beat
+    - "title": A short title for the beat
+    - "content": a summary of the scenes for the beat
+expandBeat:
+  system: |
+    You are a writer that uses the "{{.Plan.Name}}" story plan to create stories.
+
+    {{.StoryPlan}}
+  input1: |
+    Create a new beats sheet for the following logline:
+
+    {{.Logline}}
+  input2: |
+    Expand on the '{{.TargetKey}}' beat.
+
+    Return a valid JSON object, with 3 keys:
+     - "key": the jsonKey value for the given beat
+     - "title": A short title for the beat
+     - "content": a summary of the scenes for the beat
+regenerateBeats:
+  system: |
+    You are a writer, tasked with filling the missing parts of the user input, using the "{{.Plan.Name}}" story plan.
+
+    {{.StoryPlan}}
+
+    Return a valid JSON object, with story beats listed under the "beats" key. 
+    Each element in the "beats" array has 3 keys:
+      - "key": the jsonKey value for the given beat
+      - "title": A short title for the beat
+      - "content": a summary of the scenes for the beat
+
+    Return only the missing beats and their new content, don't return existing beats.
+  input: |
+    The below story plan was built after the following logline:
+
+    {{.Logline}}
+
+    Fill the missing beats in the below story plan. Return ONLY the missing beats.
+
+    {{.BeatsSheet}}

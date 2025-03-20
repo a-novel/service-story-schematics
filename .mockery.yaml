@@ -1,0 +1,15 @@
+resolve-type-alias: false
+issue-845-fix: true
+packages:
+  github.com/a-novel/story-schematics/internal/services:
+    config:
+      all: true
+      recursive: true
+      outpkg: servicesmocks
+      dir: internal/services/mocks
+  github.com/a-novel/story-schematics/api:
+    config:
+      all: true
+      recursive: false
+      outpkg: apimocks
+      dir: api/mocks

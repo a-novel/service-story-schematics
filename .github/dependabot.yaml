@@ -1,0 +1,24 @@
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    schedule:
+      interval: daily
+    groups:
+      github.com/uptrace/bun:
+        applies-to: version-updates
+        patterns:
+          - "github.com/uptrace/bun"
+          - "github.com/uptrace/bun/*"
+          - "github.com/a-novel-kit/context/pgbun"
+      github.com/a-novel-kit/middlewares:
+        applies-to: version-updates
+        patterns:
+          - "github.com/a-novel-kit/middlewares"
+          - "github.com/a-novel-kit/middlewares/*"
+  - package-ecosystem: "github-actions"
+    rebase-strategy: auto
+    open-pull-requests-limit: 25
+    directory: "/"
+    schedule:
+      interval: daily

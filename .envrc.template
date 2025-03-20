@@ -1,0 +1,20 @@
+# App.
+export PORT=4002
+export ENV="local"
+export APP_NAME="story-schematics"
+
+export AUTH_API_URL="http://127.0.0.1:4001/v1"
+
+# Postgres.
+export POSTGRES_USER="postgres"
+export POSTGRES_PASSWORD="postgres"
+export POSTGRES_DB="story-schematics"
+export POSTGRES_PORT=5002
+export POSTGRES_HOST="0.0.0.0"
+
+# Secrets.
+export GROQ_TOKEN="[SECRET]"
+
+# Other.
+export PODMAN_IGNORE_CGROUPSV1_WARNING="true"
+export PODMAN_COMPOSE_PROVIDER="podman-compose"

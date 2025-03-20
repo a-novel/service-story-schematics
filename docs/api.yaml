@@ -1,0 +1,1134 @@
+# https://github.com/OAI/OpenAPI-Specification
+openapi: 3.1.1
+servers:
+  - url: http://127.0.0.1:4002/v1
+
+info:
+  title: A-Novel Story Schematics API.
+  description: |
+    The A-Novel story schematics API, for internal use by A-Novel services.
+  contact:
+    name: A-Novel
+    email: support@agoradesecrivains.com
+  license:
+    name: GNU AGPLv3
+    url: https://www.gnu.org/licenses/agpl-3.0.en.html
+  version: 1.0.0
+
+security:
+  - bearerAuth: []
+
+# ======================================================================================================================
+# Tags
+# ======================================================================================================================
+
+tags:
+  - name: health
+    description: Routes used to check the health of the service.
+  - name: story-plan
+    description: |
+      Story plan structures the output of the story schematics service. It describes the different beats of a story,
+      controlling its final shape.
+  - name: logline
+    description: |
+      Logline is a brief summary of a story, used to quickly convey its essence. It is used to pitch the story to
+      potential readers.
+  - name: beats-sheet
+    description: |
+      Beats sheet is a detailed outline of a story, breaking it down into its individual beats. It is used to plan the
+      story and ensure its coherence. A beat sheet is generated after the guidance of a story plan.
+
+# ======================================================================================================================
+# Paths
+# ======================================================================================================================
+
+paths:
+  /ping:
+    get:
+      security: []
+      tags:
+        - health
+      summary: Check the status of the service.
+      description: |
+        Check the status of the service. If the service is running, a successful response is returned.
+      operationId: ping
+      responses:
+        "200":
+          description: The service is running.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: pong
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: API is not available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /healthcheck:
+    get:
+      security: []
+      tags:
+        - health
+      summary: Check the health of the service.
+      description: |
+        Returns a detailed report of the health of the service, including every dependency.
+      operationId: healthcheck
+      responses:
+        "200":
+          description: The service is running.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: API is not available.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /beats-sheet:
+    put:
+      tags:
+        - beats-sheet
+      summary: Create a new beats sheet.
+      description: |
+        Create a new beats sheet for a logline, following a story plan.
+      operationId: createBeatsSheet
+      requestBody:
+        $ref: "#/components/requestBodies/CreateBeatsSheetForm"
+      responses:
+        "200":
+          description: The beats sheet was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BeatsSheet"
+        "404":
+          description: The logline or story plan does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "422":
+          description: The beats sheet does not match the story plan.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnprocessableEntityError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+    get:
+      tags:
+        - beats-sheet
+      summary: Get a beats sheet.
+      description: |
+        Get a beats sheet.
+      operationId: getBeatsSheet
+      parameters:
+        - $ref: "#/components/parameters/BeatsSheetID"
+      responses:
+        "200":
+          description: The beats sheet was retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BeatsSheet"
+        "404":
+          description: The beats sheet does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /beats-sheets:
+    get:
+      tags:
+        - beats-sheet
+      summary: Get all beats sheets.
+      description: |
+        Get all beats sheets for the current user.
+      operationId: getBeatsSheets
+      parameters:
+        - $ref: "#/components/parameters/LoglineID"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: The beats sheets were retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BeatsSheetPreview"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /beats-sheet/generate:
+    post:
+      tags:
+        - beats-sheet
+      summary: Generate a new beats sheet.
+      description: |
+        Generate a new beats sheet for a logline, following a story plan.
+      operationId: generateBeatsSheet
+      requestBody:
+        $ref: "#/components/requestBodies/GenerateBeatsSheetForm"
+      responses:
+        "200":
+          description: The beats sheet was generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BeatsSheet"
+        "404":
+          description: The logline or story plan does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /beats-sheet/regenerate:
+    post:
+      tags:
+        - beats-sheet
+      summary: Regenerate beats in a beats sheet.
+      description: |
+        Regenerate the content of specific beats in a beats sheet.
+      operationId: regenerateBeats
+      requestBody:
+        $ref: "#/components/requestBodies/RegenerateBeatsForm"
+      responses:
+        "200":
+          description: The beats were regenerated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BeatsSheet"
+        "404":
+          description: The beats sheet does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /beats-sheet/expand:
+    post:
+      tags:
+        - beats-sheet
+      summary: Expand a beat in a beats sheet.
+      description: |
+        Add more details to a specific beat in a beats sheet.
+      operationId: expandBeat
+      requestBody:
+        $ref: "#/components/requestBodies/ExpandBeatForm"
+      responses:
+        "200":
+          description: The beat was expanded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Beat"
+        "404":
+          description: The beats sheet does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        "422":
+          description: The beat does not exist in the beats sheet.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnprocessableEntityError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /logline:
+    put:
+      tags:
+        - logline
+      summary: Create a new logline.
+      description: |
+        Create a new logline for a user.
+      operationId: createLogline
+      requestBody:
+        $ref: "#/components/requestBodies/CreateLoglineForm"
+      responses:
+        "200":
+          description: The logline was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Logline"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+    get:
+      tags:
+        - logline
+      summary: Get a logline.
+      description: |
+        Get a logline.
+      operationId: getLogline
+      parameters:
+        - in: query
+          name: id
+          required: false
+          schema:
+            $ref: "#/components/schemas/LoglineID"
+        - in: query
+          name: slug
+          required: false
+          schema:
+            $ref: "#/components/schemas/Slug"
+      responses:
+        "200":
+          description: The logline was retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Logline"
+        "404":
+          description: The logline does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /loglines:
+    get:
+      tags:
+        - logline
+      summary: Get all loglines.
+      description: |
+        Get all loglines for the current user.
+      operationId: getLoglines
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: The loglines were retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoglinePreview"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /loglines/generate:
+    post:
+      tags:
+        - logline
+      summary: Generate new loglines.
+      description: |
+        Generate new loglines for a user.
+      operationId: generateLoglines
+      requestBody:
+        $ref: "#/components/requestBodies/GenerateLoglinesForm"
+      responses:
+        "200":
+          description: The loglines were generated successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoglineIdea"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /logline/expand:
+    post:
+      tags:
+        - logline
+      summary: Expand a logline idea.
+      description: |
+        Add more details to a logline idea.
+      operationId: expandLogline
+      requestBody:
+        $ref: "#/components/requestBodies/ExpandLoglineForm"
+      responses:
+        "200":
+          description: The logline was expanded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoglineIdea"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /story-plan:
+    put:
+      tags:
+        - story-plan
+      summary: Create a new story plan.
+      description: |
+        Create a new story plan.
+      operationId: createStoryPlan
+      requestBody:
+        $ref: "#/components/requestBodies/CreateStoryPlanForm"
+      responses:
+        "200":
+          description: The story plan was created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryPlan"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+    patch:
+      tags:
+        - story-plan
+      summary: Update a story plan.
+      description: |
+        Update a story plan.
+      operationId: updateStoryPlan
+      requestBody:
+        $ref: "#/components/requestBodies/UpdateStoryPlanForm"
+      responses:
+        "200":
+          description: The story plan was updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryPlan"
+        "404":
+          description: The story plan does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+    get:
+      tags:
+        - story-plan
+      summary: Get a story plan.
+      description: |
+        Get a story plan.
+      operationId: getStoryPlan
+      parameters:
+        - in: query
+          name: id
+          required: false
+          schema:
+            $ref: "#/components/schemas/StoryPlanID"
+        - in: query
+          name: slug
+          required: false
+          schema:
+            $ref: "#/components/schemas/Slug"
+      responses:
+        "200":
+          description: The story plan was retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryPlan"
+        "404":
+          description: The story plan does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+  /story-plans:
+    get:
+      tags:
+        - story-plan
+      summary: Get all story plans.
+      description: |
+        Get all story plans.
+      operationId: getStoryPlans
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Offset"
+      responses:
+        "200":
+          description: The story plans were retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StoryPlanPreview"
+        "418":
+          description: This route is not expected to fail under normal circumstances.
+        default:
+          description: An unexpected error occurred while processing the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnexpectedError"
+
+# ======================================================================================================================
+# Components
+# ======================================================================================================================
+
+components:
+  # ================================================== SECURITY SCHEMAS ======================================= ===========
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  # ======================================================= SCHEMAS ======================================================
+  schemas:
+    DependencyStatus:
+      type: string
+      description: The status of a dependency.
+      example: ok
+      enum:
+        - up
+        - down
+        - unknown
+    Dependency:
+      type: object
+      required:
+        - name
+        - status
+        - error
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+          description: The name of the dependency.
+          example: database
+        status:
+          $ref: "#/components/schemas/DependencyStatus"
+    Health:
+      type: object
+      required:
+        - postgres
+      properties:
+        postgres:
+          $ref: "#/components/schemas/Dependency"
+
+    CreateBeatsSheetForm:
+      type: object
+      required:
+        - loglineID
+        - storyPlanID
+        - content
+      properties:
+        loglineID:
+          $ref: "#/components/schemas/LoglineID"
+        storyPlanID:
+          $ref: "#/components/schemas/StoryPlanID"
+        content:
+          type: array
+          maxItems: 128
+          items:
+            $ref: "#/components/schemas/Beat"
+          description: The beats of the story, in order.
+    CreateLoglineForm:
+      type: object
+      required:
+        - slug
+        - name
+        - content
+      properties:
+        slug:
+          $ref: "#/components/schemas/Slug"
+        name:
+          type: string
+          maxLength: 512
+          description: The name of the logline.
+          example: My Story
+        content:
+          type: string
+          maxLength: 4096
+          description: The content of the logline.
+          example: A story about a hero's journey.
+    CreateStoryPlanForm:
+      type: object
+      required:
+        - slug
+        - name
+        - description
+        - beats
+      properties:
+        slug:
+          $ref: "#/components/schemas/Slug"
+        name:
+          type: string
+          maxLength: 512
+          description: The name of the story plan.
+          example: My Story Plan
+        description:
+          type: string
+          maxLength: 4096
+          description: The description of the story plan.
+          example: A story plan for a hero's journey.
+        beats:
+          type: array
+          maxItems: 128
+          items:
+            $ref: "#/components/schemas/BeatDefinition"
+          description: The beats of the story plan.
+    ExpandBeatForm:
+      type: object
+      required:
+        - beatsSheetID
+        - targetKey
+      properties:
+        beatsSheetID:
+          $ref: "#/components/schemas/BeatsSheetID"
+        targetKey:
+          type: string
+          maxLength: 128
+          description: The key of the beat to expand.
+          example: 1
+    GenerateBeatsSheetForm:
+      type: object
+      required:
+        - loglineID
+        - storyPlanID
+      properties:
+        loglineID:
+          $ref: "#/components/schemas/LoglineID"
+        storyPlanID:
+          $ref: "#/components/schemas/StoryPlanID"
+    GenerateLoglinesForm:
+      type: object
+      required:
+        - count
+        - theme
+      properties:
+        count:
+          type: integer
+          minimum: 1
+          maximum: 10
+          description: The number of loglines to generate.
+          example: 5
+        theme:
+          type: string
+          maxLength: 4096
+          description: The theme of the loglines to generate.
+          example: fantasy
+    RegenerateBeatsForm:
+      type: object
+      required:
+        - beatsSheetID
+        - regenerateKeys
+      properties:
+        beatsSheetID:
+          $ref: "#/components/schemas/BeatsSheetID"
+        regenerateKeys:
+          type: array
+          maxItems: 128
+          items:
+            type: string
+            maxLength: 128
+          description: The keys of the beats to regenerate.
+    UpdateStoryPlanForm:
+      type: object
+      required:
+        - slug
+        - name
+        - description
+        - beats
+      properties:
+        slug:
+          $ref: "#/components/schemas/Slug"
+        name:
+          type: string
+          maxLength: 512
+          description: The name of the story plan.
+          example: My Story Plan
+        description:
+          type: string
+          maxLength: 4096
+          description: The description of the story plan.
+          example: A story plan for a hero's journey.
+        beats:
+          type: array
+          maxItems: 128
+          items:
+            $ref: "#/components/schemas/BeatDefinition"
+          description: The beats of the story plan.
+    # ======================================================== TYPES =======================================================
+    UserID:
+      type: string
+      format: uuid
+      description: The unique identifier of the user.
+      example: 29f71c01-5ae1-4b01-b729-e17488538e15
+    LoglineID:
+      type: string
+      format: uuid
+      description: The unique identifier of the logline.
+      example: 29f71c01-5ae1-4b01-b729-e17488538e15
+    StoryPlanID:
+      type: string
+      format: uuid
+      description: The unique identifier of the story plan.
+      example: 29f71c01-5ae1-4b01-b729-e17488538e15
+    BeatsSheetID:
+      type: string
+      format: uuid
+      description: The unique identifier of the beats sheet.
+      example: 29f71c01-5ae1-4b01-b729-e17488538e15
+    Slug:
+      type: string
+      description: A string that can be used as a URL slug.
+      example: my-story
+      maxLength: 1024
+      pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+
+    Beat:
+      type: object
+      required:
+        - key
+        - title
+        - content
+      description: A beat is a single unit of a story, representing an action through a sequence of scenes.
+      properties:
+        key:
+          type: string
+          maxLength: 128
+          description: The key of the beat.
+          example: 1
+        title:
+          type: string
+          maxLength: 512
+          description: The title of the beat.
+          example: Introduction
+        content:
+          type: string
+          maxLength: 16384
+          description: The content of the beat.
+          example: The protagonist is introduced to the reader.
+    BeatsSheet:
+      type: object
+      required:
+        - id
+        - loglineID
+        - storyPlanID
+        - content
+        - createdAt
+      description: A beats sheet is a detailed outline of a story, breaking it down into its individual beats.
+      properties:
+        id:
+          $ref: "#/components/schemas/BeatsSheetID"
+        loglineID:
+          $ref: "#/components/schemas/LoglineID"
+        storyPlanID:
+          $ref: "#/components/schemas/StoryPlanID"
+        content:
+          type: array
+          maxItems: 128
+          items:
+            $ref: "#/components/schemas/Beat"
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time at which the beats sheet was created.
+          example: 2022-01-01T00:00:00Z
+    BeatsSheetPreview:
+      type: object
+      required:
+        - id
+        - createdAt
+      properties:
+        id:
+          $ref: "#/components/schemas/BeatsSheetID"
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time at which the beats sheet was created.
+          example: 2022-01-01T00:00:00Z
+    Logline:
+      type: object
+      required:
+        - id
+        - userID
+        - slug
+        - name
+        - content
+        - createdAt
+      description: A logline is a brief summary of a story, used to quickly convey its essence.
+      properties:
+        id:
+          $ref: "#/components/schemas/LoglineID"
+        userID:
+          $ref: "#/components/schemas/UserID"
+        slug:
+          $ref: "#/components/schemas/Slug"
+        name:
+          type: string
+          maxLength: 512
+          description: The name of the logline.
+          example: My Story
+        content:
+          type: string
+          maxLength: 4096
+          description: The content of the logline.
+          example: A story about a hero's journey.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time at which the logline was created.
+          example: 2022-01-01T00:00:00Z
+    LoglinePreview:
+      type: object
+      required:
+        - slug
+        - name
+        - content
+        - createdAt
+      properties:
+        slug:
+          $ref: "#/components/schemas/Slug"
+        name:
+          type: string
+          description: The name of the logline.
+          example: My Story
+        content:
+          type: string
+          description: The content of the logline.
+          example: A story about a hero's journey.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time at which the logline was created.
+          example: 2022-01-01T00:00:00Z
+    LoglineIdea:
+      type: object
+      required:
+        - name
+        - content
+      properties:
+        name:
+          type: string
+          maxLength: 512
+          description: The title of the logline idea.
+          example: My Story
+        content:
+          type: string
+          maxLength: 4096
+          description: The content of the logline idea.
+          example: A story about a hero's journey.
+    BeatDefinition:
+      type: object
+      required:
+        - name
+        - key
+        - keyPoints
+        - purpose
+        - minScenes
+        - maxScenes
+      description:
+        A beat is a key event in a story that drives the plot forward. It is used to structure the story and
+        ensure its coherence. A beat describes the content of a beat.
+      properties:
+        name:
+          type: string
+          maxLength: 512
+          description: The name of the beat.
+          example: Introduction
+        key:
+          type: string
+          maxLength: 128
+          description: The key of the beat.
+          example: 1
+        keyPoints:
+          type: array
+          maxItems: 128
+          items:
+            type: string
+            maxLength: 2048
+          description: The key points of the beat.
+          example:
+            - The protagonist is introduced to the reader.
+            - The protagonist's goal is revealed.
+        purpose:
+          type: string
+          maxLength: 8192
+          description: The purpose of the beat.
+          example: Introduce the protagonist.
+        minScenes:
+          type: integer
+          minimum: 0
+          maximum: 10
+          description: The minimum number of scenes in the beat.
+          example: 1
+        maxScenes:
+          type: integer
+          minimum: 0
+          maximum: 10
+          description: The maximum number of scenes in the beat.
+          example: 3
+    StoryPlan:
+      type: object
+      required:
+        - id
+        - slug
+        - name
+        - description
+        - beats
+        - createdAt
+      description:
+        A story plan structures the output of the story schematics service. It describes the different beats of a story,
+        controlling its final shape.
+      properties:
+        id:
+          $ref: "#/components/schemas/StoryPlanID"
+        slug:
+          $ref: "#/components/schemas/Slug"
+        name:
+          type: string
+          maxLength: 512
+          description: The name of the story plan.
+          example: My Story Plan
+        description:
+          type: string
+          maxLength: 4096
+          description: The description of the story plan.
+          example: A story plan for a hero's journey.
+        beats:
+          type: array
+          maxItems: 128
+          items:
+            $ref: "#/components/schemas/BeatDefinition"
+          description: The beats of the story plan.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time at which the story plan was created.
+          example: 2022-01-01T00:00:00Z
+    StoryPlanPreview:
+      type: object
+      required:
+        - id
+        - slug
+        - name
+        - description
+        - createdAt
+      properties:
+        id:
+          $ref: "#/components/schemas/StoryPlanID"
+        slug:
+          $ref: "#/components/schemas/Slug"
+        name:
+          type: string
+          maxLength: 512
+          description: The name of the story plan.
+          example: My Story Plan
+        description:
+          type: string
+          maxLength: 4096
+          description: The description of the story plan.
+          example: A story plan for a hero's journey.
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time at which the story plan was created.
+          example: 2022-01-01T00:00:00Z
+    # ======================================================= ERRORS =======================================================
+    NotFoundError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: The error message.
+          example: The provided credentials do not match any user.W
+    UnexpectedError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: The error message.
+          example: An unexpected error occurred while processing the request.
+    UnprocessableEntityError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: The error message.
+          example: The provided access token is not a refresh token.
+  # =================================================== REQUEST BODIES ===================================================
+  requestBodies:
+    CreateBeatsSheetForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateBeatsSheetForm"
+    CreateLoglineForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateLoglineForm"
+    CreateStoryPlanForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/CreateStoryPlanForm"
+    ExpandBeatForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ExpandBeatForm"
+    ExpandLoglineForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/LoglineIdea"
+    GenerateBeatsSheetForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GenerateBeatsSheetForm"
+    GenerateLoglinesForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GenerateLoglinesForm"
+    RegenerateBeatsForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RegenerateBeatsForm"
+    UpdateStoryPlanForm:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/UpdateStoryPlanForm"
+  # ================================================== QUERY PARAMETERS ==================================================
+  parameters:
+    LoglineID:
+      name: loglineID
+      in: query
+      required: true
+      description: The unique identifier of the logline.
+      schema:
+        $ref: "#/components/schemas/LoglineID"
+    BeatsSheetID:
+      name: beatsSheetID
+      in: query
+      required: true
+      description: The unique identifier of the beats sheet.
+      schema:
+        $ref: "#/components/schemas/BeatsSheetID"
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: The maximum number of items to return.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+    Offset:
+      name: offset
+      in: query
+      required: false
+      description: The number of items to skip before starting to collect the result set.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0

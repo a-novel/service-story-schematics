@@ -1,0 +1,30 @@
+roles:
+  "auth:anon":
+    permissions: []
+  "auth:user":
+    inherits:
+      - "auth:anon"
+    permissions:
+      - "beats-sheet:create"
+      - "beats-sheet:read"
+      - "beats-sheets:read"
+      - "beats-sheet:generate"
+      - "beats:regenerate"
+      - "beat:expand"
+      - "logline:create"
+      - "logline:read"
+      - "loglines:generate"
+      - "loglines:read"
+      - "logline:expand"
+      - "story-plan:read"
+      - "story-plans:read"
+  "auth:admin":
+    inherits:
+      - "auth:user"
+    permissions:
+      - "story-plan:create"
+      - "story-plan:update"
+  "auth:super_admin":
+    inherits:
+      - "auth:admin"
+    permissions: []
