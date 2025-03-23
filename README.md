@@ -19,7 +19,7 @@
 
 This is a quickstart document to test the project locally.
 
-You can find the API documentation on the [repository github page](https://a-novel.github.io/story-schematics/).
+You can find the API documentation on the [repository GitHub page](https://a-novel.github.io/story-schematics/).
 
 Want to contribute? Check the [contribution guidelines](CONTRIBUTING.md).
 

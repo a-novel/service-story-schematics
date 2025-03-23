@@ -59,7 +59,6 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: pong
         "418":
           description: This route is not expected to fail under normal circumstances.
         default:
