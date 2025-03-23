@@ -15,8 +15,10 @@ func CheckStoryPlan(beats []models.Beat, beatsDefinitions []models.BeatDefinitio
 	definitionBeats := map[string]int{}
 	generatedBeats := map[string]int{}
 
-	missingBeats := []string{}
-	unknownBeats := []string{}
+	var missingBeats []string
+
+	var unknownBeats []string
+
 	misplacedBeats := map[string]struct {
 		expected int
 		actual   int
