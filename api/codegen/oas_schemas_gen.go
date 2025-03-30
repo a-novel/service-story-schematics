@@ -323,11 +323,6 @@ func (s *CreateLoglineForm) SetContent(val string) {
 	s.Content = val
 }
 
-// CreateLoglineIMATeapot is response for CreateLogline operation.
-type CreateLoglineIMATeapot struct{}
-
-func (*CreateLoglineIMATeapot) createLoglineRes() {}
-
 // Ref: #/components/schemas/CreateStoryPlanForm
 type CreateStoryPlanForm struct {
 	Slug Slug `json:"slug"`
@@ -378,11 +373,6 @@ func (s *CreateStoryPlanForm) SetDescription(val string) {
 func (s *CreateStoryPlanForm) SetBeats(val []BeatDefinition) {
 	s.Beats = val
 }
-
-// CreateStoryPlanIMATeapot is response for CreateStoryPlan operation.
-type CreateStoryPlanIMATeapot struct{}
-
-func (*CreateStoryPlanIMATeapot) createStoryPlanRes() {}
 
 // Ref: #/components/schemas/Dependency
 type Dependency struct {
@@ -510,11 +500,6 @@ func (s *ExpandBeatForm) SetTargetKey(val string) {
 	s.TargetKey = val
 }
 
-// ExpandLoglineIMATeapot is response for ExpandLogline operation.
-type ExpandLoglineIMATeapot struct{}
-
-func (*ExpandLoglineIMATeapot) expandLoglineRes() {}
-
 // Ref: #/components/schemas/GenerateBeatsSheetForm
 type GenerateBeatsSheetForm struct {
 	LoglineID   LoglineID   `json:"loglineID"`
@@ -569,37 +554,17 @@ func (s *GenerateLoglinesForm) SetTheme(val string) {
 	s.Theme = val
 }
 
-// GenerateLoglinesIMATeapot is response for GenerateLoglines operation.
-type GenerateLoglinesIMATeapot struct{}
-
-func (*GenerateLoglinesIMATeapot) generateLoglinesRes() {}
-
 type GenerateLoglinesOKApplicationJSON []LoglineIdea
 
 func (*GenerateLoglinesOKApplicationJSON) generateLoglinesRes() {}
-
-// GetBeatsSheetsIMATeapot is response for GetBeatsSheets operation.
-type GetBeatsSheetsIMATeapot struct{}
-
-func (*GetBeatsSheetsIMATeapot) getBeatsSheetsRes() {}
 
 type GetBeatsSheetsOKApplicationJSON []BeatsSheetPreview
 
 func (*GetBeatsSheetsOKApplicationJSON) getBeatsSheetsRes() {}
 
-// GetLoglinesIMATeapot is response for GetLoglines operation.
-type GetLoglinesIMATeapot struct{}
-
-func (*GetLoglinesIMATeapot) getLoglinesRes() {}
-
 type GetLoglinesOKApplicationJSON []LoglinePreview
 
 func (*GetLoglinesOKApplicationJSON) getLoglinesRes() {}
-
-// GetStoryPlansIMATeapot is response for GetStoryPlans operation.
-type GetStoryPlansIMATeapot struct{}
-
-func (*GetStoryPlansIMATeapot) getStoryPlansRes() {}
 
 type GetStoryPlansOKApplicationJSON []StoryPlanPreview
 
@@ -1189,6 +1154,38 @@ func (s *StoryPlanPreview) SetDescription(val string) {
 func (s *StoryPlanPreview) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
 }
+
+// Ref: #/components/schemas/UnauthorizedError
+type UnauthorizedError struct {
+	// The error message.
+	Error string `json:"error"`
+}
+
+// GetError returns the value of Error.
+func (s *UnauthorizedError) GetError() string {
+	return s.Error
+}
+
+// SetError sets the value of Error.
+func (s *UnauthorizedError) SetError(val string) {
+	s.Error = val
+}
+
+func (*UnauthorizedError) createBeatsSheetRes()   {}
+func (*UnauthorizedError) createLoglineRes()      {}
+func (*UnauthorizedError) createStoryPlanRes()    {}
+func (*UnauthorizedError) expandBeatRes()         {}
+func (*UnauthorizedError) expandLoglineRes()      {}
+func (*UnauthorizedError) generateBeatsSheetRes() {}
+func (*UnauthorizedError) generateLoglinesRes()   {}
+func (*UnauthorizedError) getBeatsSheetRes()      {}
+func (*UnauthorizedError) getBeatsSheetsRes()     {}
+func (*UnauthorizedError) getLoglineRes()         {}
+func (*UnauthorizedError) getLoglinesRes()        {}
+func (*UnauthorizedError) getStoryPlanRes()       {}
+func (*UnauthorizedError) getStoryPlansRes()      {}
+func (*UnauthorizedError) regenerateBeatsRes()    {}
+func (*UnauthorizedError) updateStoryPlanRes()    {}
 
 // Ref: #/components/schemas/UnexpectedError
 type UnexpectedError struct {

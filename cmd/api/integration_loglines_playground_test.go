@@ -69,12 +69,16 @@ func TestLoglinesPlayground(t *testing.T) {
 	{
 		securityClient.SetToken(userAnon)
 
-		_, err = client.CreateLogline(t.Context(), &codegen.CreateLoglineForm{
+		rawRes, err := client.CreateLogline(t.Context(), &codegen.CreateLoglineForm{
 			Slug:    codegen.Slug(loglineSlug),
 			Name:    loglineIdea.Name,
 			Content: loglineIdea.Content,
 		})
-		require.Error(t, err)
+
+		require.NoError(t, err)
+
+		_, ok := rawRes.(*codegen.UnauthorizedError)
+		require.True(t, ok)
 	}
 
 	t.Log("CreateLogline")
