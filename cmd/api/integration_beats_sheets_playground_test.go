@@ -88,11 +88,15 @@ func TestBeastSheetsPlayground(t *testing.T) {
 	{
 		securityClient.SetToken(userAnon)
 
-		_, err = client.GenerateBeatsSheet(t.Context(), &codegen.GenerateBeatsSheetForm{
+		rawRes, err := client.GenerateBeatsSheet(t.Context(), &codegen.GenerateBeatsSheetForm{
 			LoglineID:   logline.ID,
 			StoryPlanID: storyPlan.ID,
 		})
-		require.Error(t, err)
+
+		require.NoError(t, err)
+
+		_, ok := rawRes.(*codegen.UnauthorizedError)
+		require.True(t, ok)
 
 		securityClient.SetToken(userLambda)
 

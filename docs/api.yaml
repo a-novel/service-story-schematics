@@ -13,7 +13,7 @@ info:
   license:
     name: GNU AGPLv3
     url: https://www.gnu.org/licenses/agpl-3.0.en.html
-  version: 1.0.0
+  version: 0.0.0
 
 security:
   - bearerAuth: []
@@ -97,6 +97,9 @@ paths:
     put:
       tags:
         - beats-sheet
+      security:
+        - bearerAuth:
+            - "beats-sheet:create"
       summary: Create a new beats sheet.
       description: |
         Create a new beats sheet for a logline, following a story plan.
@@ -110,6 +113,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BeatsSheet"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The logline or story plan does not exist.
           content:
@@ -131,6 +140,9 @@ paths:
     get:
       tags:
         - beats-sheet
+      security:
+        - bearerAuth:
+            - "beats-sheet:read"
       summary: Get a beats sheet.
       description: |
         Get a beats sheet.
@@ -144,6 +156,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BeatsSheet"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The beats sheet does not exist.
           content:
@@ -161,6 +179,9 @@ paths:
     get:
       tags:
         - beats-sheet
+      security:
+        - bearerAuth:
+            - "beats-sheets:read"
       summary: Get all beats sheets.
       description: |
         Get all beats sheets for the current user.
@@ -178,8 +199,12 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/BeatsSheetPreview"
-        "418":
-          description: This route is not expected to fail under normal circumstances.
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -191,6 +216,9 @@ paths:
     post:
       tags:
         - beats-sheet
+      security:
+        - bearerAuth:
+            - "beats-sheet:generate"
       summary: Generate a new beats sheet.
       description: |
         Generate a new beats sheet for a logline, following a story plan.
@@ -204,6 +232,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BeatsSheet"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The logline or story plan does not exist.
           content:
@@ -221,6 +255,9 @@ paths:
     post:
       tags:
         - beats-sheet
+      security:
+        - bearerAuth:
+            - "beats-sheet:regenerate"
       summary: Regenerate beats in a beats sheet.
       description: |
         Regenerate the content of specific beats in a beats sheet.
@@ -234,6 +271,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BeatsSheet"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The beats sheet does not exist.
           content:
@@ -251,6 +294,9 @@ paths:
     post:
       tags:
         - beats-sheet
+      security:
+        - bearerAuth:
+            - "beat:expand"
       summary: Expand a beat in a beats sheet.
       description: |
         Add more details to a specific beat in a beats sheet.
@@ -264,6 +310,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Beat"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The beats sheet does not exist.
           content:
@@ -287,6 +339,9 @@ paths:
     put:
       tags:
         - logline
+      security:
+        - bearerAuth:
+            - "logline:create"
       summary: Create a new logline.
       description: |
         Create a new logline for a user.
@@ -300,8 +355,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Logline"
-        "418":
-          description: This route is not expected to fail under normal circumstances.
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -311,6 +370,9 @@ paths:
     get:
       tags:
         - logline
+      security:
+        - bearerAuth:
+            - "logline:read"
       summary: Get a logline.
       description: |
         Get a logline.
@@ -333,6 +395,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Logline"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The logline does not exist.
           content:
@@ -350,6 +418,9 @@ paths:
     get:
       tags:
         - logline
+      security:
+        - bearerAuth:
+            - "loglines:read"
       summary: Get all loglines.
       description: |
         Get all loglines for the current user.
@@ -366,8 +437,12 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/LoglinePreview"
-        "418":
-          description: This route is not expected to fail under normal circumstances.
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -379,6 +454,9 @@ paths:
     post:
       tags:
         - logline
+      security:
+        - bearerAuth:
+            - "loglines:generate"
       summary: Generate new loglines.
       description: |
         Generate new loglines for a user.
@@ -394,8 +472,12 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/LoglineIdea"
-        "418":
-          description: This route is not expected to fail under normal circumstances.
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -407,6 +489,9 @@ paths:
     post:
       tags:
         - logline
+      security:
+        - bearerAuth:
+            - "logline:expand"
       summary: Expand a logline idea.
       description: |
         Add more details to a logline idea.
@@ -420,8 +505,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/LoglineIdea"
-        "418":
-          description: This route is not expected to fail under normal circumstances.
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -433,6 +522,9 @@ paths:
     put:
       tags:
         - story-plan
+      security:
+        - bearerAuth:
+            - "story-plan:create"
       summary: Create a new story plan.
       description: |
         Create a new story plan.
@@ -446,8 +538,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StoryPlan"
-        "418":
-          description: This route is not expected to fail under normal circumstances.
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -457,6 +553,9 @@ paths:
     patch:
       tags:
         - story-plan
+      security:
+        - bearerAuth:
+            - "story-plan:update"
       summary: Update a story plan.
       description: |
         Update a story plan.
@@ -470,6 +569,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StoryPlan"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The story plan does not exist.
           content:
@@ -485,6 +590,9 @@ paths:
     get:
       tags:
         - story-plan
+      security:
+        - bearerAuth:
+            - "story-plan:read"
       summary: Get a story plan.
       description: |
         Get a story plan.
@@ -507,6 +615,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StoryPlan"
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         "404":
           description: The story plan does not exist.
           content:
@@ -524,6 +638,9 @@ paths:
     get:
       tags:
         - story-plan
+      security:
+        - bearerAuth:
+            - "story-plans:read"
       summary: Get all story plans.
       description: |
         Get all story plans.
@@ -540,8 +657,12 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/StoryPlanPreview"
-        "418":
-          description: This route is not expected to fail under normal circumstances.
+        "401":
+          description: Authentication failed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnauthorizedError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -554,13 +675,13 @@ paths:
 # ======================================================================================================================
 
 components:
-  # ================================================== SECURITY SCHEMAS ======================================= ===========
+  # ================================================== SECURITY SCHEMAS ======================================= =========
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT
-  # ======================================================= SCHEMAS ======================================================
+      bearerFormat: jwt
+  # ======================================================= SCHEMAS ====================================================
   schemas:
     DependencyStatus:
       type: string
@@ -735,7 +856,7 @@ components:
           items:
             $ref: "#/components/schemas/BeatDefinition"
           description: The beats of the story plan.
-    # ======================================================== TYPES =======================================================
+    # ======================================================== TYPES ===================================================
     UserID:
       type: string
       format: uuid
@@ -1012,7 +1133,16 @@ components:
           format: date-time
           description: The date and time at which the story plan was created.
           example: 2022-01-01T00:00:00Z
-    # ======================================================= ERRORS =======================================================
+    # ======================================================= ERRORS ===================================================
+    UnauthorizedError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: The error message.
+          example: The provided access token is not valid.
     NotFoundError:
       type: object
       required:
@@ -1040,7 +1170,7 @@ components:
           type: string
           description: The error message.
           example: The provided access token is not a refresh token.
-  # =================================================== REQUEST BODIES ===================================================
+  # =================================================== REQUEST BODIES =================================================
   requestBodies:
     CreateBeatsSheetForm:
       required: true
@@ -1096,7 +1226,7 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/UpdateStoryPlanForm"
-  # ================================================== QUERY PARAMETERS ==================================================
+  # ================================================== QUERY PARAMETERS ================================================
   parameters:
     LoglineID:
       name: loglineID

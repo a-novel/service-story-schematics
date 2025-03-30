@@ -93,8 +93,12 @@ func TestStoryPlanCRUD(t *testing.T) {
 	{
 		securityClient.SetToken(userLambda)
 
-		_, err = client.CreateStoryPlan(t.Context(), &planForm)
-		require.Error(t, err)
+		rawRes, err := client.CreateStoryPlan(t.Context(), &planForm)
+
+		require.NoError(t, err)
+
+		_, ok := rawRes.(*codegen.UnauthorizedError)
+		require.True(t, ok)
 	}
 
 	t.Log("CreateStoryPlan")
@@ -171,13 +175,17 @@ func TestStoryPlanCRUD(t *testing.T) {
 	{
 		securityClient.SetToken(userLambda)
 
-		_, err = client.UpdateStoryPlan(t.Context(), &codegen.UpdateStoryPlanForm{
+		rawRes, err := client.UpdateStoryPlan(t.Context(), &codegen.UpdateStoryPlanForm{
 			Slug:        codegen.Slug(storyPlanSlug),
 			Name:        planForm.Name + " Updated",
 			Description: planForm.Description + " Updated",
 			Beats:       planForm.Beats,
 		})
-		require.Error(t, err)
+
+		require.NoError(t, err)
+
+		_, ok := rawRes.(*codegen.UnauthorizedError)
+		require.True(t, ok)
 	}
 
 	t.Log("UpdateStoryPlan")
