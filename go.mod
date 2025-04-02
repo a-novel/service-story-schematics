@@ -1,6 +1,6 @@
 module github.com/a-novel/story-schematics
 
-go 1.24.1
+go 1.24.2
 
 require (
 	github.com/a-novel-kit/configurator v1.4.1
