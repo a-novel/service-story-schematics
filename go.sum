@@ -4,8 +4,8 @@ github.com/a-novel-kit/context v1.2.0 h1:F+iXj3lCklHd5TlaqfUjzVBmOV8DhFBnAvC6tvA
 github.com/a-novel-kit/context v1.2.0/go.mod h1:vGQBM6AXYJ8Sc5m7YfFZXbHp1aV1516zW/DtQ88h/y0=
 github.com/a-novel-kit/context/pgbun v1.2.1 h1:6a3/xdjUtKQNbiuzEYEjRjaC0Uz41f34LLnWEZo6nos=
 github.com/a-novel-kit/context/pgbun v1.2.1/go.mod h1:v8deXhn5NJsZdJTQUPnKtPiAIUG+VdjBUMuhmLtYirQ=
-github.com/a-novel-kit/context/sentry v1.2.0 h1:INs6sjuBErucTnssupakSL4EwcJQCGQmQ4yxHalPnsI=
-github.com/a-novel-kit/context/sentry v1.2.0/go.mod h1:YVU5xWZjTd/QWcf26csgsgANlZtJjXs/Xu4etEtqI2A=
+github.com/a-novel-kit/context/sentry v1.2.1 h1:liEDUepulQICik/cweSQ4uzmPfKEIsCr0xPmTj1Wvwg=
+github.com/a-novel-kit/context/sentry v1.2.1/go.mod h1:klO58mzSxBS/h6k3RPgH20CZbBZkuQhF82nf9sYOMOs=
 github.com/a-novel-kit/golm v0.1.4 h1:8DXlOjYliMIqU/inyG84idixvGe2ViCfMpB5u4jkRSg=
 github.com/a-novel-kit/golm v0.1.4/go.mod h1:Yb+eEOQWP4NOFCpay5MsyX2WRb1JV4YYcayBTMiGI00=
 github.com/a-novel-kit/jwt v1.1.1 h1:Q09oO2evB3BnzhOtPFITKlK+ZTKx/aBkk7JUkOzfYWo=
