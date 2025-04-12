@@ -11,7 +11,7 @@ require (
 	github.com/a-novel-kit/middlewares/golm v1.1.1
 	github.com/a-novel-kit/middlewares/zerolog v1.1.1
 	github.com/a-novel/authentication v0.1.7
-	github.com/getsentry/sentry-go v0.31.1
+	github.com/getsentry/sentry-go v0.32.0
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/cors v1.2.1
 	github.com/go-faster/errors v0.7.1
