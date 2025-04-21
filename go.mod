@@ -18,7 +18,7 @@ require (
 	github.com/go-faster/jx v1.1.0
 	github.com/goccy/go-yaml v1.17.1
 	github.com/google/uuid v1.6.0
-	github.com/ogen-go/ogen v1.11.0
+	github.com/ogen-go/ogen v1.12.0
 	github.com/rs/zerolog v1.34.0
 	github.com/samber/lo v1.49.1
 	github.com/stretchr/testify v1.10.0
