@@ -7,7 +7,7 @@ import (
 	"github.com/a-novel-kit/context"
 	pgctx "github.com/a-novel-kit/context/pgbun"
 
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 var ErrInsertBeatsSheetRepository = errors.New("InsertBeatsSheetRepository.InsertBeatsSheet")

@@ -5,7 +5,7 @@ import (
 
 	"github.com/a-novel-kit/configurator"
 
-	"github.com/a-novel/story-schematics/config"
+	"github.com/a-novel/service-story-schematics/config"
 )
 
 //go:embed en.yaml

@@ -5,15 +5,15 @@ import (
 	"log"
 	"time"
 
-	"github.com/a-novel/authentication/api/apiclient/testapiclient"
+	"github.com/a-novel/service-authentication/api/apiclient/testapiclient"
 
 	"github.com/a-novel-kit/configurator/chans"
 	"github.com/a-novel-kit/configurator/utilstest"
 	"github.com/a-novel-kit/context"
 
-	"github.com/a-novel/story-schematics/api/apiclient"
-	"github.com/a-novel/story-schematics/api/codegen"
-	"github.com/a-novel/story-schematics/config"
+	"github.com/a-novel/service-story-schematics/api/apiclient"
+	"github.com/a-novel/service-story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/config"
 )
 
 var logs *chans.MultiChan[string]

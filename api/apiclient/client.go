@@ -3,7 +3,7 @@ package apiclient
 import (
 	"github.com/a-novel-kit/context"
 
-	"github.com/a-novel/story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/api/codegen"
 )
 
 type SecuritySource struct {

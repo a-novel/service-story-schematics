@@ -13,22 +13,22 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/rs/zerolog"
 
-	authapiclient "github.com/a-novel/authentication/api/apiclient"
-	apicodegen "github.com/a-novel/authentication/api/codegen"
-	apimodels "github.com/a-novel/authentication/models"
+	authapiclient "github.com/a-novel/service-authentication/api/apiclient"
+	apicodegen "github.com/a-novel/service-authentication/api/codegen"
+	apimodels "github.com/a-novel/service-authentication/models"
 
 	"github.com/a-novel-kit/context"
 	"github.com/a-novel-kit/golm/bindings/groq"
 	golmmiddleware "github.com/a-novel-kit/middlewares/golm"
 	zeromiddleware "github.com/a-novel-kit/middlewares/zerolog"
 
-	"github.com/a-novel/story-schematics/api"
-	"github.com/a-novel/story-schematics/api/codegen"
-	"github.com/a-novel/story-schematics/config"
-	"github.com/a-novel/story-schematics/internal/dao"
-	"github.com/a-novel/story-schematics/internal/daoai"
-	"github.com/a-novel/story-schematics/internal/lib"
-	"github.com/a-novel/story-schematics/internal/services"
+	"github.com/a-novel/service-story-schematics/api"
+	"github.com/a-novel/service-story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/service-story-schematics/internal/dao"
+	"github.com/a-novel/service-story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/service-story-schematics/internal/services"
 )
 
 func main() {

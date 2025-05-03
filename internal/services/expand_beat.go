@@ -6,9 +6,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/a-novel/story-schematics/internal/dao"
-	"github.com/a-novel/story-schematics/internal/daoai"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/internal/dao"
+	"github.com/a-novel/service-story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 var ErrExpandBeatService = errors.New("ExpandBeatService.ExpandBeat")

@@ -9,12 +9,12 @@ import (
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/story-schematics/api"
-	"github.com/a-novel/story-schematics/api/codegen"
-	apimocks "github.com/a-novel/story-schematics/api/mocks"
-	"github.com/a-novel/story-schematics/internal/dao"
-	"github.com/a-novel/story-schematics/internal/services"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/api"
+	"github.com/a-novel/service-story-schematics/api/codegen"
+	apimocks "github.com/a-novel/service-story-schematics/api/mocks"
+	"github.com/a-novel/service-story-schematics/internal/dao"
+	"github.com/a-novel/service-story-schematics/internal/services"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 func TestUpdateStoryPlan(t *testing.T) {

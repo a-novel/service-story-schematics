@@ -9,9 +9,9 @@ import (
 
 	"github.com/a-novel-kit/context"
 
-	"github.com/a-novel/story-schematics/internal/dao"
-	"github.com/a-novel/story-schematics/internal/lib"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/internal/dao"
+	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 var ErrCreateBeatsSheetService = errors.New("CreateBeatsSheetService.CreateBeatsSheet")

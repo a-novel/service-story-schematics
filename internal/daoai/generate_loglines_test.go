@@ -9,8 +9,8 @@ import (
 	"github.com/a-novel-kit/golm"
 	groqbinding "github.com/a-novel-kit/golm/bindings/groq"
 
-	"github.com/a-novel/story-schematics/config"
-	"github.com/a-novel/story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/service-story-schematics/internal/daoai"
 )
 
 func TestGenerateLoglines(t *testing.T) {

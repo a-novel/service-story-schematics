@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 var ErrInvalidStoryPlan = errors.New("CheckStoryPlan")

@@ -10,7 +10,7 @@ import (
 
 	pgctx "github.com/a-novel-kit/context/pgbun"
 
-	"github.com/a-novel/story-schematics/internal/dao"
+	"github.com/a-novel/service-story-schematics/internal/dao"
 )
 
 func TestSelectLoglineBySlug(t *testing.T) {

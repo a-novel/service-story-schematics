@@ -5,8 +5,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/a-novel/story-schematics/config/prompts"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/config/prompts"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 var StoryPlanPrompt = template.Must(template.New("EN").Parse(prompts.Config.En.StoryPlan))

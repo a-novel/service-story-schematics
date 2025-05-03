@@ -10,8 +10,8 @@ import (
 	"github.com/a-novel-kit/context"
 	"github.com/a-novel-kit/golm"
 
-	"github.com/a-novel/story-schematics/config/prompts"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/config/prompts"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 const expandLoglineTemperature = 0.8

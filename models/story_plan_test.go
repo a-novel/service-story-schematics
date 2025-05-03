@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 func TestBeatGetScenesCount(t *testing.T) {
