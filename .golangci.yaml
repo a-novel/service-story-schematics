@@ -26,7 +26,7 @@ linters-settings:
       - default # Default section: contains all imports that could not be matched to another section type.
       - prefix(github.com/a-novel-kit)
       - prefix(github.com/a-novel)
-      - prefix(github.com/a-novel/story-schematics)
+      - prefix(github.com/a-novel/service-story-schematics)
     skip-generated: true
   gosec:
     excludes:

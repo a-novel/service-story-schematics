@@ -6,13 +6,13 @@ import (
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 
-	authapi "github.com/a-novel/authentication/api"
+	authapi "github.com/a-novel/service-authentication/api"
 
 	"github.com/a-novel-kit/context"
 
-	"github.com/a-novel/story-schematics/api/codegen"
-	"github.com/a-novel/story-schematics/internal/services"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/internal/services"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 type ListBeatsSheetsService interface {

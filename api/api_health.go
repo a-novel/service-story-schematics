@@ -11,7 +11,7 @@ import (
 	pgctx "github.com/a-novel-kit/context/pgbun"
 	sentryctx "github.com/a-novel-kit/context/sentry"
 
-	"github.com/a-novel/story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/api/codegen"
 )
 
 func (api *API) Ping(_ context.Context) (codegen.PingRes, error) {

@@ -4,12 +4,12 @@ package servicesmocks
 
 import (
 	context "github.com/a-novel-kit/context"
-	dao "github.com/a-novel/story-schematics/internal/dao"
-	daoai "github.com/a-novel/story-schematics/internal/daoai"
+	dao "github.com/a-novel/service-story-schematics/internal/dao"
+	daoai "github.com/a-novel/service-story-schematics/internal/daoai"
 
 	mock "github.com/stretchr/testify/mock"
 
-	models "github.com/a-novel/story-schematics/models"
+	models "github.com/a-novel/service-story-schematics/models"
 
 	uuid "github.com/google/uuid"
 )

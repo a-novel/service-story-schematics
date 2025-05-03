@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/uptrace/bun"
 
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 var (

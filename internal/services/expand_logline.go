@@ -7,8 +7,8 @@ import (
 
 	"github.com/a-novel-kit/context"
 
-	"github.com/a-novel/story-schematics/internal/daoai"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 var ErrExpandLoglineService = errors.New("ExpandLoglineService.ExpandLogline")

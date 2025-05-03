@@ -8,11 +8,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/story-schematics/api"
-	"github.com/a-novel/story-schematics/api/codegen"
-	apimocks "github.com/a-novel/story-schematics/api/mocks"
-	"github.com/a-novel/story-schematics/internal/services"
-	"github.com/a-novel/story-schematics/models"
+	"github.com/a-novel/service-story-schematics/api"
+	"github.com/a-novel/service-story-schematics/api/codegen"
+	apimocks "github.com/a-novel/service-story-schematics/api/mocks"
+	"github.com/a-novel/service-story-schematics/internal/services"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 func TestListStoryPlans(t *testing.T) {

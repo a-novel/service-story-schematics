@@ -7,10 +7,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/authentication/api/apiclient/testapiclient"
-	authmodels "github.com/a-novel/authentication/models"
+	"github.com/a-novel/service-authentication/api/apiclient/testapiclient"
+	authmodels "github.com/a-novel/service-authentication/models"
 
-	"github.com/a-novel/story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/api/codegen"
 )
 
 func TestLoglinesPlayground(t *testing.T) {

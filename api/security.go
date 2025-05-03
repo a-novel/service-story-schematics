@@ -3,13 +3,13 @@ package api
 import (
 	"errors"
 
-	authapi "github.com/a-novel/authentication/api"
-	authcodegen "github.com/a-novel/authentication/api/codegen"
-	"github.com/a-novel/authentication/models"
+	authapi "github.com/a-novel/service-authentication/api"
+	authcodegen "github.com/a-novel/service-authentication/api/codegen"
+	"github.com/a-novel/service-authentication/models"
 
 	"github.com/a-novel-kit/context"
 
-	"github.com/a-novel/story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/api/codegen"
 )
 
 var ErrStorySchematicsSecurityHandler = errors.New("story schematics security handler")

@@ -8,8 +8,8 @@ import (
 	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/story-schematics/api"
-	"github.com/a-novel/story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/api"
+	"github.com/a-novel/service-story-schematics/api/codegen"
 )
 
 func TestNewError(t *testing.T) {
