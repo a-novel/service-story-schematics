@@ -368,7 +368,7 @@ func (s *CreateLoglineForm) Validate() error {
 		if err := (validate.String{
 			MinLength:    0,
 			MinLengthSet: false,
-			MaxLength:    4096,
+			MaxLength:    16384,
 			MaxLengthSet: true,
 			Email:        false,
 			Hostname:     false,
@@ -583,7 +583,7 @@ func (s *GenerateLoglinesForm) Validate() error {
 		if err := (validate.String{
 			MinLength:    0,
 			MinLengthSet: false,
-			MaxLength:    4096,
+			MaxLength:    16384,
 			MaxLengthSet: true,
 			Email:        false,
 			Hostname:     false,
@@ -750,7 +750,7 @@ func (s *Logline) Validate() error {
 		if err := (validate.String{
 			MinLength:    0,
 			MinLengthSet: false,
-			MaxLength:    4096,
+			MaxLength:    16384,
 			MaxLengthSet: true,
 			Email:        false,
 			Hostname:     false,
@@ -800,7 +800,7 @@ func (s *LoglineIdea) Validate() error {
 		if err := (validate.String{
 			MinLength:    0,
 			MinLengthSet: false,
-			MaxLength:    4096,
+			MaxLength:    16384,
 			MaxLengthSet: true,
 			Email:        false,
 			Hostname:     false,

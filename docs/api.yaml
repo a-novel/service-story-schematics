@@ -746,7 +746,7 @@ components:
           example: My Story
         content:
           type: string
-          maxLength: 4096
+          maxLength: 16384
           description: The content of the logline.
           example: A story about a hero's journey.
     CreateStoryPlanForm:
@@ -812,7 +812,7 @@ components:
           example: 5
         theme:
           type: string
-          maxLength: 4096
+          maxLength: 16384
           description: The theme of the loglines to generate.
           example: fantasy
     RegenerateBeatsForm:
@@ -970,7 +970,7 @@ components:
           example: My Story
         content:
           type: string
-          maxLength: 4096
+          maxLength: 16384
           description: The content of the logline.
           example: A story about a hero's journey.
         createdAt:
@@ -1014,7 +1014,7 @@ components:
           example: My Story
         content:
           type: string
-          maxLength: 4096
+          maxLength: 16384
           description: The content of the logline idea.
           example: A story about a hero's journey.
     BeatDefinition:
