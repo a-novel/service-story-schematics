@@ -106,10 +106,10 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		generatedBeatsSheet, ok := rawGeneratedBeatsSheet.(*codegen.BeatsSheet)
+		generatedBeatsSheet, ok := rawGeneratedBeatsSheet.(*codegen.BeatsSheetIdea)
 		require.True(t, ok)
 
-		*beatsSheet = *generatedBeatsSheet
+		beatsSheet.Content = generatedBeatsSheet.Content
 	}
 
 	t.Log("CreateBeatsSheet")

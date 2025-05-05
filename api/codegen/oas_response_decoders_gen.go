@@ -806,7 +806,7 @@ func decodeGenerateBeatsSheetResponse(resp *http.Response) (res GenerateBeatsShe
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response BeatsSheet
+			var response BeatsSheetIdea
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

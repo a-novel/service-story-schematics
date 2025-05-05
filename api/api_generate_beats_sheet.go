@@ -42,7 +42,7 @@ func (api *API) GenerateBeatsSheet(
 		return nil, fmt.Errorf("generate beats sheet: %w", err)
 	}
 
-	return &codegen.BeatsSheet{
+	return &codegen.BeatsSheetIdea{
 		Content: lo.Map(beatsSheet, func(item models.Beat, _ int) codegen.Beat {
 			return codegen.Beat{
 				Key:     item.Key,

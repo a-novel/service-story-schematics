@@ -64,7 +64,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.BeatsSheet{
+			expect: &codegen.BeatsSheetIdea{
 				Content: []codegen.Beat{
 					{
 						Key:     "beat-1",
