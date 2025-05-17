@@ -7,11 +7,28 @@ import (
 	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/rs/zerolog"
 
+	authapi "github.com/a-novel/service-authentication/api"
+
 	"github.com/a-novel-kit/context"
 	sentryctx "github.com/a-novel-kit/context/sentry"
 
 	"github.com/a-novel/service-story-schematics/api/codegen"
 )
+
+var ErrUnauthorized = &codegen.UnexpectedErrorStatusCode{
+	StatusCode: http.StatusUnauthorized,
+	Response:   codegen.UnexpectedError{Error: "Unauthorized"},
+}
+
+var ErrForbidden = &codegen.UnexpectedErrorStatusCode{
+	StatusCode: http.StatusForbidden,
+	Response:   codegen.UnexpectedError{Error: "Forbidden"},
+}
+
+var ErrInternalServerError = &codegen.UnexpectedErrorStatusCode{
+	StatusCode: http.StatusInternalServerError,
+	Response:   codegen.UnexpectedError{Error: "internal server error"},
+}
 
 type API struct {
 	CreateBeatsSheetService CreateBeatsSheetService
@@ -53,9 +70,13 @@ func (api *API) NewError(ctx context.Context, err error) *codegen.UnexpectedErro
 	if ok := errors.As(err, &securityError); ok {
 		logger.Warn().Err(err).Msg("authentication failed")
 
-		return &codegen.UnexpectedErrorStatusCode{
-			StatusCode: http.StatusUnauthorized,
-			Response:   codegen.UnexpectedError{Error: "Unauthorized"},
+		switch {
+		case errors.Is(err, authapi.ErrAuthentication):
+			return ErrUnauthorized
+		case errors.Is(err, authapi.ErrPermission):
+			return ErrForbidden
+		default:
+			return ErrUnauthorized
 		}
 	}
 
@@ -63,8 +84,5 @@ func (api *API) NewError(ctx context.Context, err error) *codegen.UnexpectedErro
 	logger.Error().Err(err).Msg("internal error")
 	sentryctx.CaptureException(ctx, err)
 
-	return &codegen.UnexpectedErrorStatusCode{
-		StatusCode: http.StatusInternalServerError,
-		Response:   codegen.UnexpectedError{Error: "internal server error"},
-	}
+	return ErrInternalServerError
 }

@@ -517,6 +517,38 @@ func (s *ExpandBeatForm) SetTargetKey(val string) {
 	s.TargetKey = val
 }
 
+// Ref: #/components/schemas/ForbiddenError
+type ForbiddenError struct {
+	// The error message.
+	Error string `json:"error"`
+}
+
+// GetError returns the value of Error.
+func (s *ForbiddenError) GetError() string {
+	return s.Error
+}
+
+// SetError sets the value of Error.
+func (s *ForbiddenError) SetError(val string) {
+	s.Error = val
+}
+
+func (*ForbiddenError) createBeatsSheetRes()   {}
+func (*ForbiddenError) createLoglineRes()      {}
+func (*ForbiddenError) createStoryPlanRes()    {}
+func (*ForbiddenError) expandBeatRes()         {}
+func (*ForbiddenError) expandLoglineRes()      {}
+func (*ForbiddenError) generateBeatsSheetRes() {}
+func (*ForbiddenError) generateLoglinesRes()   {}
+func (*ForbiddenError) getBeatsSheetRes()      {}
+func (*ForbiddenError) getBeatsSheetsRes()     {}
+func (*ForbiddenError) getLoglineRes()         {}
+func (*ForbiddenError) getLoglinesRes()        {}
+func (*ForbiddenError) getStoryPlanRes()       {}
+func (*ForbiddenError) getStoryPlansRes()      {}
+func (*ForbiddenError) regenerateBeatsRes()    {}
+func (*ForbiddenError) updateStoryPlanRes()    {}
+
 // Ref: #/components/schemas/GenerateBeatsSheetForm
 type GenerateBeatsSheetForm struct {
 	LoglineID   LoglineID   `json:"loglineID"`

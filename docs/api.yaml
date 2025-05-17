@@ -119,6 +119,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The logline or story plan does not exist.
           content:
@@ -162,6 +168,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The beats sheet does not exist.
           content:
@@ -205,6 +217,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -238,6 +256,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The logline or story plan does not exist.
           content:
@@ -277,6 +301,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The beats sheet does not exist.
           content:
@@ -316,6 +346,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The beats sheet does not exist.
           content:
@@ -361,6 +397,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -401,6 +443,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The logline does not exist.
           content:
@@ -443,6 +491,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -478,6 +532,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -511,6 +571,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -544,6 +610,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -575,6 +647,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The story plan does not exist.
           content:
@@ -621,6 +699,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         "404":
           description: The story plan does not exist.
           content:
@@ -663,6 +747,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UnauthorizedError"
+        "403":
+          description: Access denied.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenError"
         default:
           description: An unexpected error occurred while processing the request.
           content:
@@ -1154,6 +1244,15 @@ components:
           type: string
           description: The error message.
           example: The provided access token is not valid.
+    ForbiddenError:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: The error message.
+          example: You do not have permission to access this resource.
     NotFoundError:
       type: object
       required:

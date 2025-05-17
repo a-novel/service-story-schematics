@@ -97,7 +97,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 
 		require.NoError(t, err)
 
-		_, ok := rawRes.(*codegen.UnauthorizedError)
+		_, ok := rawRes.(*codegen.ForbiddenError)
 		require.True(t, ok)
 	}
 
@@ -184,7 +184,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 
 		require.NoError(t, err)
 
-		_, ok := rawRes.(*codegen.UnauthorizedError)
+		_, ok := rawRes.(*codegen.ForbiddenError)
 		require.True(t, ok)
 	}
 
