@@ -14,8 +14,8 @@ github.com/a-novel-kit/middlewares/golm v1.1.1 h1:nvLp4RcuiVkkQy0P95q/XkQRu1hKhK
 github.com/a-novel-kit/middlewares/golm v1.1.1/go.mod h1:yLK0T+h1Ng8EAVOnyoHi9CcNTvK25iQga+49VeDaIAo=
 github.com/a-novel-kit/middlewares/zerolog v1.1.1 h1:x+zfnnsqp+mk0tuJHvX9f0rQ/L2fnsQWlWehvsb77Jw=
 github.com/a-novel-kit/middlewares/zerolog v1.1.1/go.mod h1:cJiVqHha7sPjpirZSw4aISg8bfulGdmmsqPcFVvCX9A=
-github.com/a-novel/service-authentication v0.2.1 h1:V4i1WfofiPlDveS0Ri4C39ZxUHZZv0hzsV81jX32N+E=
-github.com/a-novel/service-authentication v0.2.1/go.mod h1:Yza06rXAuXvLNhSjvifOl+NZzUtiduDjRyjCWbSfwJQ=
+github.com/a-novel/service-authentication v0.2.2 h1:unU1mm1rlCk67K32NaLTzhouc0FWPt0ysuWTHpiFgb0=
+github.com/a-novel/service-authentication v0.2.2/go.mod h1:Yza06rXAuXvLNhSjvifOl+NZzUtiduDjRyjCWbSfwJQ=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
