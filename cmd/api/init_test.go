@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"time"
@@ -9,7 +10,6 @@ import (
 
 	"github.com/a-novel-kit/configurator/chans"
 	"github.com/a-novel-kit/configurator/utilstest"
-	"github.com/a-novel-kit/context"
 
 	"github.com/a-novel/service-story-schematics/api/apiclient"
 	"github.com/a-novel/service-story-schematics/api/codegen"
