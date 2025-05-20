@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -9,7 +10,6 @@ import (
 
 	authapi "github.com/a-novel/service-authentication/api"
 
-	"github.com/a-novel-kit/context"
 	sentryctx "github.com/a-novel-kit/context/sentry"
 
 	"github.com/a-novel/service-story-schematics/api/codegen"

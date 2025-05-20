@@ -5,9 +5,8 @@
 package servicesmocks
 
 import (
-	context0 "context"
+	"context"
 
-	"github.com/a-novel-kit/context"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
@@ -531,7 +530,7 @@ func (_m *MockExpandBeatSource) EXPECT() *MockExpandBeatSource_Expecter {
 }
 
 // ExpandBeat provides a mock function for the type MockExpandBeatSource
-func (_mock *MockExpandBeatSource) ExpandBeat(ctx context0.Context, request daoai.ExpandBeatRequest) (*models.Beat, error) {
+func (_mock *MockExpandBeatSource) ExpandBeat(ctx context.Context, request daoai.ExpandBeatRequest) (*models.Beat, error) {
 	ret := _mock.Called(ctx, request)
 
 	if len(ret) == 0 {
@@ -540,17 +539,17 @@ func (_mock *MockExpandBeatSource) ExpandBeat(ctx context0.Context, request daoa
 
 	var r0 *models.Beat
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, daoai.ExpandBeatRequest) (*models.Beat, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, daoai.ExpandBeatRequest) (*models.Beat, error)); ok {
 		return returnFunc(ctx, request)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, daoai.ExpandBeatRequest) *models.Beat); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, daoai.ExpandBeatRequest) *models.Beat); ok {
 		r0 = returnFunc(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*models.Beat)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context0.Context, daoai.ExpandBeatRequest) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, daoai.ExpandBeatRequest) error); ok {
 		r1 = returnFunc(ctx, request)
 	} else {
 		r1 = ret.Error(1)
@@ -570,9 +569,9 @@ func (_e *MockExpandBeatSource_Expecter) ExpandBeat(ctx interface{}, request int
 	return &MockExpandBeatSource_ExpandBeat_Call{Call: _e.mock.On("ExpandBeat", ctx, request)}
 }
 
-func (_c *MockExpandBeatSource_ExpandBeat_Call) Run(run func(ctx context0.Context, request daoai.ExpandBeatRequest)) *MockExpandBeatSource_ExpandBeat_Call {
+func (_c *MockExpandBeatSource_ExpandBeat_Call) Run(run func(ctx context.Context, request daoai.ExpandBeatRequest)) *MockExpandBeatSource_ExpandBeat_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context0.Context), args[1].(daoai.ExpandBeatRequest))
+		run(args[0].(context.Context), args[1].(daoai.ExpandBeatRequest))
 	})
 	return _c
 }
@@ -582,13 +581,13 @@ func (_c *MockExpandBeatSource_ExpandBeat_Call) Return(beat *models.Beat, err er
 	return _c
 }
 
-func (_c *MockExpandBeatSource_ExpandBeat_Call) RunAndReturn(run func(ctx context0.Context, request daoai.ExpandBeatRequest) (*models.Beat, error)) *MockExpandBeatSource_ExpandBeat_Call {
+func (_c *MockExpandBeatSource_ExpandBeat_Call) RunAndReturn(run func(ctx context.Context, request daoai.ExpandBeatRequest) (*models.Beat, error)) *MockExpandBeatSource_ExpandBeat_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // SelectBeatsSheet provides a mock function for the type MockExpandBeatSource
-func (_mock *MockExpandBeatSource) SelectBeatsSheet(ctx context0.Context, data uuid.UUID) (*dao.BeatsSheetEntity, error) {
+func (_mock *MockExpandBeatSource) SelectBeatsSheet(ctx context.Context, data uuid.UUID) (*dao.BeatsSheetEntity, error) {
 	ret := _mock.Called(ctx, data)
 
 	if len(ret) == 0 {
@@ -597,17 +596,17 @@ func (_mock *MockExpandBeatSource) SelectBeatsSheet(ctx context0.Context, data u
 
 	var r0 *dao.BeatsSheetEntity
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, uuid.UUID) (*dao.BeatsSheetEntity, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (*dao.BeatsSheetEntity, error)); ok {
 		return returnFunc(ctx, data)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, uuid.UUID) *dao.BeatsSheetEntity); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) *dao.BeatsSheetEntity); ok {
 		r0 = returnFunc(ctx, data)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*dao.BeatsSheetEntity)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context0.Context, uuid.UUID) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
 		r1 = returnFunc(ctx, data)
 	} else {
 		r1 = ret.Error(1)
@@ -627,9 +626,9 @@ func (_e *MockExpandBeatSource_Expecter) SelectBeatsSheet(ctx interface{}, data 
 	return &MockExpandBeatSource_SelectBeatsSheet_Call{Call: _e.mock.On("SelectBeatsSheet", ctx, data)}
 }
 
-func (_c *MockExpandBeatSource_SelectBeatsSheet_Call) Run(run func(ctx context0.Context, data uuid.UUID)) *MockExpandBeatSource_SelectBeatsSheet_Call {
+func (_c *MockExpandBeatSource_SelectBeatsSheet_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockExpandBeatSource_SelectBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context0.Context), args[1].(uuid.UUID))
+		run(args[0].(context.Context), args[1].(uuid.UUID))
 	})
 	return _c
 }
@@ -639,13 +638,13 @@ func (_c *MockExpandBeatSource_SelectBeatsSheet_Call) Return(beatsSheetEntity *d
 	return _c
 }
 
-func (_c *MockExpandBeatSource_SelectBeatsSheet_Call) RunAndReturn(run func(ctx context0.Context, data uuid.UUID) (*dao.BeatsSheetEntity, error)) *MockExpandBeatSource_SelectBeatsSheet_Call {
+func (_c *MockExpandBeatSource_SelectBeatsSheet_Call) RunAndReturn(run func(ctx context.Context, data uuid.UUID) (*dao.BeatsSheetEntity, error)) *MockExpandBeatSource_SelectBeatsSheet_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // SelectLogline provides a mock function for the type MockExpandBeatSource
-func (_mock *MockExpandBeatSource) SelectLogline(ctx context0.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error) {
+func (_mock *MockExpandBeatSource) SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error) {
 	ret := _mock.Called(ctx, data)
 
 	if len(ret) == 0 {
@@ -654,17 +653,17 @@ func (_mock *MockExpandBeatSource) SelectLogline(ctx context0.Context, data dao.
 
 	var r0 *dao.LoglineEntity
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, dao.SelectLoglineData) (*dao.LoglineEntity, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.SelectLoglineData) (*dao.LoglineEntity, error)); ok {
 		return returnFunc(ctx, data)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, dao.SelectLoglineData) *dao.LoglineEntity); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.SelectLoglineData) *dao.LoglineEntity); ok {
 		r0 = returnFunc(ctx, data)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*dao.LoglineEntity)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context0.Context, dao.SelectLoglineData) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, dao.SelectLoglineData) error); ok {
 		r1 = returnFunc(ctx, data)
 	} else {
 		r1 = ret.Error(1)
@@ -684,9 +683,9 @@ func (_e *MockExpandBeatSource_Expecter) SelectLogline(ctx interface{}, data int
 	return &MockExpandBeatSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
-func (_c *MockExpandBeatSource_SelectLogline_Call) Run(run func(ctx context0.Context, data dao.SelectLoglineData)) *MockExpandBeatSource_SelectLogline_Call {
+func (_c *MockExpandBeatSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockExpandBeatSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context0.Context), args[1].(dao.SelectLoglineData))
+		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
 	})
 	return _c
 }
@@ -696,13 +695,13 @@ func (_c *MockExpandBeatSource_SelectLogline_Call) Return(loglineEntity *dao.Log
 	return _c
 }
 
-func (_c *MockExpandBeatSource_SelectLogline_Call) RunAndReturn(run func(ctx context0.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)) *MockExpandBeatSource_SelectLogline_Call {
+func (_c *MockExpandBeatSource_SelectLogline_Call) RunAndReturn(run func(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)) *MockExpandBeatSource_SelectLogline_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // SelectStoryPlan provides a mock function for the type MockExpandBeatSource
-func (_mock *MockExpandBeatSource) SelectStoryPlan(ctx context0.Context, data uuid.UUID) (*dao.StoryPlanEntity, error) {
+func (_mock *MockExpandBeatSource) SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error) {
 	ret := _mock.Called(ctx, data)
 
 	if len(ret) == 0 {
@@ -711,17 +710,17 @@ func (_mock *MockExpandBeatSource) SelectStoryPlan(ctx context0.Context, data uu
 
 	var r0 *dao.StoryPlanEntity
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, uuid.UUID) (*dao.StoryPlanEntity, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (*dao.StoryPlanEntity, error)); ok {
 		return returnFunc(ctx, data)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context0.Context, uuid.UUID) *dao.StoryPlanEntity); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) *dao.StoryPlanEntity); ok {
 		r0 = returnFunc(ctx, data)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*dao.StoryPlanEntity)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context0.Context, uuid.UUID) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
 		r1 = returnFunc(ctx, data)
 	} else {
 		r1 = ret.Error(1)
@@ -741,9 +740,9 @@ func (_e *MockExpandBeatSource_Expecter) SelectStoryPlan(ctx interface{}, data i
 	return &MockExpandBeatSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, data)}
 }
 
-func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Run(run func(ctx context0.Context, data uuid.UUID)) *MockExpandBeatSource_SelectStoryPlan_Call {
+func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockExpandBeatSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context0.Context), args[1].(uuid.UUID))
+		run(args[0].(context.Context), args[1].(uuid.UUID))
 	})
 	return _c
 }
@@ -753,7 +752,7 @@ func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Return(storyPlanEntity *dao
 	return _c
 }
 
-func (_c *MockExpandBeatSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context0.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)) *MockExpandBeatSource_SelectStoryPlan_Call {
+func (_c *MockExpandBeatSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)) *MockExpandBeatSource_SelectStoryPlan_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"net"
 	"net/http"
 	"os"
@@ -15,7 +16,6 @@ import (
 
 	authapiclient "github.com/a-novel/service-authentication/api/apiclient"
 
-	"github.com/a-novel-kit/context"
 	"github.com/a-novel-kit/golm/bindings/groq"
 	golmmiddleware "github.com/a-novel-kit/middlewares/golm"
 	zeromiddleware "github.com/a-novel-kit/middlewares/zerolog"

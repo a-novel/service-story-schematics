@@ -1,6 +1,7 @@
 package api_test
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -10,8 +11,6 @@ import (
 
 	authapi "github.com/a-novel/service-authentication/api"
 	authmodels "github.com/a-novel/service-authentication/models"
-
-	"github.com/a-novel-kit/context"
 
 	"github.com/a-novel/service-story-schematics/api"
 	"github.com/a-novel/service-story-schematics/api/codegen"
