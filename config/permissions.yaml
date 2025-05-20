@@ -9,7 +9,7 @@ roles:
       - "beats-sheet:read"
       - "beats-sheets:read"
       - "beats-sheet:generate"
-      - "beats:regenerate"
+      - "beats-sheet:regenerate"
       - "beat:expand"
       - "logline:create"
       - "logline:read"
