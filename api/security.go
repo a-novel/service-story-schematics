@@ -27,6 +27,7 @@ func (security *SecurityHandler) HandleBearerAuth(
 ) (context.Context, error) {
 	ctx, err := security.authHandler.HandleBearerAuth(ctx, operationName, authcodegen.BearerAuth{
 		Token: auth.Token,
+		Roles: auth.Roles,
 	})
 	if err != nil {
 		return nil, NewErrStorySchematicsSecurityHandler(err)
@@ -36,11 +37,10 @@ func (security *SecurityHandler) HandleBearerAuth(
 }
 
 func NewSecurity(
-	required map[codegen.OperationName][]models.Permission,
 	granted models.PermissionsConfig,
 	authService authapi.SecurityHandlerService,
 ) (*SecurityHandler, error) {
-	authHandler, err := authapi.NewSecurity(required, granted, authService)
+	authHandler, err := authapi.NewSecurity(granted, authService)
 	if err != nil {
 		return nil, NewErrStorySchematicsSecurityHandler(err)
 	}

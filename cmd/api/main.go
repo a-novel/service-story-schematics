@@ -14,8 +14,6 @@ import (
 	"github.com/rs/zerolog"
 
 	authapiclient "github.com/a-novel/service-authentication/api/apiclient"
-	apicodegen "github.com/a-novel/service-authentication/api/codegen"
-	apimodels "github.com/a-novel/service-authentication/models"
 
 	"github.com/a-novel-kit/context"
 	"github.com/a-novel-kit/golm/bindings/groq"
@@ -231,36 +229,9 @@ func main() {
 		UpdateStoryPlanService: updateStoryPlanService,
 	}
 
-	apiPermissions := map[apicodegen.OperationName][]apimodels.Permission{
-		codegen.PingOperation:        {},
-		codegen.HealthcheckOperation: {},
-
-		codegen.CreateBeatsSheetOperation: {"beats-sheet:create"},
-		codegen.CreateLoglineOperation:    {"logline:create"},
-		codegen.CreateStoryPlanOperation:  {"story-plan:create"},
-
-		codegen.ExpandBeatOperation:    {"beat:expand"},
-		codegen.ExpandLoglineOperation: {"logline:expand"},
-
-		codegen.GenerateBeatsSheetOperation: {"beats-sheet:generate"},
-		codegen.GenerateLoglinesOperation:   {"loglines:generate"},
-
-		codegen.GetBeatsSheetsOperation: {"beats-sheets:read"},
-		codegen.GetLoglinesOperation:    {"loglines:read"},
-		codegen.GetStoryPlansOperation:  {"story-plans:read"},
-
-		codegen.RegenerateBeatsOperation: {"beats:regenerate"},
-
-		codegen.GetBeatsSheetOperation: {"beats-sheet:read"},
-		codegen.GetLoglineOperation:    {"logline:read"},
-		codegen.GetStoryPlanOperation:  {"story-plan:read"},
-
-		codegen.UpdateStoryPlanOperation: {"story-plan:update"},
-	}
-
 	authSecurityService := authapiclient.NewSecurityHandlerService(config.API.ExternalAPIs.Auth)
 
-	securityHandler, err := api.NewSecurity(apiPermissions, config.Permissions, authSecurityService)
+	securityHandler, err := api.NewSecurity(config.Permissions, authSecurityService)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("initialize security handler")
 	}

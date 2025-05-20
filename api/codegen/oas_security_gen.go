@@ -33,6 +33,54 @@ func findAuthorization(h http.Header, prefix string) (string, bool) {
 	return "", false
 }
 
+var operationRolesBearerAuth = map[string][]string{
+	CreateBeatsSheetOperation: []string{
+		"beats-sheet:create",
+	},
+	CreateLoglineOperation: []string{
+		"logline:create",
+	},
+	CreateStoryPlanOperation: []string{
+		"story-plan:create",
+	},
+	ExpandBeatOperation: []string{
+		"beat:expand",
+	},
+	ExpandLoglineOperation: []string{
+		"logline:expand",
+	},
+	GenerateBeatsSheetOperation: []string{
+		"beats-sheet:generate",
+	},
+	GenerateLoglinesOperation: []string{
+		"loglines:generate",
+	},
+	GetBeatsSheetOperation: []string{
+		"beats-sheet:read",
+	},
+	GetBeatsSheetsOperation: []string{
+		"beats-sheets:read",
+	},
+	GetLoglineOperation: []string{
+		"logline:read",
+	},
+	GetLoglinesOperation: []string{
+		"loglines:read",
+	},
+	GetStoryPlanOperation: []string{
+		"story-plan:read",
+	},
+	GetStoryPlansOperation: []string{
+		"story-plans:read",
+	},
+	RegenerateBeatsOperation: []string{
+		"beats-sheet:regenerate",
+	},
+	UpdateStoryPlanOperation: []string{
+		"story-plan:update",
+	},
+}
+
 func (s *Server) securityBearerAuth(ctx context.Context, operationName OperationName, req *http.Request) (context.Context, bool, error) {
 	var t BearerAuth
 	token, ok := findAuthorization(req.Header, "Bearer")
@@ -40,6 +88,7 @@ func (s *Server) securityBearerAuth(ctx context.Context, operationName Operation
 		return ctx, false, nil
 	}
 	t.Token = token
+	t.Roles = operationRolesBearerAuth[operationName]
 	rctx, err := s.sec.HandleBearerAuth(ctx, operationName, t)
 	if errors.Is(err, ogenerrors.ErrSkipServerSecurity) {
 		return nil, false, nil

@@ -10,7 +10,7 @@ require (
 	github.com/a-novel-kit/golm v0.1.4
 	github.com/a-novel-kit/middlewares/golm v1.1.1
 	github.com/a-novel-kit/middlewares/zerolog v1.1.1
-	github.com/a-novel/service-authentication v0.2.2
+	github.com/a-novel/service-authentication v0.3.0
 	github.com/getsentry/sentry-go v0.33.0
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/cors v1.2.1
@@ -18,7 +18,7 @@ require (
 	github.com/go-faster/jx v1.1.0
 	github.com/goccy/go-yaml v1.17.1
 	github.com/google/uuid v1.6.0
-	github.com/ogen-go/ogen v1.12.0
+	github.com/ogen-go/ogen v1.13.0
 	github.com/rs/zerolog v1.34.0
 	github.com/samber/lo v1.50.0
 	github.com/stretchr/testify v1.10.0
