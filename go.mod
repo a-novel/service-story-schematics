@@ -7,8 +7,8 @@ require (
 	github.com/a-novel-kit/context/pgbun v1.3.0
 	github.com/a-novel-kit/context/sentry v1.3.0
 	github.com/a-novel-kit/golm v0.1.4
-	github.com/a-novel-kit/middlewares/golm v1.1.1
-	github.com/a-novel-kit/middlewares/zerolog v1.1.1
+	github.com/a-novel-kit/middlewares/golm v1.2.0
+	github.com/a-novel-kit/middlewares/zerolog v1.2.0
 	github.com/a-novel/service-authentication v0.3.0
 	github.com/getsentry/sentry-go v0.33.0
 	github.com/go-chi/chi/v5 v5.2.1
