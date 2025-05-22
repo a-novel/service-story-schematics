@@ -10,10 +10,10 @@ github.com/a-novel-kit/golm v0.1.4 h1:8DXlOjYliMIqU/inyG84idixvGe2ViCfMpB5u4jkRS
 github.com/a-novel-kit/golm v0.1.4/go.mod h1:Yb+eEOQWP4NOFCpay5MsyX2WRb1JV4YYcayBTMiGI00=
 github.com/a-novel-kit/jwt v1.1.3 h1:L17/J6rEYUgs69xba0uZwm+ZZIpLoPAITDN5fx3pMtw=
 github.com/a-novel-kit/jwt v1.1.3/go.mod h1:Nj5JPWxEiguWf42R06PdeCw8pDIqNLPz9cB7ZqCn5wg=
-github.com/a-novel-kit/middlewares/golm v1.1.1 h1:nvLp4RcuiVkkQy0P95q/XkQRu1hKhKxGGEaNr9c7+EE=
-github.com/a-novel-kit/middlewares/golm v1.1.1/go.mod h1:yLK0T+h1Ng8EAVOnyoHi9CcNTvK25iQga+49VeDaIAo=
-github.com/a-novel-kit/middlewares/zerolog v1.1.1 h1:x+zfnnsqp+mk0tuJHvX9f0rQ/L2fnsQWlWehvsb77Jw=
-github.com/a-novel-kit/middlewares/zerolog v1.1.1/go.mod h1:cJiVqHha7sPjpirZSw4aISg8bfulGdmmsqPcFVvCX9A=
+github.com/a-novel-kit/middlewares/golm v1.2.0 h1:SyYlyjkQrr8zlynTnlqwdsKLJ1golWMUbff+9D0yS7k=
+github.com/a-novel-kit/middlewares/golm v1.2.0/go.mod h1:BmiXwMVHJtDm6sRSfJ0DQPnbOWgZVFrj9sNESaDrm2U=
+github.com/a-novel-kit/middlewares/zerolog v1.2.0 h1:SOeRNKuIYIlTSnKc2gWrUWy16osyeUzGPr3Z1NozDKs=
+github.com/a-novel-kit/middlewares/zerolog v1.2.0/go.mod h1:uG0o+923oLkWfq0Th3gtNakqnm4Y3cEHn8r53k9m0Hw=
 github.com/a-novel/service-authentication v0.3.0 h1:qxcI4g8ndS1oTSRkBa8M6iVHxImFwl5oAA0FBXjj+r0=
 github.com/a-novel/service-authentication v0.3.0/go.mod h1:9DC1WD9tNbfx11+9XbfhGWcFYYf2IeVmvOCnCDFyTvI=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
