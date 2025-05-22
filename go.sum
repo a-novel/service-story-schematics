@@ -1,7 +1,5 @@
 github.com/a-novel-kit/configurator v1.4.2 h1:2WcovE9Gj11uaHs8q3Oosc5o32a2MalK/BI6zP/DiYU=
 github.com/a-novel-kit/configurator v1.4.2/go.mod h1:je07LdinxSbJxG3NybdhNJTQ2BiRG7SZVOSXuX7Y1m8=
-github.com/a-novel-kit/context v1.2.1 h1:90vypkMGmZZu8uIhmX1wyscb/0Xeld/DsG/XX7KpSqg=
-github.com/a-novel-kit/context v1.2.1/go.mod h1:EvrSJEkjoajUmOwY7BuoUR9c0PG9heyzo30wMHmFAn0=
 github.com/a-novel-kit/context/pgbun v1.4.0 h1:1a+8wFT9R8ibl5M9GPoklXMKByYCDqlr7w4La4eqmbQ=
 github.com/a-novel-kit/context/pgbun v1.4.0/go.mod h1:ViNhjM3QEdebAB5kYNgrfYQCHsJvw6WEWEjS8u/tNhw=
 github.com/a-novel-kit/context/sentry v1.3.0 h1:g0VyeZiGvBuAxHhBDEj4PSQ7ZY0Q+HM2LJcw1sXTOKY=
@@ -12,10 +10,12 @@ github.com/a-novel-kit/jwt v1.1.3 h1:L17/J6rEYUgs69xba0uZwm+ZZIpLoPAITDN5fx3pMtw
 github.com/a-novel-kit/jwt v1.1.3/go.mod h1:Nj5JPWxEiguWf42R06PdeCw8pDIqNLPz9cB7ZqCn5wg=
 github.com/a-novel-kit/middlewares/golm v1.2.0 h1:SyYlyjkQrr8zlynTnlqwdsKLJ1golWMUbff+9D0yS7k=
 github.com/a-novel-kit/middlewares/golm v1.2.0/go.mod h1:BmiXwMVHJtDm6sRSfJ0DQPnbOWgZVFrj9sNESaDrm2U=
+github.com/a-novel-kit/middlewares/sentry v1.2.0 h1:4NOtOz9S9Ec3FFLg+SU02S6ASy9Nh+U0w8DqTP1jfR0=
+github.com/a-novel-kit/middlewares/sentry v1.2.0/go.mod h1:bTwsyDAO71pu0ENQWEh/o1dlqo/I1yR8ksyhkS1Tz/k=
 github.com/a-novel-kit/middlewares/zerolog v1.2.0 h1:SOeRNKuIYIlTSnKc2gWrUWy16osyeUzGPr3Z1NozDKs=
 github.com/a-novel-kit/middlewares/zerolog v1.2.0/go.mod h1:uG0o+923oLkWfq0Th3gtNakqnm4Y3cEHn8r53k9m0Hw=
-github.com/a-novel/service-authentication v0.3.0 h1:qxcI4g8ndS1oTSRkBa8M6iVHxImFwl5oAA0FBXjj+r0=
-github.com/a-novel/service-authentication v0.3.0/go.mod h1:9DC1WD9tNbfx11+9XbfhGWcFYYf2IeVmvOCnCDFyTvI=
+github.com/a-novel/service-authentication v0.3.1 h1:XgZ1vu8GXz2Qxigs6/bjnio3AauK9t0V3G9UfvCgpMY=
+github.com/a-novel/service-authentication v0.3.1/go.mod h1:070pba+FR5HGEtw0n4Top5WHtDi4dIg3Q8rpBi3EgNk=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -9,7 +9,7 @@ require (
 	github.com/a-novel-kit/golm v0.1.4
 	github.com/a-novel-kit/middlewares/golm v1.2.0
 	github.com/a-novel-kit/middlewares/zerolog v1.2.0
-	github.com/a-novel/service-authentication v0.3.0
+	github.com/a-novel/service-authentication v0.3.1
 	github.com/getsentry/sentry-go v0.33.0
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/cors v1.2.1
@@ -29,8 +29,8 @@ require (
 )
 
 require (
-	github.com/a-novel-kit/context v1.2.1 // indirect
 	github.com/a-novel-kit/jwt v1.1.3 // indirect
+	github.com/a-novel-kit/middlewares/sentry v1.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/fatih/color v1.18.0 // indirect
