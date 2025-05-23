@@ -1,14 +1,13 @@
 package daoai_test
 
 import (
+	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/packages/param"
 	"strings"
 	"testing"
 
-	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
-
-	"github.com/a-novel-kit/golm"
-	groqbinding "github.com/a-novel-kit/golm/bindings/groq"
 
 	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
@@ -20,20 +19,19 @@ const TestUser = "agora-story-schematics-test"
 func CheckAgent(t *testing.T, prompt, message string) {
 	t.Helper()
 
-	binding := groqbinding.New(config.Groq.APIKey, config.Groq.Model)
-	chat := golm.NewChat(binding)
-	chat.SetSystem(golm.NewSystemMessage(`You are a tester. Just answer "YES" or "NO", nothing else.`))
+	ctx := lib.NewOpenaiContext(t.Context())
+	chatCompletion, err := lib.OpenAIClient(ctx).Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Model:       config.Groq.Model,
+		Temperature: param.NewOpt(0.2),
+		User:        param.NewOpt(TestUser),
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage("You are a tester. Just answer \"YES\" or \"NO\", nothing else, no dot."),
+			openai.UserMessage(prompt),
+		},
+	})
 
-	requestMessage := golm.NewUserMessage(prompt)
-
-	params := golm.CompletionParams{
-		Temperature: lo.ToPtr(0.2),
-	}
-
-	resp, err := chat.Completion(t.Context(), requestMessage, params)
 	require.NoError(t, err)
-
-	require.Equal(t, "YES", resp.GetContent(), message)
+	require.Equal(t, "YES", chatCompletion.Choices[0].Message.Content, message)
 }
 
 func TestStoryPlanToPrompt(t *testing.T) {

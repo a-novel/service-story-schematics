@@ -3,14 +3,14 @@ package api
 import (
 	"context"
 	"errors"
+	"fmt"
+	sentrymiddleware "github.com/a-novel-kit/middlewares/sentry"
 	"net/http"
 
 	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/rs/zerolog"
 
 	authapi "github.com/a-novel/service-authentication/api"
-
-	sentryctx "github.com/a-novel-kit/context/sentry"
 
 	"github.com/a-novel/service-story-schematics/api/codegen"
 )
@@ -81,8 +81,7 @@ func (api *API) NewError(ctx context.Context, err error) *codegen.UnexpectedErro
 	}
 
 	// Unhandled, unexpected error occurred.
-	logger.Error().Err(err).Msg("internal error")
-	sentryctx.CaptureException(ctx, err)
+	sentrymiddleware.CaptureError(ctx, fmt.Errorf("new api: %w", err))
 
 	return ErrInternalServerError
 }

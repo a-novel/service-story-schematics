@@ -30,7 +30,8 @@ type Prompts struct {
 	} `yaml:"expandBeat"`
 	RegenerateBeats struct {
 		System string `yaml:"system"`
-		Input  string `yaml:"input"`
+		Input1 string `yaml:"input1"`
+		Input2 string `yaml:"input2"`
 	} `yaml:"regenerateBeats"`
 }
 

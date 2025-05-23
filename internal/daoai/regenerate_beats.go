@@ -2,14 +2,17 @@ package daoai
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/packages/param"
 	"strings"
 	"text/template"
 
 	"github.com/samber/lo"
-
-	"github.com/a-novel-kit/golm"
 
 	"github.com/a-novel/service-story-schematics/config/prompts"
 	"github.com/a-novel/service-story-schematics/internal/lib"
@@ -20,10 +23,12 @@ const regenerateBeatsTemperature = 0.6
 
 var RegenerateBeatsPrompts = struct {
 	System *template.Template
-	Input  *template.Template
+	Input1 *template.Template
+	Input2 *template.Template
 }{
-	System: template.Must(template.New("EN").Parse(prompts.Config.En.RegenerateBeats.System)),
-	Input:  template.Must(template.New("EN").Parse(prompts.Config.En.RegenerateBeats.Input)),
+	System: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.RegenerateBeats.System)),
+	Input1: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.RegenerateBeats.Input1)),
+	Input2: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.RegenerateBeats.Input2)),
 }
 
 var ErrRegenerateBeatsRepository = errors.New("RegenerateBeatsRepository.RegenerateBeats")
@@ -97,40 +102,69 @@ func (repository *RegenerateBeatsRepository) mergeSourceAndNewBeats(
 func (repository *RegenerateBeatsRepository) RegenerateBeats(
 	ctx context.Context, request RegenerateBeatsRequest,
 ) ([]models.Beat, error) {
-	storyPlanPrompt, err := StoryPlanToPrompt("EN", request.Plan)
+	storyPlanPartialPrompt, err := StoryPlanToPrompt("EN", request.Plan)
 	if err != nil {
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
-	systemPrompt, err := golm.NewSystemMessageT(RegenerateBeatsPrompts.System, "EN", map[string]interface{}{
-		"StoryPlan": storyPlanPrompt,
+	systemPrompt := new(strings.Builder)
+
+	err = RegenerateBeatsPrompts.System.ExecuteTemplate(systemPrompt, string(models.LangEN), map[string]any{
+		"StoryPlan": storyPlanPartialPrompt,
 		"Plan":      request.Plan,
 	})
 	if err != nil {
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse system message: %w", err))
 	}
 
-	userPrompt, err := golm.NewUserMessageT(RegenerateBeatsPrompts.Input, "EN", map[string]any{
-		"Logline":    request.Logline,
-		"BeatsSheet": repository.extrudedBeatsSheet(request),
+	userPrompt1 := new(strings.Builder)
+
+	err = RegenerateBeatsPrompts.Input1.ExecuteTemplate(userPrompt1, string(models.LangEN), map[string]any{
+		"Logline": request.Logline,
 	})
 	if err != nil {
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse user message: %w", err))
 	}
 
-	chat := golm.Context(ctx)
-	chat.SetSystem(systemPrompt)
+	userPrompt2 := new(strings.Builder)
 
-	params := golm.CompletionParams{
-		Temperature: lo.ToPtr(regenerateBeatsTemperature),
-		User:        request.UserID,
+	err = RegenerateBeatsPrompts.Input2.ExecuteTemplate(userPrompt2, string(models.LangEN), map[string]any{
+		"Beats": request.RegenerateKeys,
+	})
+	if err != nil {
+		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse user message: %w", err))
+	}
+
+	chatCompletion, err := lib.OpenAIClient(ctx).Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Model:       config.Groq.Model,
+		Temperature: param.NewOpt(regenerateBeatsTemperature),
+		User:        param.NewOpt(request.UserID),
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage(systemPrompt.String()),
+			openai.UserMessage(userPrompt1.String()),
+			openai.AssistantMessage(repository.extrudedBeatsSheet(request)),
+			openai.UserMessage(userPrompt2.String()),
+		},
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
+					Name:        "beats",
+					Description: openai.String(schemas.Config.En.Beats.Description),
+					Schema:      schemas.Config.En.Beats.Schema,
+					Strict:      openai.Bool(true),
+				},
+			},
+		},
+	})
+	if err != nil {
+		return nil, NewErrRegenerateBeatsRepository(err)
 	}
 
 	var beats struct {
 		Beats []models.Beat `json:"beats"`
 	}
 
-	if err = chat.CompletionJSON(ctx, userPrompt, params, &beats); err != nil {
+	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats); err != nil {
 		return nil, NewErrRegenerateBeatsRepository(err)
 	}
 

@@ -2,14 +2,11 @@ package daoai_test
 
 import (
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel-kit/golm"
-	groqbinding "github.com/a-novel-kit/golm/bindings/groq"
-
-	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 )
 
@@ -31,15 +28,13 @@ implications of altering the course of human history and the emergence of a new,
 		},
 	}
 
-	binding := groqbinding.New(config.Groq.APIKey, config.Groq.Model)
-
 	repository := daoai.NewExpandLoglineRepository()
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			ctx := golm.WithContext(t.Context(), binding)
+			ctx := lib.NewOpenaiContext(t.Context())
 
 			resp, err := repository.ExpandLogline(ctx, testCase.request)
 			require.NoError(t, err)

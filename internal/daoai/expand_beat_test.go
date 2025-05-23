@@ -2,15 +2,12 @@ package daoai_test
 
 import (
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"testing"
 
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel-kit/golm"
-	groqbinding "github.com/a-novel-kit/golm/bindings/groq"
-
-	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -122,15 +119,13 @@ blueprint for crafting compelling stories.`,
 		},
 	}
 
-	binding := groqbinding.New(config.Groq.APIKey, config.Groq.Model)
-
 	repository := daoai.NewExpandBeatRepository()
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			ctx := golm.WithContext(t.Context(), binding)
+			ctx := lib.NewOpenaiContext(t.Context())
 
 			resp, err := repository.ExpandBeat(ctx, testCase.request)
 			require.NoError(t, err)
