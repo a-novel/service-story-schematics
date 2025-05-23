@@ -9,7 +9,7 @@ import (
 	"github.com/a-novel/service-story-schematics/models"
 )
 
-var StoryPlanPrompt = template.Must(template.New("EN").Parse(prompts.Config.En.StoryPlan))
+var StoryPlanPrompt = template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.StoryPlan))
 
 func StoryPlanToPrompt(tName string, data models.StoryPlan) (string, error) {
 	var sb strings.Builder

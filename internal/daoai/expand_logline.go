@@ -2,13 +2,16 @@ package daoai
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/packages/param"
+	"strings"
 	"text/template"
-
-	"github.com/samber/lo"
-
-	"github.com/a-novel-kit/golm"
 
 	"github.com/a-novel/service-story-schematics/config/prompts"
 	"github.com/a-novel/service-story-schematics/models"
@@ -19,7 +22,7 @@ const expandLoglineTemperature = 0.8
 var ExpandLoglinePrompts = struct {
 	System *template.Template
 }{
-	System: template.Must(template.New("EN").Parse(prompts.Config.En.ExpandLogline)),
+	System: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.ExpandLogline)),
 }
 
 var ErrExpandLoglineRepository = errors.New("ExpandLoglineRepository.ExpandLogline")
@@ -38,25 +41,37 @@ type ExpandLoglineRepository struct{}
 func (repository *ExpandLoglineRepository) ExpandLogline(
 	ctx context.Context, request ExpandLoglineRequest,
 ) (*models.LoglineIdea, error) {
-	chat := golm.Context(ctx)
-
-	systemMessage, err := golm.NewSystemMessageT(ExpandLoglinePrompts.System, "EN", nil)
-	if err != nil {
-		return nil, NewErrExpandLoglineRepository(fmt.Errorf("parse system message: %w", err))
+	systemPrompt := new(strings.Builder)
+	if err := ExpandLoglinePrompts.System.ExecuteTemplate(systemPrompt, string(models.LangEN), nil); err != nil {
+		return nil, NewErrExpandLoglineRepository(fmt.Errorf("execute system prompt: %w", err))
 	}
 
-	chat.SetSystem(systemMessage)
-
-	requestMessage := golm.NewUserMessage(request.Logline)
-
-	params := golm.CompletionParams{
-		Temperature: lo.ToPtr(expandLoglineTemperature),
-		User:        request.UserID,
+	chatCompletion, err := lib.OpenAIClient(ctx).Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Model:       config.Groq.Model,
+		Temperature: param.NewOpt(expandLoglineTemperature),
+		User:        param.NewOpt(request.UserID),
+		Messages: []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage(systemPrompt.String()),
+			openai.UserMessage(request.Logline),
+		},
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
+					Name:        "logline",
+					Description: openai.String(schemas.Config.En.Logline.Description),
+					Schema:      schemas.Config.En.Logline.Schema,
+					Strict:      openai.Bool(true),
+				},
+			},
+		},
+	})
+	if err != nil {
+		return nil, NewErrExpandLoglineRepository(err)
 	}
 
 	var logline models.LoglineIdea
 
-	if err = chat.CompletionJSON(ctx, requestMessage, params, &logline); err != nil {
+	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &logline); err != nil {
 		return nil, NewErrExpandLoglineRepository(err)
 	}
 

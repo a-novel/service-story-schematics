@@ -2,14 +2,11 @@ package daoai_test
 
 import (
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel-kit/golm"
-	groqbinding "github.com/a-novel-kit/golm/bindings/groq"
-
-	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 )
 
@@ -47,15 +44,13 @@ func TestGenerateLoglines(t *testing.T) {
 		},
 	}
 
-	binding := groqbinding.New(config.Groq.APIKey, config.Groq.Model)
-
 	repository := daoai.NewGenerateLoglinesRepository()
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			ctx := golm.WithContext(t.Context(), binding)
+			ctx := lib.NewOpenaiContext(t.Context())
 
 			loglines, err := repository.GenerateLoglines(ctx, testCase.request)
 			require.NoError(t, err)
