@@ -5,8 +5,8 @@ go 1.24.3
 require (
 	github.com/a-novel-kit/configurator v1.4.2
 	github.com/a-novel-kit/context/pgbun v1.4.0
-	github.com/a-novel-kit/middlewares/sentry v1.2.0
-	github.com/a-novel-kit/middlewares/zerolog v1.2.0
+	github.com/a-novel-kit/middlewares/sentry v1.3.0
+	github.com/a-novel-kit/middlewares/zerolog v1.3.0
 	github.com/a-novel/service-authentication v0.3.1
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/cors v1.2.1
