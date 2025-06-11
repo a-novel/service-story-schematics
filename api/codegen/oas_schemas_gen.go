@@ -162,6 +162,10 @@ func (s *BeatDefinition) SetMaxScenes(val int) {
 	s.MaxScenes = val
 }
 
+type Beats []Beat
+
+func (*Beats) regenerateBeatsRes() {}
+
 // A beats sheet is a detailed outline of a story, breaking it down into its individual beats.
 // Ref: #/components/schemas/BeatsSheet
 type BeatsSheet struct {
@@ -169,6 +173,8 @@ type BeatsSheet struct {
 	LoglineID   LoglineID    `json:"loglineID"`
 	StoryPlanID StoryPlanID  `json:"storyPlanID"`
 	Content     []Beat       `json:"content"`
+	// The language of the beats sheet.
+	Lang Lang `json:"lang"`
 	// The date and time at which the beats sheet was created.
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -191,6 +197,11 @@ func (s *BeatsSheet) GetStoryPlanID() StoryPlanID {
 // GetContent returns the value of Content.
 func (s *BeatsSheet) GetContent() []Beat {
 	return s.Content
+}
+
+// GetLang returns the value of Lang.
+func (s *BeatsSheet) GetLang() Lang {
+	return s.Lang
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -218,6 +229,11 @@ func (s *BeatsSheet) SetContent(val []Beat) {
 	s.Content = val
 }
 
+// SetLang sets the value of Lang.
+func (s *BeatsSheet) SetLang(val Lang) {
+	s.Lang = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *BeatsSheet) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
@@ -225,7 +241,6 @@ func (s *BeatsSheet) SetCreatedAt(val time.Time) {
 
 func (*BeatsSheet) createBeatsSheetRes() {}
 func (*BeatsSheet) getBeatsSheetRes()    {}
-func (*BeatsSheet) regenerateBeatsRes()  {}
 
 type BeatsSheetID uuid.UUID
 
@@ -233,6 +248,8 @@ type BeatsSheetID uuid.UUID
 // Ref: #/components/schemas/BeatsSheetIdea
 type BeatsSheetIdea struct {
 	Content []Beat `json:"content"`
+	// The language of the beats sheet idea.
+	Lang Lang `json:"lang"`
 }
 
 // GetContent returns the value of Content.
@@ -240,9 +257,19 @@ func (s *BeatsSheetIdea) GetContent() []Beat {
 	return s.Content
 }
 
+// GetLang returns the value of Lang.
+func (s *BeatsSheetIdea) GetLang() Lang {
+	return s.Lang
+}
+
 // SetContent sets the value of Content.
 func (s *BeatsSheetIdea) SetContent(val []Beat) {
 	s.Content = val
+}
+
+// SetLang sets the value of Lang.
+func (s *BeatsSheetIdea) SetLang(val Lang) {
+	s.Lang = val
 }
 
 func (*BeatsSheetIdea) generateBeatsSheetRes() {}
@@ -250,6 +277,8 @@ func (*BeatsSheetIdea) generateBeatsSheetRes() {}
 // Ref: #/components/schemas/BeatsSheetPreview
 type BeatsSheetPreview struct {
 	ID BeatsSheetID `json:"id"`
+	// The language of the beats sheet.
+	Lang Lang `json:"lang"`
 	// The date and time at which the beats sheet was created.
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -257,6 +286,11 @@ type BeatsSheetPreview struct {
 // GetID returns the value of ID.
 func (s *BeatsSheetPreview) GetID() BeatsSheetID {
 	return s.ID
+}
+
+// GetLang returns the value of Lang.
+func (s *BeatsSheetPreview) GetLang() Lang {
+	return s.Lang
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -267,6 +301,11 @@ func (s *BeatsSheetPreview) GetCreatedAt() time.Time {
 // SetID sets the value of ID.
 func (s *BeatsSheetPreview) SetID(val BeatsSheetID) {
 	s.ID = val
+}
+
+// SetLang sets the value of Lang.
+func (s *BeatsSheetPreview) SetLang(val Lang) {
+	s.Lang = val
 }
 
 // SetCreatedAt sets the value of CreatedAt.
@@ -280,6 +319,8 @@ type CreateBeatsSheetForm struct {
 	StoryPlanID StoryPlanID `json:"storyPlanID"`
 	// The beats of the story, in order.
 	Content []Beat `json:"content"`
+	// The language of the beats sheet.
+	Lang Lang `json:"lang"`
 }
 
 // GetLoglineID returns the value of LoglineID.
@@ -297,6 +338,11 @@ func (s *CreateBeatsSheetForm) GetContent() []Beat {
 	return s.Content
 }
 
+// GetLang returns the value of Lang.
+func (s *CreateBeatsSheetForm) GetLang() Lang {
+	return s.Lang
+}
+
 // SetLoglineID sets the value of LoglineID.
 func (s *CreateBeatsSheetForm) SetLoglineID(val LoglineID) {
 	s.LoglineID = val
@@ -312,6 +358,11 @@ func (s *CreateBeatsSheetForm) SetContent(val []Beat) {
 	s.Content = val
 }
 
+// SetLang sets the value of Lang.
+func (s *CreateBeatsSheetForm) SetLang(val Lang) {
+	s.Lang = val
+}
+
 // Ref: #/components/schemas/CreateLoglineForm
 type CreateLoglineForm struct {
 	Slug Slug `json:"slug"`
@@ -319,6 +370,8 @@ type CreateLoglineForm struct {
 	Name string `json:"name"`
 	// The content of the logline.
 	Content string `json:"content"`
+	// The language of the logline.
+	Lang Lang `json:"lang"`
 }
 
 // GetSlug returns the value of Slug.
@@ -336,6 +389,11 @@ func (s *CreateLoglineForm) GetContent() string {
 	return s.Content
 }
 
+// GetLang returns the value of Lang.
+func (s *CreateLoglineForm) GetLang() Lang {
+	return s.Lang
+}
+
 // SetSlug sets the value of Slug.
 func (s *CreateLoglineForm) SetSlug(val Slug) {
 	s.Slug = val
@@ -351,6 +409,11 @@ func (s *CreateLoglineForm) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLang sets the value of Lang.
+func (s *CreateLoglineForm) SetLang(val Lang) {
+	s.Lang = val
+}
+
 // Ref: #/components/schemas/CreateStoryPlanForm
 type CreateStoryPlanForm struct {
 	Slug Slug `json:"slug"`
@@ -360,6 +423,8 @@ type CreateStoryPlanForm struct {
 	Description string `json:"description"`
 	// The beats of the story plan.
 	Beats []BeatDefinition `json:"beats"`
+	// The language of the story plan.
+	Lang Lang `json:"lang"`
 }
 
 // GetSlug returns the value of Slug.
@@ -382,6 +447,11 @@ func (s *CreateStoryPlanForm) GetBeats() []BeatDefinition {
 	return s.Beats
 }
 
+// GetLang returns the value of Lang.
+func (s *CreateStoryPlanForm) GetLang() Lang {
+	return s.Lang
+}
+
 // SetSlug sets the value of Slug.
 func (s *CreateStoryPlanForm) SetSlug(val Slug) {
 	s.Slug = val
@@ -400,6 +470,11 @@ func (s *CreateStoryPlanForm) SetDescription(val string) {
 // SetBeats sets the value of Beats.
 func (s *CreateStoryPlanForm) SetBeats(val []BeatDefinition) {
 	s.Beats = val
+}
+
+// SetLang sets the value of Lang.
+func (s *CreateStoryPlanForm) SetLang(val Lang) {
+	s.Lang = val
 }
 
 // Ref: #/components/schemas/Dependency
@@ -564,6 +639,8 @@ func (*ForbiddenError) updateStoryPlanRes()    {}
 type GenerateBeatsSheetForm struct {
 	LoglineID   LoglineID   `json:"loglineID"`
 	StoryPlanID StoryPlanID `json:"storyPlanID"`
+	// The language of the beats sheet to generate.
+	Lang Lang `json:"lang"`
 }
 
 // GetLoglineID returns the value of LoglineID.
@@ -576,6 +653,11 @@ func (s *GenerateBeatsSheetForm) GetStoryPlanID() StoryPlanID {
 	return s.StoryPlanID
 }
 
+// GetLang returns the value of Lang.
+func (s *GenerateBeatsSheetForm) GetLang() Lang {
+	return s.Lang
+}
+
 // SetLoglineID sets the value of LoglineID.
 func (s *GenerateBeatsSheetForm) SetLoglineID(val LoglineID) {
 	s.LoglineID = val
@@ -586,12 +668,19 @@ func (s *GenerateBeatsSheetForm) SetStoryPlanID(val StoryPlanID) {
 	s.StoryPlanID = val
 }
 
+// SetLang sets the value of Lang.
+func (s *GenerateBeatsSheetForm) SetLang(val Lang) {
+	s.Lang = val
+}
+
 // Ref: #/components/schemas/GenerateLoglinesForm
 type GenerateLoglinesForm struct {
 	// The number of loglines to generate.
 	Count int `json:"count"`
 	// The theme of the loglines to generate.
 	Theme string `json:"theme"`
+	// The language of the loglines to generate.
+	Lang Lang `json:"lang"`
 }
 
 // GetCount returns the value of Count.
@@ -604,6 +693,11 @@ func (s *GenerateLoglinesForm) GetTheme() string {
 	return s.Theme
 }
 
+// GetLang returns the value of Lang.
+func (s *GenerateLoglinesForm) GetLang() Lang {
+	return s.Lang
+}
+
 // SetCount sets the value of Count.
 func (s *GenerateLoglinesForm) SetCount(val int) {
 	s.Count = val
@@ -612,6 +706,11 @@ func (s *GenerateLoglinesForm) SetCount(val int) {
 // SetTheme sets the value of Theme.
 func (s *GenerateLoglinesForm) SetTheme(val string) {
 	s.Theme = val
+}
+
+// SetLang sets the value of Lang.
+func (s *GenerateLoglinesForm) SetLang(val Lang) {
+	s.Lang = val
 }
 
 type GenerateLoglinesOKApplicationJSON []LoglineIdea
@@ -652,6 +751,49 @@ type HealthcheckIMATeapot struct{}
 
 func (*HealthcheckIMATeapot) healthcheckRes() {}
 
+// The language of the content.
+// Ref: #/components/schemas/Lang
+type Lang string
+
+const (
+	LangEn Lang = "en"
+	LangFr Lang = "fr"
+)
+
+// AllValues returns all Lang values.
+func (Lang) AllValues() []Lang {
+	return []Lang{
+		LangEn,
+		LangFr,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s Lang) MarshalText() ([]byte, error) {
+	switch s {
+	case LangEn:
+		return []byte(s), nil
+	case LangFr:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *Lang) UnmarshalText(data []byte) error {
+	switch Lang(data) {
+	case LangEn:
+		*s = LangEn
+		return nil
+	case LangFr:
+		*s = LangFr
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
+
 // A logline is a brief summary of a story, used to quickly convey its essence.
 // Ref: #/components/schemas/Logline
 type Logline struct {
@@ -662,6 +804,8 @@ type Logline struct {
 	Name string `json:"name"`
 	// The content of the logline.
 	Content string `json:"content"`
+	// The language of the logline.
+	Lang Lang `json:"lang"`
 	// The date and time at which the logline was created.
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -689,6 +833,11 @@ func (s *Logline) GetName() string {
 // GetContent returns the value of Content.
 func (s *Logline) GetContent() string {
 	return s.Content
+}
+
+// GetLang returns the value of Lang.
+func (s *Logline) GetLang() Lang {
+	return s.Lang
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -721,6 +870,11 @@ func (s *Logline) SetContent(val string) {
 	s.Content = val
 }
 
+// SetLang sets the value of Lang.
+func (s *Logline) SetLang(val Lang) {
+	s.Lang = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *Logline) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
@@ -737,6 +891,8 @@ type LoglineIdea struct {
 	Name string `json:"name"`
 	// The content of the logline idea.
 	Content string `json:"content"`
+	// The language of the logline idea.
+	Lang Lang `json:"lang"`
 }
 
 // GetName returns the value of Name.
@@ -749,6 +905,11 @@ func (s *LoglineIdea) GetContent() string {
 	return s.Content
 }
 
+// GetLang returns the value of Lang.
+func (s *LoglineIdea) GetLang() Lang {
+	return s.Lang
+}
+
 // SetName sets the value of Name.
 func (s *LoglineIdea) SetName(val string) {
 	s.Name = val
@@ -757,6 +918,11 @@ func (s *LoglineIdea) SetName(val string) {
 // SetContent sets the value of Content.
 func (s *LoglineIdea) SetContent(val string) {
 	s.Content = val
+}
+
+// SetLang sets the value of Lang.
+func (s *LoglineIdea) SetLang(val Lang) {
+	s.Lang = val
 }
 
 func (*LoglineIdea) expandLoglineRes() {}
@@ -768,6 +934,8 @@ type LoglinePreview struct {
 	Name string `json:"name"`
 	// The content of the logline.
 	Content string `json:"content"`
+	// The language of the logline.
+	Lang Lang `json:"lang"`
 	// The date and time at which the logline was created.
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -785,6 +953,11 @@ func (s *LoglinePreview) GetName() string {
 // GetContent returns the value of Content.
 func (s *LoglinePreview) GetContent() string {
 	return s.Content
+}
+
+// GetLang returns the value of Lang.
+func (s *LoglinePreview) GetLang() Lang {
+	return s.Lang
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -805,6 +978,11 @@ func (s *LoglinePreview) SetName(val string) {
 // SetContent sets the value of Content.
 func (s *LoglinePreview) SetContent(val string) {
 	s.Content = val
+}
+
+// SetLang sets the value of Lang.
+func (s *LoglinePreview) SetLang(val Lang) {
+	s.Lang = val
 }
 
 // SetCreatedAt sets the value of CreatedAt.
@@ -1083,6 +1261,8 @@ type StoryPlan struct {
 	Description string `json:"description"`
 	// The beats of the story plan.
 	Beats []BeatDefinition `json:"beats"`
+	// The language of the story plan.
+	Lang Lang `json:"lang"`
 	// The date and time at which the story plan was created.
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -1110,6 +1290,11 @@ func (s *StoryPlan) GetDescription() string {
 // GetBeats returns the value of Beats.
 func (s *StoryPlan) GetBeats() []BeatDefinition {
 	return s.Beats
+}
+
+// GetLang returns the value of Lang.
+func (s *StoryPlan) GetLang() Lang {
+	return s.Lang
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -1142,6 +1327,11 @@ func (s *StoryPlan) SetBeats(val []BeatDefinition) {
 	s.Beats = val
 }
 
+// SetLang sets the value of Lang.
+func (s *StoryPlan) SetLang(val Lang) {
+	s.Lang = val
+}
+
 // SetCreatedAt sets the value of CreatedAt.
 func (s *StoryPlan) SetCreatedAt(val time.Time) {
 	s.CreatedAt = val
@@ -1161,6 +1351,8 @@ type StoryPlanPreview struct {
 	Name string `json:"name"`
 	// The description of the story plan.
 	Description string `json:"description"`
+	// The language of the story plan.
+	Lang Lang `json:"lang"`
 	// The date and time at which the story plan was created.
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -1183,6 +1375,11 @@ func (s *StoryPlanPreview) GetName() string {
 // GetDescription returns the value of Description.
 func (s *StoryPlanPreview) GetDescription() string {
 	return s.Description
+}
+
+// GetLang returns the value of Lang.
+func (s *StoryPlanPreview) GetLang() Lang {
+	return s.Lang
 }
 
 // GetCreatedAt returns the value of CreatedAt.
@@ -1208,6 +1405,11 @@ func (s *StoryPlanPreview) SetName(val string) {
 // SetDescription sets the value of Description.
 func (s *StoryPlanPreview) SetDescription(val string) {
 	s.Description = val
+}
+
+// SetLang sets the value of Lang.
+func (s *StoryPlanPreview) SetLang(val Lang) {
+	s.Lang = val
 }
 
 // SetCreatedAt sets the value of CreatedAt.
@@ -1317,6 +1519,8 @@ type UpdateStoryPlanForm struct {
 	Description string `json:"description"`
 	// The beats of the story plan.
 	Beats []BeatDefinition `json:"beats"`
+	// The language of the story plan.
+	Lang Lang `json:"lang"`
 }
 
 // GetSlug returns the value of Slug.
@@ -1339,6 +1543,11 @@ func (s *UpdateStoryPlanForm) GetBeats() []BeatDefinition {
 	return s.Beats
 }
 
+// GetLang returns the value of Lang.
+func (s *UpdateStoryPlanForm) GetLang() Lang {
+	return s.Lang
+}
+
 // SetSlug sets the value of Slug.
 func (s *UpdateStoryPlanForm) SetSlug(val Slug) {
 	s.Slug = val
@@ -1357,6 +1566,11 @@ func (s *UpdateStoryPlanForm) SetDescription(val string) {
 // SetBeats sets the value of Beats.
 func (s *UpdateStoryPlanForm) SetBeats(val []BeatDefinition) {
 	s.Beats = val
+}
+
+// SetLang sets the value of Lang.
+func (s *UpdateStoryPlanForm) SetLang(val Lang) {
+	s.Lang = val
 }
 
 type UserID uuid.UUID

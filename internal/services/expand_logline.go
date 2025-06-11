@@ -35,6 +35,7 @@ func (service *ExpandLoglineService) ExpandLogline(
 	resp, err := service.source.ExpandLogline(ctx, daoai.ExpandLoglineRequest{
 		Logline: request.Logline.Name + "\n\n" + request.Logline.Content,
 		UserID:  request.UserID.String(),
+		Lang:    request.Logline.Lang,
 	})
 	if err != nil {
 		return nil, NewErrExpandLoglineService(err)

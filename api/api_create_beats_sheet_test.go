@@ -60,6 +60,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
@@ -79,6 +80,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 							Content: "Beat 2 content",
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -99,6 +101,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
+				Lang:      codegen.LangEn,
 				CreatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -120,6 +123,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
@@ -146,6 +150,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
@@ -172,6 +177,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
@@ -198,6 +204,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
@@ -224,6 +231,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						LoglineID:   uuid.UUID(testCase.form.GetLoglineID()),
 						UserID:      uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 						StoryPlanID: uuid.UUID(testCase.form.GetStoryPlanID()),
+						Lang:        models.Lang(testCase.form.GetLang()),
 						Content: lo.Map(testCase.form.GetContent(), func(item codegen.Beat, _ int) models.Beat {
 							return models.Beat{
 								Key:     item.GetKey(),

@@ -71,6 +71,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			insertStoryPlanData: &insertStoryPlanData{
@@ -99,6 +100,7 @@ func TestCreateStoryPlan(t *testing.T) {
 							Purpose: "beat 2 purpose",
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2019, time.August, 26, 1, 2, 0, 0, time.UTC),
 				},
 			},
@@ -128,6 +130,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2019, time.August, 26, 1, 2, 0, 0, time.UTC),
 			},
 		},
@@ -158,6 +161,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			insertStoryPlanData: &insertStoryPlanData{
@@ -195,6 +199,7 @@ func TestCreateStoryPlan(t *testing.T) {
 							Purpose: "beat 2 purpose",
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2019, time.August, 26, 1, 2, 0, 0, time.UTC),
 				},
 			},
@@ -224,6 +229,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2019, time.August, 26, 1, 2, 0, 0, time.UTC),
 			},
 		},
@@ -254,6 +260,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			insertStoryPlanData: &insertStoryPlanData{
@@ -289,6 +296,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			insertStoryPlanData: &insertStoryPlanData{
@@ -328,6 +336,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			insertStoryPlanData: &insertStoryPlanData{
@@ -363,6 +372,7 @@ func TestCreateStoryPlan(t *testing.T) {
 							assert.Equal(t, testCase.request.Name, data.Plan.Name) &&
 							assert.Equal(t, testCase.request.Description, data.Plan.Description) &&
 							assert.Equal(t, testCase.request.Beats, data.Plan.Beats) &&
+							assert.Equal(t, testCase.request.Lang, data.Plan.Lang) &&
 							assert.WithinDuration(t, time.Now(), data.Plan.CreatedAt, time.Second)
 					})).
 					Return(testCase.insertStoryPlanData.resp, testCase.insertStoryPlanData.err).
@@ -376,6 +386,7 @@ func TestCreateStoryPlan(t *testing.T) {
 								assert.Equal(t, testCase.request.Name, data.Plan.Name) &&
 								assert.Equal(t, testCase.request.Description, data.Plan.Description) &&
 								assert.Equal(t, testCase.request.Beats, data.Plan.Beats) &&
+								assert.Equal(t, testCase.request.Lang, data.Plan.Lang) &&
 								assert.WithinDuration(t, time.Now(), data.Plan.CreatedAt, time.Second)
 						})).
 						Return(testCase.reinsertStoryPlanData.resp, testCase.reinsertStoryPlanData.err).

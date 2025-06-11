@@ -28,6 +28,7 @@ type GenerateBeatsSheetRequest struct {
 	LoglineID   uuid.UUID
 	StoryPlanID uuid.UUID
 	UserID      uuid.UUID
+	Lang        models.Lang
 }
 
 type GenerateBeatsSheetService struct {
@@ -58,8 +59,10 @@ func (service *GenerateBeatsSheetService) GenerateBeatsSheet(
 			Name:        storyPlan.Name,
 			Description: storyPlan.Description,
 			Beats:       storyPlan.Beats,
+			Lang:        storyPlan.Lang,
 			CreatedAt:   storyPlan.CreatedAt,
 		},
+		Lang:   request.Lang,
 		UserID: request.UserID.String(),
 	})
 	if err != nil {

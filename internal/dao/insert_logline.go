@@ -27,6 +27,7 @@ type InsertLoglineData struct {
 
 	Name    string
 	Content string
+	Lang    models.Lang
 
 	Now time.Time
 }
@@ -47,6 +48,7 @@ func (repository *InsertLoglineRepository) InsertLogline(
 		Slug:      data.Slug,
 		Name:      data.Name,
 		Content:   data.Content,
+		Lang:      data.Lang,
 		CreatedAt: data.Now,
 	}
 

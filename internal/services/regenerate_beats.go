@@ -64,8 +64,11 @@ func (service *RegenerateBeatsService) RegenerateBeats(
 			Name:        storyPlan.Name,
 			Description: storyPlan.Description,
 			Beats:       storyPlan.Beats,
+			Lang:        storyPlan.Lang,
 			CreatedAt:   storyPlan.CreatedAt,
 		},
+		UserID:         request.UserID.String(),
+		Lang:           beatsSheet.Lang,
 		Beats:          beatsSheet.Content,
 		RegenerateKeys: request.RegenerateKeys,
 	})

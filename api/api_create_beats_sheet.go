@@ -40,6 +40,7 @@ func (api *API) CreateBeatsSheet(
 				Content: item.GetContent(),
 			}
 		}),
+		Lang: models.Lang(req.GetLang()),
 	})
 
 	switch {
@@ -62,6 +63,7 @@ func (api *API) CreateBeatsSheet(
 				Content: item.Content,
 			}
 		}),
+		Lang:      codegen.Lang(beatsSheet.Lang),
 		CreatedAt: beatsSheet.CreatedAt,
 	}, nil
 }

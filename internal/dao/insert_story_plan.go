@@ -46,6 +46,7 @@ func (repository *InsertStoryPlanRepository) InsertStoryPlan(
 		Name:        data.Plan.Name,
 		Description: data.Plan.Description,
 		Beats:       data.Plan.Beats,
+		Lang:        data.Plan.Lang,
 		CreatedAt:   data.Plan.CreatedAt,
 	}
 

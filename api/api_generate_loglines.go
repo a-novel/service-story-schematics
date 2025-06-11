@@ -29,6 +29,7 @@ func (api *API) GenerateLoglines(
 		Count:  req.GetCount(),
 		Theme:  req.GetTheme(),
 		UserID: userID,
+		Lang:   models.Lang(req.GetLang()),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("generate loglines: %w", err)
@@ -39,6 +40,7 @@ func (api *API) GenerateLoglines(
 			return codegen.LoglineIdea{
 				Name:    item.Name,
 				Content: item.Content,
+				Lang:    codegen.Lang(item.Lang),
 			}
 		}),
 	)

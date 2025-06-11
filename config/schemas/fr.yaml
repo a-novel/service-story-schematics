@@ -1,0 +1,90 @@
+beat:
+  description: |
+    Un battement est une unité de structure narrative qui représente un moment ou un événement spécifique dans l'histoire.
+  schema:
+    type: object
+    additionalProperties: false
+    required:
+      - key
+      - title
+      - content
+    properties:
+      key:
+        type: string
+        description: La clé JSON du battement
+      title:
+        type: string
+        description: Un titre court décrivant le battement
+      content:
+        type: string
+        description: Un résumé des scènes dans le battement
+
+beats:
+  description: |
+    Une collection de battements qui composent la structure narrative, basée sur le plan d'histoire choisi.
+  schema:
+    type: object
+    additionalProperties: false
+    required:
+      - beats
+    properties:
+      beats:
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - key
+            - title
+            - content
+          properties:
+            key:
+              type: string
+              description: La clé JSON du battement
+            title:
+              type: string
+              description: Un titre court décrivant le battement
+            content:
+              type: string
+              description: Un résumé des scènes dans le battement
+
+logline:
+  description: |
+    Une prémisse est un résumé en une phrase d'une histoire qui capture son essence et attire l'intérêt du lecteur.
+  schema:
+    type: object
+    additionalProperties: false
+    required:
+      - name
+      - content
+    properties:
+      name:
+        type: string
+        description: Le titre de l'histoire.
+      content:
+        type: string
+        description: Un résumé court de l'histoire.
+
+loglines:
+  description: |
+    Une collection de prémisses qui servent de base à la structure narrative, basée sur le plan d'histoire choisi.
+  schema:
+    type: object
+    additionalProperties: false
+    required:
+      - loglines
+    properties:
+      loglines:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required:
+            - name
+            - content
+          properties:
+            name:
+              type: string
+              description: Le titre de l'histoire.
+            content:
+              type: string
+              description: Un résumé court de l'histoire.

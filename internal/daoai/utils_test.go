@@ -40,7 +40,7 @@ func TestStoryPlanToPrompt(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		template string
+		template models.Lang
 		plan     models.StoryPlan
 
 		expect string
@@ -48,7 +48,7 @@ func TestStoryPlanToPrompt(t *testing.T) {
 		{
 			name: "En",
 
-			template: "EN",
+			template: "en",
 
 			plan: models.StoryPlan{
 				Description: "Test Description.",

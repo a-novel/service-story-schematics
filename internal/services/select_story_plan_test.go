@@ -65,6 +65,7 @@ func TestSelectStoryPlan(t *testing.T) {
 							Purpose:   "The purpose of the plot second point, in a single sentence.",
 						},
 					},
+					Lang: models.LangEN,
 
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
@@ -91,6 +92,7 @@ func TestSelectStoryPlan(t *testing.T) {
 						Purpose:   "The purpose of the plot second point, in a single sentence.",
 					},
 				},
+				Lang: models.LangEN,
 
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
@@ -124,6 +126,7 @@ func TestSelectStoryPlan(t *testing.T) {
 							Purpose:   "The purpose of the plot second point, in a single sentence.",
 						},
 					},
+					Lang: models.LangEN,
 
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
@@ -150,6 +153,7 @@ func TestSelectStoryPlan(t *testing.T) {
 						Purpose:   "The purpose of the plot second point, in a single sentence.",
 					},
 				},
+				Lang: models.LangEN,
 
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},

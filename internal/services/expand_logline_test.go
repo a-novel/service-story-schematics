@@ -40,6 +40,7 @@ func TestExpandLogline(t *testing.T) {
 				Logline: models.LoglineIdea{
 					Name:    "test title",
 					Content: "test content",
+					Lang:    models.LangEN,
 				},
 				UserID: uuid.MustParse("00000000-0000-0000-0000-000000000001"),
 			},
@@ -48,12 +49,14 @@ func TestExpandLogline(t *testing.T) {
 				resp: &models.LoglineIdea{
 					Name:    "test",
 					Content: "test",
+					Lang:    models.LangEN,
 				},
 			},
 
 			expect: &models.LoglineIdea{
 				Name:    "test",
 				Content: "test",
+				Lang:    models.LangEN,
 			},
 		},
 		{
@@ -63,6 +66,7 @@ func TestExpandLogline(t *testing.T) {
 				Logline: models.LoglineIdea{
 					Name:    "test title",
 					Content: "test content",
+					Lang:    models.LangEN,
 				},
 				UserID: uuid.MustParse("00000000-0000-0000-0000-000000000001"),
 			},
@@ -88,6 +92,7 @@ func TestExpandLogline(t *testing.T) {
 					ExpandLogline(ctx, daoai.ExpandLoglineRequest{
 						Logline: testCase.request.Logline.Name + "\n\n" + testCase.request.Logline.Content,
 						UserID:  testCase.request.UserID.String(),
+						Lang:    testCase.request.Logline.Lang,
 					}).
 					Return(testCase.expandLoglineData.resp, testCase.expandLoglineData.err)
 			}

@@ -22,7 +22,20 @@ const expandLoglineTemperature = 0.8
 var ExpandLoglinePrompts = struct {
 	System *template.Template
 }{
-	System: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.ExpandLogline)),
+	System: RegisterTemplateLocales(prompts.Config.En.ExpandLogline, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.ExpandLogline,
+		models.LangFR: prompts.Config.Fr.ExpandLogline,
+	}),
+}
+
+var ExpandLoglineSchemas = map[models.Lang]any{
+	models.LangEN: schemas.Config.En.Logline.Schema,
+	models.LangFR: schemas.Config.Fr.Logline.Schema,
+}
+
+var ExpandLoglineDescriptions = map[models.Lang]string{
+	models.LangEN: schemas.Config.En.Logline.Description,
+	models.LangFR: schemas.Config.Fr.Logline.Description,
 }
 
 var ErrExpandLoglineRepository = errors.New("ExpandLoglineRepository.ExpandLogline")
@@ -34,6 +47,7 @@ func NewErrExpandLoglineRepository(err error) error {
 type ExpandLoglineRequest struct {
 	Logline string
 	UserID  string
+	Lang    models.Lang
 }
 
 type ExpandLoglineRepository struct{}
@@ -42,7 +56,7 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 	ctx context.Context, request ExpandLoglineRequest,
 ) (*models.LoglineIdea, error) {
 	systemPrompt := new(strings.Builder)
-	if err := ExpandLoglinePrompts.System.ExecuteTemplate(systemPrompt, string(models.LangEN), nil); err != nil {
+	if err := ExpandLoglinePrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), nil); err != nil {
 		return nil, NewErrExpandLoglineRepository(fmt.Errorf("execute system prompt: %w", err))
 	}
 
@@ -58,8 +72,8 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 					Name:        "logline",
-					Description: openai.String(schemas.Config.En.Logline.Description),
-					Schema:      schemas.Config.En.Logline.Schema,
+					Description: openai.String(ExpandLoglineDescriptions[request.Lang]),
+					Schema:      ExpandLoglineSchemas[request.Lang],
 					Strict:      openai.Bool(true),
 				},
 			},
@@ -74,6 +88,8 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &logline); err != nil {
 		return nil, NewErrExpandLoglineRepository(err)
 	}
+
+	logline.Lang = request.Lang
 
 	return &logline, nil
 }

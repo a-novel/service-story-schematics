@@ -2,6 +2,7 @@ package dao_test
 
 import (
 	"database/sql"
+	"github.com/a-novel/service-story-schematics/models"
 	"testing"
 	"time"
 
@@ -33,6 +34,7 @@ func TestInserLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Name",
 				Content: "Lorem ipsum dolor sit amet",
+				Lang:    models.LangEN,
 				Now:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 
@@ -42,6 +44,7 @@ func TestInserLogline(t *testing.T) {
 				Slug:      "test-slug",
 				Name:      "Test Name",
 				Content:   "Lorem ipsum dolor sit amet",
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -55,6 +58,7 @@ func TestInserLogline(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -65,6 +69,7 @@ func TestInserLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Name",
 				Content: "Lorem ipsum dolor sit amet",
+				Lang:    models.LangEN,
 				Now:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 
@@ -80,6 +85,7 @@ func TestInserLogline(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -90,6 +96,7 @@ func TestInserLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Name",
 				Content: "Lorem ipsum dolor sit amet",
+				Lang:    models.LangEN,
 				Now:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 
@@ -99,6 +106,7 @@ func TestInserLogline(t *testing.T) {
 				Slug:      "test-slug",
 				Name:      "Test Name",
 				Content:   "Lorem ipsum dolor sit amet",
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -112,6 +120,7 @@ func TestInserLogline(t *testing.T) {
 					Slug:      "test-slug-2",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -122,6 +131,7 @@ func TestInserLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Name",
 				Content: "Lorem ipsum dolor sit amet",
+				Lang:    models.LangEN,
 				Now:     time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 
@@ -131,6 +141,7 @@ func TestInserLogline(t *testing.T) {
 				Slug:      "test-slug",
 				Name:      "Test Name",
 				Content:   "Lorem ipsum dolor sit amet",
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},

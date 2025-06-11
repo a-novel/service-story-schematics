@@ -50,6 +50,7 @@ func (service *SelectLoglineService) SelectLogline(
 			Slug:      data.Slug,
 			Name:      data.Name,
 			Content:   data.Content,
+			Lang:      data.Lang,
 			CreatedAt: data.CreatedAt,
 		}, nil
 	}
@@ -68,6 +69,7 @@ func (service *SelectLoglineService) SelectLogline(
 		Slug:      data.Slug,
 		Name:      data.Name,
 		Content:   data.Content,
+		Lang:      data.Lang,
 		CreatedAt: data.CreatedAt,
 	}, nil
 }

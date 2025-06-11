@@ -30,6 +30,7 @@ type CreateBeatsSheetRequest struct {
 	UserID      uuid.UUID
 	StoryPlanID uuid.UUID
 	Content     []models.Beat
+	Lang        models.Lang
 }
 
 type CreateBeatsSheetService struct {
@@ -63,6 +64,7 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 			LoglineID:   request.LoglineID,
 			StoryPlanID: request.StoryPlanID,
 			Content:     request.Content,
+			Lang:        request.Lang,
 			CreatedAt:   time.Now(),
 		},
 	})
@@ -75,6 +77,7 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 		LoglineID:   resp.LoglineID,
 		StoryPlanID: resp.StoryPlanID,
 		Content:     resp.Content,
+		Lang:        resp.Lang,
 		CreatedAt:   resp.CreatedAt,
 	}, nil
 }

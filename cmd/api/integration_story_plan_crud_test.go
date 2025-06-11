@@ -67,6 +67,7 @@ blueprint for crafting compelling stories.`,
 			MaxScenes: 3,
 		},
 	},
+	Lang: codegen.LangEn,
 }
 
 func TestStoryPlanCRUD(t *testing.T) {
@@ -179,6 +180,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 			Slug:        codegen.Slug(storyPlanSlug),
 			Name:        planForm.Name + " Updated",
 			Description: planForm.Description + " Updated",
+			Lang:        codegen.LangEn,
 			Beats:       planForm.Beats,
 		})
 
@@ -196,6 +198,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 			Slug:        codegen.Slug(storyPlanSlug),
 			Name:        planForm.Name + " Updated",
 			Description: planForm.Description + " Updated",
+			Lang:        codegen.LangEn,
 			Beats:       planForm.Beats,
 		})
 		require.NoError(t, err)

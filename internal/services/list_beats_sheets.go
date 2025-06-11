@@ -58,6 +58,7 @@ func (service *ListBeatsSheetsService) ListBeatsSheets(
 	return lo.Map(resp, func(item *dao.BeatsSheetPreviewEntity, _ int) *models.BeatsSheetPreview {
 		return &models.BeatsSheetPreview{
 			ID:        item.ID,
+			Lang:      item.Lang,
 			CreatedAt: item.CreatedAt,
 		}
 	}), nil

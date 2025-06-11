@@ -46,6 +46,7 @@ func (service *SelectStoryPlanService) SelectStoryPlan(
 			Name:        data.Name,
 			Description: data.Description,
 			Beats:       data.Beats,
+			Lang:        data.Lang,
 			CreatedAt:   data.CreatedAt,
 		}, nil
 	}
@@ -61,6 +62,7 @@ func (service *SelectStoryPlanService) SelectStoryPlan(
 		Name:        data.Name,
 		Description: data.Description,
 		Beats:       data.Beats,
+		Lang:        data.Lang,
 		CreatedAt:   data.CreatedAt,
 	}, nil
 }

@@ -26,9 +26,28 @@ var RegenerateBeatsPrompts = struct {
 	Input1 *template.Template
 	Input2 *template.Template
 }{
-	System: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.RegenerateBeats.System)),
-	Input1: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.RegenerateBeats.Input1)),
-	Input2: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.RegenerateBeats.Input2)),
+	System: RegisterTemplateLocales(prompts.Config.En.RegenerateBeats.System, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.RegenerateBeats.System,
+		models.LangFR: prompts.Config.Fr.RegenerateBeats.System,
+	}),
+	Input1: RegisterTemplateLocales(prompts.Config.En.RegenerateBeats.Input1, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.RegenerateBeats.Input1,
+		models.LangFR: prompts.Config.Fr.RegenerateBeats.Input1,
+	}),
+	Input2: RegisterTemplateLocales(prompts.Config.En.RegenerateBeats.Input2, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.RegenerateBeats.Input2,
+		models.LangFR: prompts.Config.Fr.RegenerateBeats.Input2,
+	}),
+}
+
+var RegenerateBeatsSchemas = map[models.Lang]any{
+	models.LangEN: schemas.Config.En.Beats.Schema,
+	models.LangFR: schemas.Config.Fr.Beats.Schema,
+}
+
+var RegenerateBeatsDescriptions = map[models.Lang]string{
+	models.LangEN: schemas.Config.En.Beats.Description,
+	models.LangFR: schemas.Config.Fr.Beats.Description,
 }
 
 var ErrRegenerateBeatsRepository = errors.New("RegenerateBeatsRepository.RegenerateBeats")
@@ -43,6 +62,7 @@ type RegenerateBeatsRequest struct {
 	Plan           models.StoryPlan
 	RegenerateKeys []string
 	UserID         string
+	Lang           models.Lang
 }
 
 type RegenerateBeatsRepository struct{}
@@ -102,14 +122,14 @@ func (repository *RegenerateBeatsRepository) mergeSourceAndNewBeats(
 func (repository *RegenerateBeatsRepository) RegenerateBeats(
 	ctx context.Context, request RegenerateBeatsRequest,
 ) ([]models.Beat, error) {
-	storyPlanPartialPrompt, err := StoryPlanToPrompt("EN", request.Plan)
+	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
 	if err != nil {
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
 
-	err = RegenerateBeatsPrompts.System.ExecuteTemplate(systemPrompt, string(models.LangEN), map[string]any{
+	err = RegenerateBeatsPrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), map[string]any{
 		"StoryPlan": storyPlanPartialPrompt,
 		"Plan":      request.Plan,
 	})
@@ -119,7 +139,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 
 	userPrompt1 := new(strings.Builder)
 
-	err = RegenerateBeatsPrompts.Input1.ExecuteTemplate(userPrompt1, string(models.LangEN), map[string]any{
+	err = RegenerateBeatsPrompts.Input1.ExecuteTemplate(userPrompt1, request.Lang.String(), map[string]any{
 		"Logline": request.Logline,
 	})
 	if err != nil {
@@ -128,7 +148,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 
 	userPrompt2 := new(strings.Builder)
 
-	err = RegenerateBeatsPrompts.Input2.ExecuteTemplate(userPrompt2, string(models.LangEN), map[string]any{
+	err = RegenerateBeatsPrompts.Input2.ExecuteTemplate(userPrompt2, request.Lang.String(), map[string]any{
 		"Beats": request.RegenerateKeys,
 	})
 	if err != nil {
@@ -149,8 +169,8 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 					Name:        "beats",
-					Description: openai.String(schemas.Config.En.Beats.Description),
-					Schema:      schemas.Config.En.Beats.Schema,
+					Description: openai.String(RegenerateBeatsDescriptions[request.Lang]),
+					Schema:      RegenerateBeatsSchemas[request.Lang],
 					Strict:      openai.Bool(true),
 				},
 			},

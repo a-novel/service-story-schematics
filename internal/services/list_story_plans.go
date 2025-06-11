@@ -46,6 +46,7 @@ func (service *ListStoryPlansService) ListStoryPlans(
 			Slug:        item.Slug,
 			Name:        item.Name,
 			Description: item.Description,
+			Lang:        item.Lang,
 			CreatedAt:   item.CreatedAt,
 		}
 	}), nil

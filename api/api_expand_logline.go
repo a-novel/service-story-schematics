@@ -25,6 +25,7 @@ func (api *API) ExpandLogline(ctx context.Context, req *codegen.LoglineIdea) (co
 		Logline: models.LoglineIdea{
 			Name:    req.GetName(),
 			Content: req.GetContent(),
+			Lang:    models.Lang(req.GetLang()),
 		},
 		UserID: userID,
 	})
@@ -35,5 +36,6 @@ func (api *API) ExpandLogline(ctx context.Context, req *codegen.LoglineIdea) (co
 	return &codegen.LoglineIdea{
 		Name:    logline.Name,
 		Content: logline.Content,
+		Lang:    codegen.Lang(logline.Lang),
 	}, nil
 }

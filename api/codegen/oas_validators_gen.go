@@ -232,6 +232,39 @@ func (s *BeatDefinition) Validate() error {
 	return nil
 }
 
+func (s Beats) Validate() error {
+	alias := ([]Beat)(s)
+	if alias == nil {
+		return errors.New("nil is invalid value")
+	}
+	if err := (validate.Array{
+		MinLength:    0,
+		MinLengthSet: false,
+		MaxLength:    128,
+		MaxLengthSet: true,
+	}).ValidateLength(len(alias)); err != nil {
+		return errors.Wrap(err, "array")
+	}
+	var failures []validate.FieldError
+	for i, elem := range alias {
+		if err := func() error {
+			if err := elem.Validate(); err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			failures = append(failures, validate.FieldError{
+				Name:  fmt.Sprintf("[%d]", i),
+				Error: err,
+			})
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s *BeatsSheet) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -271,6 +304,17 @@ func (s *BeatsSheet) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "content",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
 			Error: err,
 		})
 	}
@@ -322,6 +366,40 @@ func (s *BeatsSheetIdea) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *BeatsSheetPreview) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -367,6 +445,17 @@ func (s *CreateBeatsSheetForm) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "content",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
 			Error: err,
 		})
 	}
@@ -428,6 +517,17 @@ func (s *CreateLoglineForm) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "content",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
 			Error: err,
 		})
 	}
@@ -528,6 +628,17 @@ func (s *CreateStoryPlanForm) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -601,6 +712,29 @@ func (s *ExpandBeatForm) Validate() error {
 	return nil
 }
 
+func (s *GenerateBeatsSheetForm) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
 func (s *GenerateLoglinesForm) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -646,6 +780,17 @@ func (s *GenerateLoglinesForm) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -681,6 +826,23 @@ func (s GetBeatsSheetsOKApplicationJSON) Validate() error {
 	alias := ([]BeatsSheetPreview)(s)
 	if alias == nil {
 		return errors.New("nil is invalid value")
+	}
+	var failures []validate.FieldError
+	for i, elem := range alias {
+		if err := func() error {
+			if err := elem.Validate(); err != nil {
+				return err
+			}
+			return nil
+		}(); err != nil {
+			failures = append(failures, validate.FieldError{
+				Name:  fmt.Sprintf("[%d]", i),
+				Error: err,
+			})
+		}
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
 	}
 	return nil
 }
@@ -758,6 +920,17 @@ func (s *Health) Validate() error {
 	return nil
 }
 
+func (s Lang) Validate() error {
+	switch s {
+	case "en":
+		return nil
+	case "fr":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
 func (s *Logline) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
@@ -813,6 +986,17 @@ func (s *Logline) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -863,6 +1047,17 @@ func (s *LoglineIdea) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -883,6 +1078,17 @@ func (s *LoglinePreview) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "slug",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
 			Error: err,
 		})
 	}
@@ -1055,6 +1261,17 @@ func (s *StoryPlan) Validate() error {
 			Error: err,
 		})
 	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
+			Error: err,
+		})
+	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
 	}
@@ -1113,6 +1330,17 @@ func (s *StoryPlanPreview) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "description",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
 			Error: err,
 		})
 	}
@@ -1210,6 +1438,17 @@ func (s *UpdateStoryPlanForm) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "beats",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.Lang.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "lang",
 			Error: err,
 		})
 	}

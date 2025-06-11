@@ -46,6 +46,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			form: &codegen.GenerateBeatsSheetForm{
 				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				StoryPlanID: codegen.StoryPlanID(uuid.New()),
+				Lang:        codegen.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
@@ -76,6 +77,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 		},
 		{
@@ -84,6 +86,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			form: &codegen.GenerateBeatsSheetForm{
 				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				StoryPlanID: codegen.StoryPlanID(uuid.New()),
+				Lang:        codegen.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
@@ -98,6 +101,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			form: &codegen.GenerateBeatsSheetForm{
 				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				StoryPlanID: codegen.StoryPlanID(uuid.New()),
+				Lang:        codegen.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
@@ -112,6 +116,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			form: &codegen.GenerateBeatsSheetForm{
 				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				StoryPlanID: codegen.StoryPlanID(uuid.New()),
+				Lang:        codegen.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
@@ -138,6 +143,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 						LoglineID:   uuid.UUID(testCase.form.GetLoglineID()),
 						StoryPlanID: uuid.UUID(testCase.form.GetStoryPlanID()),
 						UserID:      uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+						Lang:        models.Lang(testCase.form.GetLang()),
 					}).
 					Return(testCase.generateBeatsSheetData.resp, testCase.generateBeatsSheetData.err)
 			}

@@ -26,6 +26,7 @@ func (api *API) CreateLogline(ctx context.Context, req *codegen.CreateLoglineFor
 		Slug:    models.Slug(req.GetSlug()),
 		Name:    req.GetName(),
 		Content: req.GetContent(),
+		Lang:    models.Lang(req.GetLang()),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("create logline: %w", err)
@@ -37,6 +38,7 @@ func (api *API) CreateLogline(ctx context.Context, req *codegen.CreateLoglineFor
 		Slug:      codegen.Slug(logline.Slug),
 		Name:      logline.Name,
 		Content:   logline.Content,
+		Lang:      codegen.Lang(logline.Lang),
 		CreatedAt: logline.CreatedAt,
 	}, nil
 }

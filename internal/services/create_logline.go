@@ -27,6 +27,7 @@ type CreateLoglineRequest struct {
 	Slug    models.Slug
 	Name    string
 	Content string
+	Lang    models.Lang
 }
 
 type CreateLoglineService struct {
@@ -42,6 +43,7 @@ func (service *CreateLoglineService) CreateLogline(
 		Slug:    request.Slug,
 		Name:    request.Name,
 		Content: request.Content,
+		Lang:    request.Lang,
 		Now:     time.Now(),
 	}
 
@@ -74,6 +76,7 @@ func (service *CreateLoglineService) CreateLogline(
 		Slug:      resp.Slug,
 		Name:      resp.Name,
 		Content:   resp.Content,
+		Lang:      resp.Lang,
 		CreatedAt: resp.CreatedAt,
 	}, nil
 }

@@ -2,6 +2,7 @@ package dao_test
 
 import (
 	"database/sql"
+	"github.com/a-novel/service-story-schematics/models"
 	"testing"
 	"time"
 
@@ -34,6 +35,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -42,6 +44,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-2",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -50,6 +53,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangFR,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -63,18 +67,21 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangFR,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					Slug:      "test-slug-2",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -89,6 +96,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -97,6 +105,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-2",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -105,6 +114,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangFR,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -119,12 +129,14 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangFR,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -139,6 +151,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -147,6 +160,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-2",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -155,6 +169,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangFR,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -169,12 +184,14 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangFR,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					Slug:      "test-slug-2",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -189,6 +206,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -197,6 +215,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-2",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
@@ -205,6 +224,7 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -218,12 +238,14 @@ func TestListLoglines(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					Slug:      "test-slug-3",
 					Name:      "Test Name 3",
 					Content:   "Lorem ipsum dolor sit amet 3",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},

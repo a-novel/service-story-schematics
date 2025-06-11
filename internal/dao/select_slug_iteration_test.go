@@ -36,6 +36,7 @@ func TestSelectSlugIteration(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -65,6 +66,7 @@ func TestSelectSlugIteration(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				&dao.LoglineEntity{
@@ -73,6 +75,7 @@ func TestSelectSlugIteration(t *testing.T) {
 					Slug:      "test-slug-1",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 				&dao.LoglineEntity{
@@ -81,6 +84,7 @@ func TestSelectSlugIteration(t *testing.T) {
 					Slug:      "test-slug-2",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -110,6 +114,7 @@ func TestSelectSlugIteration(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				&dao.LoglineEntity{
@@ -118,6 +123,7 @@ func TestSelectSlugIteration(t *testing.T) {
 					Slug:      "test-slug-3",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 				&dao.LoglineEntity{
@@ -126,6 +132,7 @@ func TestSelectSlugIteration(t *testing.T) {
 					Slug:      "test-slug-100",
 					Name:      "Test Name",
 					Content:   "Lorem ipsum dolor sit amet",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 			},

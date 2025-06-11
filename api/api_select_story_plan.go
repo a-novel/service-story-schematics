@@ -46,6 +46,7 @@ func (api *API) GetStoryPlan(ctx context.Context, params codegen.GetStoryPlanPar
 				MaxScenes: item.MaxScenes,
 			}
 		}),
+		Lang:      codegen.Lang(storyPlan.Lang),
 		CreatedAt: storyPlan.CreatedAt,
 	}, nil
 }

@@ -51,6 +51,7 @@ func TestInsertStoryPlan(t *testing.T) {
 							MaxScenes: 5,
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -79,6 +80,7 @@ func TestInsertStoryPlan(t *testing.T) {
 						MaxScenes: 5,
 					},
 				},
+				Lang: models.LangEN,
 
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
@@ -109,6 +111,7 @@ func TestInsertStoryPlan(t *testing.T) {
 							MaxScenes: 5,
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -130,6 +133,7 @@ func TestInsertStoryPlan(t *testing.T) {
 							MinScenes: 1,
 						},
 					},
+					Lang: models.LangEN,
 
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},

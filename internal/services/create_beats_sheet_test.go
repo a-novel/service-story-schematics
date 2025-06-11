@@ -68,6 +68,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Test Beat Content 2",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -77,6 +78,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -87,6 +89,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 					Slug:        "test-slug",
 					Name:        "Test Name",
 					Description: "Lorem ipsum dolor sit amet",
+					Lang:        models.LangEN,
 					Beats: []models.BeatDefinition{
 						{
 							Name: "Test Beat",
@@ -125,6 +128,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 							Content: "Test Beat Content 2",
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -145,6 +149,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Test Beat Content 2",
 					},
 				},
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -167,6 +172,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Test Beat Content 2",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -176,6 +182,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -204,6 +211,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 							Purpose: "Test Purpose 2",
 						},
 					},
+					Lang: models.LangEN,
 				},
 			},
 
@@ -232,6 +240,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Test Beat Content 2",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -241,6 +250,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -270,6 +280,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Test Beat Content 2",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -297,6 +308,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Test Beat Content 2",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -306,6 +318,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -326,6 +339,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 							Purpose: "Test Purpose",
 						},
 					},
+					Lang: models.LangEN,
 				},
 			},
 
@@ -363,6 +377,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 							assert.Equal(t, testCase.request.LoglineID, data.Sheet.LoglineID) &&
 							assert.Equal(t, testCase.request.StoryPlanID, data.Sheet.StoryPlanID) &&
 							assert.Equal(t, testCase.request.Content, data.Sheet.Content) &&
+							assert.Equal(t, testCase.request.Lang, data.Sheet.Lang) &&
 							assert.WithinDuration(t, time.Now(), data.Sheet.CreatedAt, time.Second)
 					})).
 					Return(testCase.insertBeatsSheetData.resp, testCase.insertBeatsSheetData.err)

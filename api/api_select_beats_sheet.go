@@ -51,6 +51,7 @@ func (api *API) GetBeatsSheet(
 				Content: item.Content,
 			}
 		}),
+		Lang:      codegen.Lang(beatsSheet.Lang),
 		CreatedAt: beatsSheet.CreatedAt,
 	}, nil
 }

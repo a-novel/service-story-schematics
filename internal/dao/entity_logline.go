@@ -22,8 +22,9 @@ type LoglineEntity struct {
 	UserID uuid.UUID   `bun:"user_id,type:uuid"`
 	Slug   models.Slug `bun:"slug"`
 
-	Name    string `bun:"name"`
-	Content string `bun:"content"`
+	Name    string      `bun:"name"`
+	Content string      `bun:"content"`
+	Lang    models.Lang `bun:"lang"`
 
 	CreatedAt time.Time `bun:"created_at"`
 }
@@ -33,8 +34,9 @@ type LoglinePreviewEntity struct {
 
 	Slug models.Slug `bun:"slug"`
 
-	Name    string `bun:"name"`
-	Content string `bun:"content"`
+	Name    string      `bun:"name"`
+	Content string      `bun:"content"`
+	Lang    models.Lang `bun:"lang"`
 
 	CreatedAt time.Time `bun:"created_at"`
 }

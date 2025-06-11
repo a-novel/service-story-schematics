@@ -66,7 +66,9 @@ func (service *ExpandBeatService) ExpandBeat(
 			Description: storyPlan.Description,
 			Beats:       storyPlan.Beats,
 			CreatedAt:   storyPlan.CreatedAt,
+			Lang:        beatsSheet.Lang,
 		},
+		Lang:      beatsSheet.Lang,
 		TargetKey: request.TargetKey,
 		UserID:    request.UserID.String(),
 	})

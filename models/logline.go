@@ -13,6 +13,7 @@ type Logline struct {
 
 	Name    string `json:"name"`
 	Content string `json:"content"`
+	Lang    Lang   `json:"lang"`
 
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -22,6 +23,7 @@ type LoglinePreview struct {
 
 	Name    string `json:"name"`
 	Content string `json:"content"`
+	Lang    Lang   `json:"lang"`
 
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -29,4 +31,5 @@ type LoglinePreview struct {
 type LoglineIdea struct {
 	Name    string `json:"name"`
 	Content string `json:"content"`
+	Lang    Lang   `json:"lang"`
 }

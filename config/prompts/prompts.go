@@ -11,6 +11,9 @@ import (
 //go:embed en.yaml
 var en []byte
 
+//go:embed fr.yaml
+var fr []byte
+
 type Prompts struct {
 	GenerateLogline struct {
 		System struct {
@@ -37,8 +40,10 @@ type Prompts struct {
 
 type TranslatedPrompts struct {
 	En Prompts `yaml:"en"`
+	Fr Prompts `yaml:"fr"`
 }
 
 var Config = TranslatedPrompts{
 	En: configurator.NewLoader[Prompts](config.Loader).MustLoad(configurator.NewConfig("", en)),
+	Fr: configurator.NewLoader[Prompts](config.Loader).MustLoad(configurator.NewConfig("", fr)),
 }

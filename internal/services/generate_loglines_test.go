@@ -40,6 +40,7 @@ func TestGenerateLoglines(t *testing.T) {
 				Count:  5,
 				Theme:  "test-theme",
 				UserID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				Lang:   models.LangEN,
 			},
 
 			generateLoglinesData: &generateLoglinesData{
@@ -47,10 +48,12 @@ func TestGenerateLoglines(t *testing.T) {
 					{
 						Name:    "Logline 1",
 						Content: "Content 1",
+						Lang:    models.LangEN,
 					},
 					{
 						Name:    "Logline 2",
 						Content: "Content 2",
+						Lang:    models.LangEN,
 					},
 				},
 			},
@@ -59,10 +62,12 @@ func TestGenerateLoglines(t *testing.T) {
 				{
 					Name:    "Logline 1",
 					Content: "Content 1",
+					Lang:    models.LangEN,
 				},
 				{
 					Name:    "Logline 2",
 					Content: "Content 2",
+					Lang:    models.LangEN,
 				},
 			},
 		},
@@ -73,6 +78,7 @@ func TestGenerateLoglines(t *testing.T) {
 				Count:  5,
 				Theme:  "test-theme",
 				UserID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				Lang:   models.LangEN,
 			},
 
 			generateLoglinesData: &generateLoglinesData{
@@ -97,6 +103,7 @@ func TestGenerateLoglines(t *testing.T) {
 						Count:  testCase.request.Count,
 						Theme:  testCase.request.Theme,
 						UserID: testCase.request.UserID.String(),
+						Lang:   testCase.request.Lang,
 					}).
 					Return(testCase.generateLoglinesData.resp, testCase.generateLoglinesData.err)
 			}

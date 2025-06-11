@@ -38,6 +38,7 @@ func (api *API) GetLoglines(ctx context.Context, params codegen.GetLoglinesParam
 				Slug:      codegen.Slug(item.Slug),
 				Name:      item.Name,
 				Content:   item.Content,
+				Lang:      codegen.Lang(item.Lang),
 				CreatedAt: item.CreatedAt,
 			}
 		}),

@@ -32,6 +32,7 @@ func (api *API) GenerateBeatsSheet(
 		LoglineID:   uuid.UUID(req.GetLoglineID()),
 		StoryPlanID: uuid.UUID(req.GetStoryPlanID()),
 		UserID:      userID,
+		Lang:        models.Lang(req.GetLang()),
 	})
 
 	switch {
@@ -49,5 +50,6 @@ func (api *API) GenerateBeatsSheet(
 				Content: item.Content,
 			}
 		}),
+		Lang: req.GetLang(),
 	}, nil
 }

@@ -23,8 +23,24 @@ var GenerateLoglinesPrompts = struct {
 	Themed *template.Template
 	Random *template.Template
 }{
-	Themed: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.GenerateLogline.System.Themed)),
-	Random: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.GenerateLogline.System.Random)),
+	Themed: RegisterTemplateLocales(prompts.Config.En.GenerateLogline.System.Themed, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.GenerateLogline.System.Themed,
+		models.LangFR: prompts.Config.Fr.GenerateLogline.System.Themed,
+	}),
+	Random: RegisterTemplateLocales(prompts.Config.En.GenerateLogline.System.Random, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.GenerateLogline.System.Random,
+		models.LangFR: prompts.Config.Fr.GenerateLogline.System.Random,
+	}),
+}
+
+var GenerateLoglinesSchemas = map[models.Lang]any{
+	models.LangEN: schemas.Config.En.Loglines.Schema,
+	models.LangFR: schemas.Config.Fr.Loglines.Schema,
+}
+
+var GenerateLoglinesDescriptions = map[models.Lang]string{
+	models.LangEN: schemas.Config.En.Loglines.Description,
+	models.LangFR: schemas.Config.Fr.Loglines.Description,
 }
 
 var ErrGenerateLoglinesRepository = errors.New("GenerateLoglinesRepository.GenerateLoglines")
@@ -37,6 +53,7 @@ type GenerateLoglinesRequest struct {
 	Count  int
 	Theme  string
 	UserID string
+	Lang   models.Lang
 }
 
 type GenerateLoglinesRepository struct{}
@@ -51,7 +68,7 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 
 	if request.Theme != "" {
 		systemPrompt := new(strings.Builder)
-		err = GenerateLoglinesPrompts.Themed.ExecuteTemplate(systemPrompt, string(models.LangEN), request)
+		err = GenerateLoglinesPrompts.Themed.ExecuteTemplate(systemPrompt, request.Lang.String(), request)
 
 		messages = []openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(systemPrompt.String()),
@@ -59,7 +76,7 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 		}
 	} else {
 		userPrompt := new(strings.Builder)
-		err = GenerateLoglinesPrompts.Random.ExecuteTemplate(userPrompt, string(models.LangEN), request)
+		err = GenerateLoglinesPrompts.Random.ExecuteTemplate(userPrompt, request.Lang.String(), request)
 
 		messages = []openai.ChatCompletionMessageParamUnion{
 			openai.UserMessage(userPrompt.String()),
@@ -79,8 +96,8 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 					Name:        "logline",
-					Description: openai.String(schemas.Config.En.Loglines.Description),
-					Schema:      schemas.Config.En.Loglines.Schema,
+					Description: openai.String(GenerateLoglinesDescriptions[request.Lang]),
+					Schema:      GenerateLoglinesSchemas[request.Lang],
 					Strict:      openai.Bool(true),
 				},
 			},
@@ -96,6 +113,10 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 
 	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &loglines); err != nil {
 		return nil, NewErrGenerateLoglinesRepository(err)
+	}
+
+	for i := range loglines.Loglines {
+		loglines.Loglines[i].Lang = request.Lang
 	}
 
 	return loglines.Loglines, nil

@@ -47,6 +47,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:    "slug",
 				Name:    "name",
 				Content: "content",
+				Lang:    codegen.LangEn,
 			},
 
 			createLoglineData: &createLoglineData{
@@ -56,6 +57,7 @@ func TestCreateLogline(t *testing.T) {
 					Slug:      "slug",
 					Name:      "name",
 					Content:   "content",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -66,6 +68,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:      "slug",
 				Name:      "name",
 				Content:   "content",
+				Lang:      codegen.LangEn,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -76,6 +79,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:    "slug",
 				Name:    "name",
 				Content: "content",
+				Lang:    codegen.LangEn,
 			},
 
 			createLoglineData: &createLoglineData{
@@ -103,6 +107,7 @@ func TestCreateLogline(t *testing.T) {
 						Slug:    models.Slug(testCase.form.GetSlug()),
 						Name:    testCase.form.GetName(),
 						Content: testCase.form.GetContent(),
+						Lang:    models.Lang(testCase.form.GetLang()),
 					}).
 					Return(testCase.createLoglineData.resp, testCase.createLoglineData.err)
 			}

@@ -53,10 +53,12 @@ func TestListBeatsSheets(t *testing.T) {
 				resp: []*models.BeatsSheetPreview{
 					{
 						ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+						Lang:      models.LangEN,
 						CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						ID:        uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+						Lang:      models.LangEN,
 						CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 					},
 				},
@@ -65,10 +67,12 @@ func TestListBeatsSheets(t *testing.T) {
 			expect: &codegen.GetBeatsSheetsOKApplicationJSON{
 				{
 					ID:        codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+					Lang:      codegen.LangEn,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					ID:        codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000002")),
+					Lang:      codegen.LangEn,
 					CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},

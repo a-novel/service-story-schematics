@@ -54,6 +54,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:        models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -63,6 +64,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 					Slug:      "logline-1",
 					Name:      "Logline 1",
 					Content:   "Content 1",
+					Lang:      models.LangEN,
 					CreatedAt: time.Now(),
 				},
 			},
@@ -85,6 +87,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 							MinScenes: 1,
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Now(),
 				},
 			},
@@ -124,6 +127,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:        models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -133,6 +137,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 					Slug:      "logline-1",
 					Name:      "Logline 1",
 					Content:   "Content 1",
+					Lang:      models.LangEN,
 					CreatedAt: time.Now(),
 				},
 			},
@@ -155,6 +160,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 							MinScenes: 1,
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Now(),
 				},
 			},
@@ -172,6 +178,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:        models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -181,6 +188,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 					Slug:      "logline-1",
 					Name:      "Logline 1",
 					Content:   "Content 1",
+					Lang:      models.LangEN,
 					CreatedAt: time.Now(),
 				},
 			},
@@ -198,6 +206,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:        models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -226,8 +235,10 @@ func TestGenerateBeatsSheet(t *testing.T) {
 							Name:        testCase.selectStoryPlanData.resp.Name,
 							Description: testCase.selectStoryPlanData.resp.Description,
 							Beats:       testCase.selectStoryPlanData.resp.Beats,
+							Lang:        testCase.selectStoryPlanData.resp.Lang,
 							CreatedAt:   testCase.selectStoryPlanData.resp.CreatedAt,
 						},
+						Lang:   testCase.request.Lang,
 						UserID: testCase.request.UserID.String(),
 					}).
 					Return(testCase.generateBeatsSheetData.resp, testCase.generateBeatsSheetData.err)
