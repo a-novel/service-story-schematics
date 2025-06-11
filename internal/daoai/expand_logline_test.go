@@ -3,6 +3,7 @@ package daoai_test
 import (
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/service-story-schematics/models"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -24,6 +25,7 @@ func TestExpandLogline(t *testing.T) {
 
 As a team of scientists discover a way to harness the energy of a nearby supernova, they must also contend with the 
 implications of altering the course of human history and the emergence of a new, technologically advanced world order.`,
+				Lang: models.LangEN,
 			},
 		},
 	}

@@ -2582,7 +2582,7 @@ func decodeRegenerateBeatsResponse(resp *http.Response) (res RegenerateBeatsRes,
 			}
 			d := jx.DecodeBytes(buf)
 
-			var response BeatsSheet
+			var response Beats
 			if err := func() error {
 				if err := response.Decode(d); err != nil {
 					return err

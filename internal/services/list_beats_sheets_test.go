@@ -57,6 +57,7 @@ func TestListBeatsSheets(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -65,10 +66,12 @@ func TestListBeatsSheets(t *testing.T) {
 				resp: []*dao.BeatsSheetPreviewEntity{
 					{
 						ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+						Lang:      models.LangEN,
 						CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 					},
 					{
 						ID:        uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+						Lang:      models.LangEN,
 						CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 					},
 				},
@@ -77,10 +80,12 @@ func TestListBeatsSheets(t *testing.T) {
 			expect: []*models.BeatsSheetPreview{
 				{
 					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -102,6 +107,7 @@ func TestListBeatsSheets(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},

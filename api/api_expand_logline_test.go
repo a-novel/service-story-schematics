@@ -45,18 +45,21 @@ func TestExpandLogline(t *testing.T) {
 			form: &codegen.LoglineIdea{
 				Name:    "Logline 1",
 				Content: "Logline 1 content",
+				Lang:    codegen.LangEn,
 			},
 
 			expandLoglineData: &expandLoglineData{
 				resp: &models.LoglineIdea{
 					Name:    "Logline 1 expanded",
 					Content: "Logline 1 content expanded",
+					Lang:    models.LangEN,
 				},
 			},
 
 			expect: &codegen.LoglineIdea{
 				Name:    "Logline 1 expanded",
 				Content: "Logline 1 content expanded",
+				Lang:    codegen.LangEn,
 			},
 		},
 		{
@@ -65,6 +68,7 @@ func TestExpandLogline(t *testing.T) {
 			form: &codegen.LoglineIdea{
 				Name:    "Logline 1",
 				Content: "Logline 1 content",
+				Lang:    codegen.LangEn,
 			},
 
 			expandLoglineData: &expandLoglineData{
@@ -91,6 +95,7 @@ func TestExpandLogline(t *testing.T) {
 						Logline: models.LoglineIdea{
 							Name:    testCase.form.GetName(),
 							Content: testCase.form.GetContent(),
+							Lang:    models.Lang(testCase.form.GetLang()),
 						},
 						UserID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 					}).

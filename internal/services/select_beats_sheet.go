@@ -52,6 +52,7 @@ func (service *SelectBeatsSheetService) SelectBeatsSheet(
 		LoglineID:   data.LoglineID,
 		StoryPlanID: data.StoryPlanID,
 		Content:     data.Content,
+		Lang:        data.Lang,
 		CreatedAt:   data.CreatedAt,
 	}, nil
 }

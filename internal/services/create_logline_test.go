@@ -52,6 +52,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Logline",
 				Content: "Once upon a time",
+				Lang:    models.LangEN,
 			},
 
 			insertLoglineData: &insertLoglineData{
@@ -61,6 +62,7 @@ func TestCreateLogline(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Logline",
 					Content:   "Once upon a time",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -71,6 +73,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:      "test-slug",
 				Name:      "Test Logline",
 				Content:   "Once upon a time",
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -82,6 +85,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Logline",
 				Content: "Once upon a time",
+				Lang:    models.LangEN,
 			},
 
 			insertLoglineData: &insertLoglineData{
@@ -100,6 +104,7 @@ func TestCreateLogline(t *testing.T) {
 					Slug:      "test-slug-2",
 					Name:      "Test Logline",
 					Content:   "Once upon a time",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -110,6 +115,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:      "test-slug-2",
 				Name:      "Test Logline",
 				Content:   "Once upon a time",
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -121,6 +127,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Logline",
 				Content: "Once upon a time",
+				Lang:    models.LangEN,
 			},
 
 			insertLoglineData: &insertLoglineData{
@@ -137,6 +144,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Logline",
 				Content: "Once upon a time",
+				Lang:    models.LangEN,
 			},
 
 			insertLoglineData: &insertLoglineData{
@@ -157,6 +165,7 @@ func TestCreateLogline(t *testing.T) {
 				Slug:    "test-slug",
 				Name:    "Test Logline",
 				Content: "Once upon a time",
+				Lang:    models.LangEN,
 			},
 
 			insertLoglineData: &insertLoglineData{
@@ -192,6 +201,7 @@ func TestCreateLogline(t *testing.T) {
 							testCase.request.Slug == data.Slug &&
 							assert.Equal(t, testCase.request.Name, data.Name) &&
 							assert.Equal(t, testCase.request.Content, data.Content) &&
+							assert.Equal(t, testCase.request.Lang, data.Lang) &&
 							assert.WithinDuration(t, time.Now(), data.Now, time.Second)
 					})).
 					Return(testCase.insertLoglineData.resp, testCase.insertLoglineData.err).
@@ -205,6 +215,7 @@ func TestCreateLogline(t *testing.T) {
 								testCase.selectSlugIterationData.slug == data.Slug &&
 								assert.Equal(t, testCase.request.Name, data.Name) &&
 								assert.Equal(t, testCase.request.Content, data.Content) &&
+								assert.Equal(t, testCase.request.Lang, data.Lang) &&
 								assert.WithinDuration(t, time.Now(), data.Now, time.Second)
 						})).
 						Return(testCase.reinsertLoglineData.resp, testCase.reinsertLoglineData.err).

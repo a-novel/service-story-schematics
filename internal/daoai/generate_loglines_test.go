@@ -3,6 +3,7 @@ package daoai_test
 import (
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/service-story-schematics/models"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -23,6 +24,7 @@ func TestGenerateLoglines(t *testing.T) {
 				Count:  3,
 				Theme:  "Sci-Fi",
 				UserID: TestUser,
+				Lang:   models.LangEN,
 			},
 		},
 		{
@@ -32,6 +34,7 @@ func TestGenerateLoglines(t *testing.T) {
 				Count:  3,
 				Theme:  "old school detective story",
 				UserID: TestUser,
+				Lang:   models.LangEN,
 			},
 		},
 		{
@@ -40,6 +43,7 @@ func TestGenerateLoglines(t *testing.T) {
 			request: daoai.GenerateLoglinesRequest{
 				Count:  3,
 				UserID: TestUser,
+				Lang:   models.LangEN,
 			},
 		},
 	}

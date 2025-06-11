@@ -66,18 +66,16 @@ func TestRegenerateBeats(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.BeatsSheet{
-				Content: []codegen.Beat{
-					{
-						Key:     "beat-1",
-						Title:   "Regenerated Beat 1",
-						Content: "Regenerated Content 1",
-					},
-					{
-						Key:     "beat-2",
-						Title:   "Regenerated Beat 2",
-						Content: "Regenerated Content 2",
-					},
+			expect: &codegen.Beats{
+				{
+					Key:     "beat-1",
+					Title:   "Regenerated Beat 1",
+					Content: "Regenerated Content 1",
+				},
+				{
+					Key:     "beat-2",
+					Title:   "Regenerated Beat 2",
+					Content: "Regenerated Content 2",
 				},
 			},
 		},

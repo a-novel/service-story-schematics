@@ -50,6 +50,7 @@ func TestListStoryPlans(t *testing.T) {
 
 						Name:        "Test Name 2",
 						Description: "Test Description 2, a lot going on here.",
+						Lang:        models.LangEN,
 
 						CreatedAt: time.Date(2021, 1, 3, 0, 0, 0, 0, time.UTC),
 					},
@@ -59,6 +60,7 @@ func TestListStoryPlans(t *testing.T) {
 
 						Name:        "Test Name 3",
 						Description: "Test Description 3, a lot going on here.",
+						Lang:        models.LangEN,
 
 						CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 					},
@@ -68,6 +70,7 @@ func TestListStoryPlans(t *testing.T) {
 
 						Name:        "Test Name",
 						Description: "Test Description, a lot going on here.",
+						Lang:        models.LangEN,
 
 						CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 					},
@@ -81,6 +84,7 @@ func TestListStoryPlans(t *testing.T) {
 
 					Name:        "Test Name 2",
 					Description: "Test Description 2, a lot going on here.",
+					Lang:        models.LangEN,
 
 					CreatedAt: time.Date(2021, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
@@ -90,6 +94,7 @@ func TestListStoryPlans(t *testing.T) {
 
 					Name:        "Test Name 3",
 					Description: "Test Description 3, a lot going on here.",
+					Lang:        models.LangEN,
 
 					CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
@@ -99,6 +104,7 @@ func TestListStoryPlans(t *testing.T) {
 
 					Name:        "Test Name",
 					Description: "Test Description, a lot going on here.",
+					Lang:        models.LangEN,
 
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},

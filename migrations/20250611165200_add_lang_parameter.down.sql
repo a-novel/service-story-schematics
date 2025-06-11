@@ -1,0 +1,8 @@
+ALTER TABLE story_plans
+DROP COLUMN IF EXISTS lang;
+
+ALTER TABLE loglines
+DROP COLUMN IF EXISTS lang;
+
+ALTER TABLE beats_sheets
+DROP COLUMN IF EXISTS lang;

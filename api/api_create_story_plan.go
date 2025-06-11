@@ -32,6 +32,7 @@ func (api *API) CreateStoryPlan(
 				MaxScenes: item.GetMaxScenes(),
 			}
 		}),
+		Lang: models.Lang(req.GetLang()),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("create story plan: %w", err)
@@ -52,6 +53,7 @@ func (api *API) CreateStoryPlan(
 				MaxScenes: item.MaxScenes,
 			}
 		}),
+		Lang:      codegen.Lang(storyPlan.Lang),
 		CreatedAt: storyPlan.CreatedAt,
 	}, nil
 }

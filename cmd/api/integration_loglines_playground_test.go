@@ -41,6 +41,7 @@ func TestLoglinesPlayground(t *testing.T) {
 		rawideas, err := client.GenerateLoglines(t.Context(), &codegen.GenerateLoglinesForm{
 			Count: 2,
 			Theme: "scifi, like Asimov Foundation",
+			Lang:  codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -52,7 +53,7 @@ func TestLoglinesPlayground(t *testing.T) {
 		*loglineIdea = (*ideas)[0]
 	}
 
-	t.Log("Expandlogline")
+	t.Log("ExpandLogline")
 	{
 		securityClient.SetToken(userLambda)
 
@@ -73,6 +74,7 @@ func TestLoglinesPlayground(t *testing.T) {
 			Slug:    codegen.Slug(loglineSlug),
 			Name:    loglineIdea.Name,
 			Content: loglineIdea.Content,
+			Lang:    codegen.LangEn,
 		})
 
 		require.NoError(t, err)
@@ -89,6 +91,7 @@ func TestLoglinesPlayground(t *testing.T) {
 			Slug:    codegen.Slug(loglineSlug),
 			Name:    loglineIdea.Name,
 			Content: loglineIdea.Content,
+			Lang:    codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -141,6 +144,7 @@ func TestLoglinesPlayground(t *testing.T) {
 			Slug:    codegen.Slug(loglineSlug),
 			Name:    loglineIdea.Name + " Alt",
 			Content: loglineIdea.Content + " Alt",
+			Lang:    codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -170,12 +174,14 @@ func TestLoglinesPlayground(t *testing.T) {
 				Slug:      loglines[1].Slug,
 				Name:      loglines[1].Name,
 				Content:   loglines[1].Content,
+				Lang:      codegen.LangEn,
 				CreatedAt: loglines[1].CreatedAt,
 			},
 			{
 				Slug:      loglines[0].Slug,
 				Name:      loglines[0].Name,
 				Content:   loglines[0].Content,
+				Lang:      codegen.LangEn,
 				CreatedAt: loglines[0].CreatedAt,
 			},
 		}, userLoglines)
@@ -197,6 +203,7 @@ func TestLoglinesPlayground(t *testing.T) {
 			Slug:    codegen.Slug(loglineSlug),
 			Name:    loglineIdea.Name,
 			Content: loglineIdea.Content,
+			Lang:    codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -227,6 +234,7 @@ func TestLoglinesPlayground(t *testing.T) {
 				Name:      loglines[2].Name,
 				Content:   loglines[2].Content,
 				CreatedAt: loglines[2].CreatedAt,
+				Lang:      codegen.LangEn,
 			},
 		}, userLoglines)
 	}

@@ -337,6 +337,56 @@ func (s *BeatDefinition) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes Beats as json.
+func (s Beats) Encode(e *jx.Encoder) {
+	unwrapped := []Beat(s)
+
+	e.ArrStart()
+	for _, elem := range unwrapped {
+		elem.Encode(e)
+	}
+	e.ArrEnd()
+}
+
+// Decode decodes Beats from json.
+func (s *Beats) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode Beats to nil")
+	}
+	var unwrapped []Beat
+	if err := func() error {
+		unwrapped = make([]Beat, 0)
+		if err := d.Arr(func(d *jx.Decoder) error {
+			var elem Beat
+			if err := elem.Decode(d); err != nil {
+				return err
+			}
+			unwrapped = append(unwrapped, elem)
+			return nil
+		}); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return errors.Wrap(err, "alias")
+	}
+	*s = Beats(unwrapped)
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s Beats) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *Beats) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode implements json.Marshaler.
 func (s *BeatsSheet) Encode(e *jx.Encoder) {
 	e.ObjStart()
@@ -367,17 +417,22 @@ func (s *BeatsSheet) encodeFields(e *jx.Encoder) {
 		e.ArrEnd()
 	}
 	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
+	{
 		e.FieldStart("createdAt")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
 }
 
-var jsonFieldsNameOfBeatsSheet = [5]string{
+var jsonFieldsNameOfBeatsSheet = [6]string{
 	0: "id",
 	1: "loglineID",
 	2: "storyPlanID",
 	3: "content",
-	4: "createdAt",
+	4: "lang",
+	5: "createdAt",
 }
 
 // Decode decodes BeatsSheet from json.
@@ -437,8 +492,18 @@ func (s *BeatsSheet) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "createdAt":
+		case "lang":
 			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
+		case "createdAt":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -459,7 +524,7 @@ func (s *BeatsSheet) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00011111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -562,10 +627,15 @@ func (s *BeatsSheetIdea) encodeFields(e *jx.Encoder) {
 		}
 		e.ArrEnd()
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfBeatsSheetIdea = [1]string{
+var jsonFieldsNameOfBeatsSheetIdea = [2]string{
 	0: "content",
+	1: "lang",
 }
 
 // Decode decodes BeatsSheetIdea from json.
@@ -595,6 +665,16 @@ func (s *BeatsSheetIdea) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -605,7 +685,7 @@ func (s *BeatsSheetIdea) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000001,
+		0b00000011,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -665,14 +745,19 @@ func (s *BeatsSheetPreview) encodeFields(e *jx.Encoder) {
 		s.ID.Encode(e)
 	}
 	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
+	{
 		e.FieldStart("createdAt")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
 }
 
-var jsonFieldsNameOfBeatsSheetPreview = [2]string{
+var jsonFieldsNameOfBeatsSheetPreview = [3]string{
 	0: "id",
-	1: "createdAt",
+	1: "lang",
+	2: "createdAt",
 }
 
 // Decode decodes BeatsSheetPreview from json.
@@ -694,8 +779,18 @@ func (s *BeatsSheetPreview) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"id\"")
 			}
-		case "createdAt":
+		case "lang":
 			requiredBitSet[0] |= 1 << 1
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
+		case "createdAt":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -716,7 +811,7 @@ func (s *BeatsSheetPreview) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -787,12 +882,17 @@ func (s *CreateBeatsSheetForm) encodeFields(e *jx.Encoder) {
 		}
 		e.ArrEnd()
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfCreateBeatsSheetForm = [3]string{
+var jsonFieldsNameOfCreateBeatsSheetForm = [4]string{
 	0: "loglineID",
 	1: "storyPlanID",
 	2: "content",
+	3: "lang",
 }
 
 // Decode decodes CreateBeatsSheetForm from json.
@@ -842,6 +942,16 @@ func (s *CreateBeatsSheetForm) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -852,7 +962,7 @@ func (s *CreateBeatsSheetForm) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -919,12 +1029,17 @@ func (s *CreateLoglineForm) encodeFields(e *jx.Encoder) {
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfCreateLoglineForm = [3]string{
+var jsonFieldsNameOfCreateLoglineForm = [4]string{
 	0: "slug",
 	1: "name",
 	2: "content",
+	3: "lang",
 }
 
 // Decode decodes CreateLoglineForm from json.
@@ -970,6 +1085,16 @@ func (s *CreateLoglineForm) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -980,7 +1105,7 @@ func (s *CreateLoglineForm) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000111,
+		0b00001111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1055,13 +1180,18 @@ func (s *CreateStoryPlanForm) encodeFields(e *jx.Encoder) {
 		}
 		e.ArrEnd()
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfCreateStoryPlanForm = [4]string{
+var jsonFieldsNameOfCreateStoryPlanForm = [5]string{
 	0: "slug",
 	1: "name",
 	2: "description",
 	3: "beats",
+	4: "lang",
 }
 
 // Decode decodes CreateStoryPlanForm from json.
@@ -1125,6 +1255,16 @@ func (s *CreateStoryPlanForm) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"beats\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1135,7 +1275,7 @@ func (s *CreateStoryPlanForm) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1635,11 +1775,16 @@ func (s *GenerateBeatsSheetForm) encodeFields(e *jx.Encoder) {
 		e.FieldStart("storyPlanID")
 		s.StoryPlanID.Encode(e)
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfGenerateBeatsSheetForm = [2]string{
+var jsonFieldsNameOfGenerateBeatsSheetForm = [3]string{
 	0: "loglineID",
 	1: "storyPlanID",
+	2: "lang",
 }
 
 // Decode decodes GenerateBeatsSheetForm from json.
@@ -1671,6 +1816,16 @@ func (s *GenerateBeatsSheetForm) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"storyPlanID\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1681,7 +1836,7 @@ func (s *GenerateBeatsSheetForm) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1744,11 +1899,16 @@ func (s *GenerateLoglinesForm) encodeFields(e *jx.Encoder) {
 		e.FieldStart("theme")
 		e.Str(s.Theme)
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfGenerateLoglinesForm = [2]string{
+var jsonFieldsNameOfGenerateLoglinesForm = [3]string{
 	0: "count",
 	1: "theme",
+	2: "lang",
 }
 
 // Decode decodes GenerateLoglinesForm from json.
@@ -1784,6 +1944,16 @@ func (s *GenerateLoglinesForm) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"theme\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -1794,7 +1964,7 @@ func (s *GenerateLoglinesForm) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2134,6 +2304,46 @@ func (s *Health) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
+// Encode encodes Lang as json.
+func (s Lang) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes Lang from json.
+func (s *Lang) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode Lang to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch Lang(v) {
+	case LangEn:
+		*s = LangEn
+	case LangFr:
+		*s = LangFr
+	default:
+		*s = Lang(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s Lang) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *Lang) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode implements json.Marshaler.
 func (s *Logline) Encode(e *jx.Encoder) {
 	e.ObjStart()
@@ -2164,18 +2374,23 @@ func (s *Logline) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
+	{
 		e.FieldStart("createdAt")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
 }
 
-var jsonFieldsNameOfLogline = [6]string{
+var jsonFieldsNameOfLogline = [7]string{
 	0: "id",
 	1: "userID",
 	2: "slug",
 	3: "name",
 	4: "content",
-	5: "createdAt",
+	5: "lang",
+	6: "createdAt",
 }
 
 // Decode decodes Logline from json.
@@ -2241,8 +2456,18 @@ func (s *Logline) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "createdAt":
+		case "lang":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
+		case "createdAt":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -2263,7 +2488,7 @@ func (s *Logline) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00111111,
+		0b01111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2366,11 +2591,16 @@ func (s *LoglineIdea) encodeFields(e *jx.Encoder) {
 		e.FieldStart("content")
 		e.Str(s.Content)
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfLoglineIdea = [2]string{
+var jsonFieldsNameOfLoglineIdea = [3]string{
 	0: "name",
 	1: "content",
+	2: "lang",
 }
 
 // Decode decodes LoglineIdea from json.
@@ -2406,6 +2636,16 @@ func (s *LoglineIdea) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 2
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -2416,7 +2656,7 @@ func (s *LoglineIdea) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2484,16 +2724,21 @@ func (s *LoglinePreview) encodeFields(e *jx.Encoder) {
 		e.Str(s.Content)
 	}
 	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
+	{
 		e.FieldStart("createdAt")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
 }
 
-var jsonFieldsNameOfLoglinePreview = [4]string{
+var jsonFieldsNameOfLoglinePreview = [5]string{
 	0: "slug",
 	1: "name",
 	2: "content",
-	3: "createdAt",
+	3: "lang",
+	4: "createdAt",
 }
 
 // Decode decodes LoglinePreview from json.
@@ -2539,8 +2784,18 @@ func (s *LoglinePreview) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"content\"")
 			}
-		case "createdAt":
+		case "lang":
 			requiredBitSet[0] |= 1 << 3
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
+		case "createdAt":
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -2561,7 +2816,7 @@ func (s *LoglinePreview) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -2999,18 +3254,23 @@ func (s *StoryPlan) encodeFields(e *jx.Encoder) {
 		e.ArrEnd()
 	}
 	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
+	{
 		e.FieldStart("createdAt")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
 }
 
-var jsonFieldsNameOfStoryPlan = [6]string{
+var jsonFieldsNameOfStoryPlan = [7]string{
 	0: "id",
 	1: "slug",
 	2: "name",
 	3: "description",
 	4: "beats",
-	5: "createdAt",
+	5: "lang",
+	6: "createdAt",
 }
 
 // Decode decodes StoryPlan from json.
@@ -3084,8 +3344,18 @@ func (s *StoryPlan) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"beats\"")
 			}
-		case "createdAt":
+		case "lang":
 			requiredBitSet[0] |= 1 << 5
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
+		case "createdAt":
+			requiredBitSet[0] |= 1 << 6
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -3106,7 +3376,7 @@ func (s *StoryPlan) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00111111,
+		0b01111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -3218,17 +3488,22 @@ func (s *StoryPlanPreview) encodeFields(e *jx.Encoder) {
 		e.Str(s.Description)
 	}
 	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
+	{
 		e.FieldStart("createdAt")
 		json.EncodeDateTime(e, s.CreatedAt)
 	}
 }
 
-var jsonFieldsNameOfStoryPlanPreview = [5]string{
+var jsonFieldsNameOfStoryPlanPreview = [6]string{
 	0: "id",
 	1: "slug",
 	2: "name",
 	3: "description",
-	4: "createdAt",
+	4: "lang",
+	5: "createdAt",
 }
 
 // Decode decodes StoryPlanPreview from json.
@@ -3284,8 +3559,18 @@ func (s *StoryPlanPreview) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"description\"")
 			}
-		case "createdAt":
+		case "lang":
 			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
+		case "createdAt":
+			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := json.DecodeDateTime(d)
 				s.CreatedAt = v
@@ -3306,7 +3591,7 @@ func (s *StoryPlanPreview) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00011111,
+		0b00111111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -3669,13 +3954,18 @@ func (s *UpdateStoryPlanForm) encodeFields(e *jx.Encoder) {
 		}
 		e.ArrEnd()
 	}
+	{
+		e.FieldStart("lang")
+		s.Lang.Encode(e)
+	}
 }
 
-var jsonFieldsNameOfUpdateStoryPlanForm = [4]string{
+var jsonFieldsNameOfUpdateStoryPlanForm = [5]string{
 	0: "slug",
 	1: "name",
 	2: "description",
 	3: "beats",
+	4: "lang",
 }
 
 // Decode decodes UpdateStoryPlanForm from json.
@@ -3739,6 +4029,16 @@ func (s *UpdateStoryPlanForm) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"beats\"")
 			}
+		case "lang":
+			requiredBitSet[0] |= 1 << 4
+			if err := func() error {
+				if err := s.Lang.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"lang\"")
+			}
 		default:
 			return d.Skip()
 		}
@@ -3749,7 +4049,7 @@ func (s *UpdateStoryPlanForm) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001111,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.

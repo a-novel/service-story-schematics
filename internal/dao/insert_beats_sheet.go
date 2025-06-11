@@ -35,6 +35,7 @@ func (repository *InsertBeatsSheetRepository) InsertBeatsSheet(
 		LoglineID:   data.Sheet.LoglineID,
 		StoryPlanID: data.Sheet.StoryPlanID,
 		Content:     make([]models.Beat, len(data.Sheet.Content)),
+		Lang:        data.Sheet.Lang,
 		CreatedAt:   data.Sheet.CreatedAt,
 	}
 

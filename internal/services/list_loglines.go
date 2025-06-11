@@ -48,6 +48,7 @@ func (service *ListLoglinesService) ListLoglines(
 			Slug:      item.Slug,
 			Name:      item.Name,
 			Content:   item.Content,
+			Lang:      item.Lang,
 			CreatedAt: item.CreatedAt,
 		}
 	}), nil

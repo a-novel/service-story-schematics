@@ -26,6 +26,7 @@ type UpdateStoryPlanRequest struct {
 	Name        string
 	Description string
 	Beats       []models.BeatDefinition
+	Lang        models.Lang
 }
 
 type UpdateStoryPlanService struct {
@@ -42,6 +43,7 @@ func (service *UpdateStoryPlanService) UpdateStoryPlan(
 			Name:        request.Name,
 			Description: request.Description,
 			Beats:       request.Beats,
+			Lang:        request.Lang,
 			CreatedAt:   time.Now(),
 		},
 	})
@@ -55,6 +57,7 @@ func (service *UpdateStoryPlanService) UpdateStoryPlan(
 		Name:        resp.Name,
 		Description: resp.Description,
 		Beats:       resp.Beats,
+		Lang:        resp.Lang,
 		CreatedAt:   resp.CreatedAt,
 	}, nil
 }

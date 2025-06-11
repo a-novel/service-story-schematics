@@ -40,6 +40,7 @@ func (api *API) GetBeatsSheets(
 		lo.Map(beatsSheets, func(item *models.BeatsSheetPreview, _ int) codegen.BeatsSheetPreview {
 			return codegen.BeatsSheetPreview{
 				ID:        codegen.BeatsSheetID(item.ID),
+				Lang:      codegen.Lang(item.Lang),
 				CreatedAt: item.CreatedAt,
 			}
 		}),

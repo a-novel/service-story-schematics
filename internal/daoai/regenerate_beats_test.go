@@ -31,6 +31,7 @@ implications of altering the course of human history and the emergence of a new,
 					Name: "Save The Cat Simplified",
 					Description: `The "Save The Cat" simplified story plan consists of 5 beats that serve as a
 blueprint for crafting compelling stories.`,
+					Lang: models.LangEN,
 					Beats: []models.BeatDefinition{
 						{
 							Name:      "Opening Image",
@@ -114,6 +115,7 @@ blueprint for crafting compelling stories.`,
 							"stage for character arcs.",
 					},
 				},
+				Lang:           models.LangEN,
 				RegenerateKeys: []string{"setup"},
 				UserID:         TestUser,
 			},
@@ -130,6 +132,7 @@ implications of altering the course of human history and the emergence of a new,
 					Name: "Save The Cat Simplified",
 					Description: `The "Save The Cat" simplified story plan consists of 5 beats that serve as a
 blueprint for crafting compelling stories.`,
+					Lang: models.LangEN,
 					Beats: []models.BeatDefinition{
 						{
 							Name:      "Opening Image",
@@ -213,6 +216,7 @@ blueprint for crafting compelling stories.`,
 							"stage for character arcs.",
 					},
 				},
+				Lang:           models.LangEN,
 				RegenerateKeys: []string{"openingImage", "debate", "setup"},
 				UserID:         TestUser,
 			},

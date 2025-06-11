@@ -34,6 +34,7 @@ func (api *API) UpdateStoryPlan(
 				MaxScenes: item.GetMaxScenes(),
 			}
 		}),
+		Lang: models.Lang(req.GetLang()),
 	})
 
 	switch {
@@ -58,6 +59,7 @@ func (api *API) UpdateStoryPlan(
 				MaxScenes: item.MaxScenes,
 			}
 		}),
+		Lang:      codegen.Lang(storyPlan.Lang),
 		CreatedAt: storyPlan.CreatedAt,
 	}, nil
 }

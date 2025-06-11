@@ -50,6 +50,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		rawideas, err := client.GenerateLoglines(t.Context(), &codegen.GenerateLoglinesForm{
 			Count: 1,
 			Theme: "scifi, like Asimov Foundation",
+			Lang:  codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -60,6 +61,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 			Slug:    codegen.Slug(loglineSlug),
 			Name:    (*ideas)[0].Name,
 			Content: (*ideas)[0].Content,
+			Lang:    codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -91,6 +93,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		rawRes, err := client.GenerateBeatsSheet(t.Context(), &codegen.GenerateBeatsSheetForm{
 			LoglineID:   logline.ID,
 			StoryPlanID: storyPlan.ID,
+			Lang:        codegen.LangEn,
 		})
 
 		require.NoError(t, err)
@@ -103,6 +106,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		rawGeneratedBeatsSheet, err := client.GenerateBeatsSheet(t.Context(), &codegen.GenerateBeatsSheetForm{
 			LoglineID:   logline.ID,
 			StoryPlanID: storyPlan.ID,
+			Lang:        codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -120,6 +124,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 			LoglineID:   logline.ID,
 			StoryPlanID: storyPlan.ID,
 			Content:     beatsSheet.Content,
+			Lang:        codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -144,14 +149,15 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		})
 		require.NoError(t, err)
 
-		regeneratedBeatsSheet, ok := rawRegeneratedBeatsSheet.(*codegen.BeatsSheet)
+		regeneratedBeatsSheet, ok := rawRegeneratedBeatsSheet.(*codegen.Beats)
 		require.True(t, ok)
 
 		// Save the new beats sheet.
 		rawBeatsSheet, err := client.CreateBeatsSheet(t.Context(), &codegen.CreateBeatsSheetForm{
 			LoglineID:   logline.ID,
 			StoryPlanID: storyPlan.ID,
-			Content:     regeneratedBeatsSheet.Content,
+			Content:     *regeneratedBeatsSheet,
+			Lang:        codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -181,6 +187,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 			LoglineID:   logline.ID,
 			StoryPlanID: storyPlan.ID,
 			Content:     beatsSheet.Content,
+			Lang:        codegen.LangEn,
 		})
 		require.NoError(t, err)
 
@@ -222,6 +229,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.Len(t, *beatsSheets, 3)
 		require.Equal(t, codegen.BeatsSheetPreview{
 			ID:        beatsSheet.ID,
+			Lang:      beatsSheet.Lang,
 			CreatedAt: beatsSheet.CreatedAt,
 		}, (*beatsSheets)[0])
 	}

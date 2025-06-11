@@ -61,6 +61,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						MaxScenes: 1,
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 
 			createStoryPlanData: &createStoryPlanData{
@@ -87,6 +88,7 @@ func TestCreateStoryPlan(t *testing.T) {
 							MaxScenes: 1,
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -114,6 +116,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						MaxScenes: 1,
 					},
 				},
+				Lang:      codegen.LangEn,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -142,6 +145,7 @@ func TestCreateStoryPlan(t *testing.T) {
 						MaxScenes: 1,
 					},
 				},
+				Lang: codegen.LangEn,
 			},
 
 			createStoryPlanData: &createStoryPlanData{
@@ -177,6 +181,7 @@ func TestCreateStoryPlan(t *testing.T) {
 								}
 							},
 						),
+						Lang: models.Lang(testCase.form.GetLang()),
 					}).
 					Return(testCase.createStoryPlanData.resp, testCase.createStoryPlanData.err)
 			}

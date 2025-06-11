@@ -45,6 +45,7 @@ func TestGenerateLoglines(t *testing.T) {
 			form: &codegen.GenerateLoglinesForm{
 				Count: 10,
 				Theme: "theme",
+				Lang:  codegen.LangEn,
 			},
 
 			generateLoglinesData: &generateLoglinesData{
@@ -52,10 +53,12 @@ func TestGenerateLoglines(t *testing.T) {
 					{
 						Name:    "Logline 1",
 						Content: "Logline 1 content",
+						Lang:    models.LangEN,
 					},
 					{
 						Name:    "Logline 2",
 						Content: "Logline 2 content",
+						Lang:    models.LangEN,
 					},
 				},
 			},
@@ -64,10 +67,12 @@ func TestGenerateLoglines(t *testing.T) {
 				{
 					Name:    "Logline 1",
 					Content: "Logline 1 content",
+					Lang:    codegen.LangEn,
 				},
 				{
 					Name:    "Logline 2",
 					Content: "Logline 2 content",
+					Lang:    codegen.LangEn,
 				},
 			},
 		},
@@ -77,6 +82,7 @@ func TestGenerateLoglines(t *testing.T) {
 			form: &codegen.GenerateLoglinesForm{
 				Count: 10,
 				Theme: "theme",
+				Lang:  codegen.LangEn,
 			},
 
 			generateLoglinesData: &generateLoglinesData{
@@ -103,6 +109,7 @@ func TestGenerateLoglines(t *testing.T) {
 						Count:  testCase.form.GetCount(),
 						Theme:  testCase.form.GetTheme(),
 						UserID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+						Lang:   models.Lang(testCase.form.GetLang()),
 					}).
 					Return(testCase.generateLoglinesData.loglines, testCase.generateLoglinesData.err)
 			}

@@ -20,6 +20,7 @@ type BeatsSheetEntity struct {
 	StoryPlanID uuid.UUID `bun:"story_plan_id,type:uuid"`
 
 	Content []models.Beat `bun:"content,type:jsonb"`
+	Lang    models.Lang   `bun:"lang"`
 
 	CreatedAt time.Time `bun:"created_at"`
 }
@@ -27,7 +28,8 @@ type BeatsSheetEntity struct {
 type BeatsSheetPreviewEntity struct {
 	bun.BaseModel `bun:"table:beats_sheets"`
 
-	ID uuid.UUID `bun:"id,pk,type:uuid"`
+	ID   uuid.UUID   `bun:"id,pk,type:uuid"`
+	Lang models.Lang `bun:"lang"`
 
 	CreatedAt time.Time `bun:"created_at"`
 }

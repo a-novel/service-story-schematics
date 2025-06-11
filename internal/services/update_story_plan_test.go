@@ -63,6 +63,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			updateStoryPlanData: &updateStoryPlanData{
@@ -91,6 +92,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 							Purpose: "beat 2 purpose",
 						},
 					},
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2019, time.August, 26, 1, 2, 0, 0, time.UTC),
 				},
 			},
@@ -120,6 +122,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2019, time.August, 26, 1, 2, 0, 0, time.UTC),
 			},
 		},
@@ -150,6 +153,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 						Purpose: "beat 2 purpose",
 					},
 				},
+				Lang: models.LangEN,
 			},
 
 			updateStoryPlanData: &updateStoryPlanData{
@@ -176,6 +180,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 							assert.Equal(t, testCase.request.Name, data.Plan.Name) &&
 							assert.Equal(t, testCase.request.Description, data.Plan.Description) &&
 							assert.Equal(t, testCase.request.Beats, data.Plan.Beats) &&
+							assert.Equal(t, testCase.request.Lang, data.Plan.Lang) &&
 							assert.WithinDuration(t, time.Now(), data.Plan.CreatedAt, time.Second)
 					})).
 					Return(testCase.updateStoryPlanData.resp, testCase.updateStoryPlanData.err)

@@ -22,7 +22,20 @@ const generateBeatsSheetTemperature = 0.8
 var GenerateBeatsSheetPrompts = struct {
 	System *template.Template
 }{
-	System: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.GenerateBeatsSheet)),
+	System: RegisterTemplateLocales(prompts.Config.En.GenerateBeatsSheet, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.GenerateBeatsSheet,
+		models.LangFR: prompts.Config.Fr.GenerateBeatsSheet,
+	}),
+}
+
+var GenerateBeatsSheetSchemas = map[models.Lang]any{
+	models.LangEN: schemas.Config.En.Beats.Schema,
+	models.LangFR: schemas.Config.Fr.Beats.Schema,
+}
+
+var GenerateBeatsSheetDescriptions = map[models.Lang]string{
+	models.LangEN: schemas.Config.En.Beats.Description,
+	models.LangFR: schemas.Config.Fr.Beats.Description,
 }
 
 var ErrInvalidBeatSheet = errors.New("invalid beat sheet")
@@ -37,6 +50,7 @@ type GenerateBeatsSheetRequest struct {
 	Logline string
 	Plan    models.StoryPlan
 	UserID  string
+	Lang    models.Lang
 }
 
 type GenerateBeatsSheetRepository struct{}
@@ -44,14 +58,14 @@ type GenerateBeatsSheetRepository struct{}
 func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 	ctx context.Context, request GenerateBeatsSheetRequest,
 ) ([]models.Beat, error) {
-	storyPlanPartialPrompt, err := StoryPlanToPrompt("EN", request.Plan)
+	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
 	if err != nil {
 		return nil, NewErrGenerateBeatsSheetRepository(fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
 
-	err = GenerateBeatsSheetPrompts.System.ExecuteTemplate(systemPrompt, string(models.LangEN), map[string]any{
+	err = GenerateBeatsSheetPrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), map[string]any{
 		"StoryPlan": storyPlanPartialPrompt,
 		"Plan":      request.Plan,
 	})
@@ -71,8 +85,8 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 					Name:        "story_beats",
-					Description: openai.String(schemas.Config.En.Beats.Description),
-					Schema:      schemas.Config.En.Beats.Schema,
+					Description: openai.String(GenerateBeatsSheetDescriptions[request.Lang]),
+					Schema:      GenerateBeatsSheetSchemas[request.Lang],
 					Strict:      openai.Bool(true),
 				},
 			},

@@ -14,12 +14,15 @@ type BeatsSheet struct {
 	StoryPlanID uuid.UUID `json:"storyPlanID"`
 
 	// The beats (in order) that make up the story.
-	Content   []Beat    `bun:"content,type:jsonb" json:"content"`
-	CreatedAt time.Time `bun:"created_at"         json:"createdAt"`
+	Content []Beat `bun:"content,type:jsonb" json:"content"`
+	Lang    Lang   `bun:"lang"               json:"lang"`
+
+	CreatedAt time.Time `bun:"created_at" json:"createdAt"`
 }
 
 type BeatsSheetPreview struct {
-	ID uuid.UUID `json:"id"`
+	ID   uuid.UUID `json:"id"`
+	Lang Lang      `json:"lang"`
 
 	CreatedAt time.Time `bun:"created_at" json:"createdAt"`
 }

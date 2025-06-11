@@ -22,6 +22,8 @@ type StoryPlan struct {
 	// A list of beats (ordered) that make up the story.
 	Beats []BeatDefinition `json:"beats"`
 
+	Lang Lang `json:"lang"`
+
 	CreatedAt time.Time `json:"createdAt"`
 }
 
@@ -35,6 +37,8 @@ type StoryPlanPreview struct {
 	Name string `json:"name"`
 	// Description of the story plan.
 	Description string `json:"description"`
+
+	Lang Lang `json:"lang"`
 
 	CreatedAt time.Time `json:"createdAt"`
 }

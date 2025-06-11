@@ -21,8 +21,9 @@ type StoryPlanEntity struct {
 	ID   uuid.UUID   `bun:"id,pk,type:uuid"`
 	Slug models.Slug `bun:"slug"`
 
-	Name        string `bun:"name"`
-	Description string `bun:"description"`
+	Name        string      `bun:"name"`
+	Description string      `bun:"description"`
+	Lang        models.Lang `bun:"lang,type:text"`
 
 	Beats []models.BeatDefinition `bun:"beats,type:jsonb"`
 
@@ -35,8 +36,9 @@ type StoryPlanPreviewEntity struct {
 	ID   uuid.UUID   `bun:"id,pk,type:uuid"`
 	Slug models.Slug `bun:"slug"`
 
-	Name        string `bun:"name"`
-	Description string `bun:"description"`
+	Name        string      `bun:"name"`
+	Description string      `bun:"description"`
+	Lang        models.Lang `bun:"lang"`
 
 	CreatedAt time.Time `bun:"created_at"`
 }

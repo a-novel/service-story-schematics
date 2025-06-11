@@ -2,6 +2,7 @@ package dao_test
 
 import (
 	"database/sql"
+	"github.com/a-novel/service-story-schematics/models"
 	"testing"
 	"time"
 
@@ -34,6 +35,7 @@ func TestSelectLoglineBySlug(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -49,6 +51,7 @@ func TestSelectLoglineBySlug(t *testing.T) {
 				Slug:      "test-slug",
 				Name:      "Test Name 2",
 				Content:   "Lorem ipsum dolor sit amet 2",
+				Lang:      models.LangEN,
 				CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
@@ -62,6 +65,7 @@ func TestSelectLoglineBySlug(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -83,6 +87,7 @@ func TestSelectLoglineBySlug(t *testing.T) {
 					Slug:      "test-slug",
 					Name:      "Test Name 2",
 					Content:   "Lorem ipsum dolor sit amet 2",
+					Lang:      models.LangEN,
 					CreatedAt: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},

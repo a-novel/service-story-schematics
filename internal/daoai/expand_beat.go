@@ -26,9 +26,28 @@ var ExpandBeatPrompts = struct {
 	Input1 *template.Template
 	Input2 *template.Template
 }{
-	System: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.ExpandBeat.System)),
-	Input1: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.ExpandBeat.Input1)),
-	Input2: template.Must(template.New(string(models.LangEN)).Parse(prompts.Config.En.ExpandBeat.Input2)),
+	System: RegisterTemplateLocales(prompts.Config.En.ExpandBeat.System, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.ExpandBeat.System,
+		models.LangFR: prompts.Config.Fr.ExpandBeat.System,
+	}),
+	Input1: RegisterTemplateLocales(prompts.Config.En.ExpandBeat.Input1, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.ExpandBeat.Input1,
+		models.LangFR: prompts.Config.Fr.ExpandBeat.Input1,
+	}),
+	Input2: RegisterTemplateLocales(prompts.Config.En.ExpandBeat.Input2, map[models.Lang]string{
+		models.LangEN: prompts.Config.En.ExpandBeat.Input2,
+		models.LangFR: prompts.Config.Fr.ExpandBeat.Input2,
+	}),
+}
+
+var ExpandBeatSchemas = map[models.Lang]any{
+	models.LangEN: schemas.Config.En.Beat.Schema,
+	models.LangFR: schemas.Config.Fr.Beat.Schema,
+}
+
+var ExpandBeatDescriptions = map[models.Lang]string{
+	models.LangEN: schemas.Config.En.Beat.Description,
+	models.LangFR: schemas.Config.Fr.Beat.Description,
 }
 
 var ErrExpandBeatRepository = errors.New(".ExpandBeat")
@@ -43,6 +62,7 @@ type ExpandBeatRequest struct {
 	Logline   string
 	Beats     []models.Beat
 	Plan      models.StoryPlan
+	Lang      models.Lang
 	TargetKey string
 	UserID    string
 }
@@ -70,14 +90,14 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 		return nil, NewErrExpandBeatRepository(ErrUnknownTargetKey)
 	}
 
-	storyPlanPartialPrompt, err := StoryPlanToPrompt("EN", request.Plan)
+	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
 	if err != nil {
 		return nil, NewErrExpandBeatRepository(fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
 
-	err = ExpandBeatPrompts.System.ExecuteTemplate(systemPrompt, string(models.LangEN), map[string]any{
+	err = ExpandBeatPrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), map[string]any{
 		"StoryPlan": storyPlanPartialPrompt,
 		"Plan":      request.Plan,
 	})
@@ -87,14 +107,14 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 
 	userPrompt1 := new(strings.Builder)
 
-	err = ExpandBeatPrompts.Input1.ExecuteTemplate(userPrompt1, string(models.LangEN), request)
+	err = ExpandBeatPrompts.Input1.ExecuteTemplate(userPrompt1, request.Lang.String(), request)
 	if err != nil {
 		return nil, NewErrExpandBeatRepository(fmt.Errorf("parse user message 1: %w", err))
 	}
 
 	userPrompt2 := new(strings.Builder)
 
-	err = ExpandBeatPrompts.Input2.ExecuteTemplate(userPrompt2, string(models.LangEN), request)
+	err = ExpandBeatPrompts.Input2.ExecuteTemplate(userPrompt2, request.Lang.String(), request)
 	if err != nil {
 		return nil, NewErrExpandBeatRepository(fmt.Errorf("parse user message 2: %w", err))
 	}
@@ -113,8 +133,8 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 					Name:        "storyBeat",
-					Description: openai.String(schemas.Config.En.Beat.Description),
-					Schema:      schemas.Config.En.Beat.Schema,
+					Description: openai.String(ExpandBeatDescriptions[request.Lang]),
+					Schema:      ExpandBeatSchemas[request.Lang],
 					Strict:      openai.Bool(true),
 				},
 			},

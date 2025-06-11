@@ -33,6 +33,7 @@ func (api *API) GetStoryPlans(
 				Slug:        codegen.Slug(item.Slug),
 				Name:        item.Name,
 				Description: item.Description,
+				Lang:        codegen.Lang(item.Lang),
 				CreatedAt:   item.CreatedAt,
 			}
 		},

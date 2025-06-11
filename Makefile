@@ -35,4 +35,7 @@ api:
 install:
 	pipx install sqlfluff
 
+postgres-local:
+	psql postgres://postgres:postgres@127.0.0.1:5002/story-schematics
+
 .PHONY: api

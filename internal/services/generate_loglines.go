@@ -24,6 +24,7 @@ type GenerateLoglinesRequest struct {
 	Count  int
 	Theme  string
 	UserID uuid.UUID
+	Lang   models.Lang
 }
 
 type GenerateLoglinesService struct {
@@ -37,6 +38,7 @@ func (service *GenerateLoglinesService) GenerateLoglines(
 		Count:  request.Count,
 		Theme:  request.Theme,
 		UserID: request.UserID.String(),
+		Lang:   request.Lang,
 	})
 	if err != nil {
 		return nil, NewErrGenerateLoglinesService(err)

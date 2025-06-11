@@ -43,13 +43,13 @@ func (api *API) RegenerateBeats(
 		return nil, fmt.Errorf("regenerate beats: %w", err)
 	}
 
-	return &codegen.BeatsSheet{
-		Content: lo.Map(beats, func(item models.Beat, _ int) codegen.Beat {
-			return codegen.Beat{
-				Key:     item.Key,
-				Title:   item.Title,
-				Content: item.Content,
-			}
-		}),
-	}, nil
+	var res codegen.Beats = lo.Map(beats, func(item models.Beat, _ int) codegen.Beat {
+		return codegen.Beat{
+			Key:     item.Key,
+			Title:   item.Title,
+			Content: item.Content,
+		}
+	})
+
+	return &res, nil
 }
