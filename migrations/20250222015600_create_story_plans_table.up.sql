@@ -8,7 +8,7 @@ CREATE TABLE story_plans
 
   beats jsonb NOT NULL,
 
-  created_at timestamp (0) with time zone NOT NULL
+  created_at timestamp(0) with time zone NOT NULL
 );
 
 CREATE INDEX story_plans_slug_timestamp_idx ON story_plans (
