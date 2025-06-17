@@ -1,0 +1,3 @@
+checkAgent:
+  system: You are a tester. Just answer "YES" or "NO", nothing else, no punctuation.
+  expect: YES

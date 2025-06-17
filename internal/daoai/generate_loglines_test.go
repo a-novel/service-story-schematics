@@ -2,6 +2,7 @@ package daoai_test
 
 import (
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 	"testing"
@@ -12,79 +13,54 @@ import (
 )
 
 func TestGenerateLoglines(t *testing.T) {
-	testCases := []struct {
-		name string
+	const errorMsgThemed = "The greater AI decreted that this logline:\n\n%s\n\nDoes not match this theme:\n\n%s"
 
-		request daoai.GenerateLoglinesRequest
-	}{
-		{
-			name: "Success",
-
-			request: daoai.GenerateLoglinesRequest{
-				Count:  3,
-				Theme:  "Sci-Fi",
-				UserID: TestUser,
-				Lang:   models.LangEN,
-			},
-		},
-		{
-			name: "Success/AnotherTheme",
-
-			request: daoai.GenerateLoglinesRequest{
-				Count:  3,
-				Theme:  "old school detective story",
-				UserID: TestUser,
-				Lang:   models.LangEN,
-			},
-		},
-		{
-			name: "Random",
-
-			request: daoai.GenerateLoglinesRequest{
-				Count:  3,
-				UserID: TestUser,
-				Lang:   models.LangEN,
-			},
-		},
-	}
+	const errorMsgRandom = "The greater AI decreted that this is not a valid logline for a story:\n\n%s"
 
 	repository := daoai.NewGenerateLoglinesRepository()
 
-	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
+	for _, lang := range []models.Lang{models.LangEN, models.LangFR} {
+		t.Run(lang.String(), func(t *testing.T) {
 			t.Parallel()
 
-			ctx := lib.NewOpenaiContext(t.Context())
+			data := testdata.GenerateLoglinesPrompts[lang]
 
-			loglines, err := repository.GenerateLoglines(ctx, testCase.request)
-			require.NoError(t, err)
+			for name, testCase := range data.Cases {
+				t.Run(name, func(t *testing.T) {
+					t.Parallel()
 
-			require.NotNil(t, loglines)
-			require.Len(t, loglines, testCase.request.Count)
+					ctx := lib.NewOpenaiContext(t.Context())
 
-			for _, logline := range loglines {
-				require.NotEmpty(t, logline.Name)
-				require.NotEmpty(t, logline.Content)
+					loglines, err := repository.GenerateLoglines(ctx, daoai.GenerateLoglinesRequest{
+						Count:  testCase.Count,
+						Theme:  testCase.Theme,
+						UserID: TestUser,
+						Lang:   lang,
+					})
+					require.NoError(t, err)
 
-				if testCase.request.Theme != "" {
-					CheckAgent(
-						t,
-						fmt.Sprintf(
-							"Does this logline:\n\n%s\n\nMatches this theme:\n\n%s",
-							logline.Content, testCase.request.Theme,
-						),
-						fmt.Sprintf(
-							"The greater AI decreted that this logline:\n\n%s\n\nDoes not match this theme:\n\n%s",
-							logline.Content, testCase.request.Theme,
-						),
-					)
-				} else {
-					CheckAgent(
-						t,
-						"Can this be used as a logline for a story ?\n\n"+logline.Content,
-						"The greater AI decreted that this is not a valid logline for a story:\n\n"+logline.Content,
-					)
-				}
+					require.NotNil(t, loglines)
+					require.Len(t, loglines, testCase.Count)
+
+					for _, logline := range loglines {
+						require.NotEmpty(t, logline.Name)
+						require.NotEmpty(t, logline.Content)
+
+						if testCase.Theme != "" {
+							CheckAgent(
+								t, lang,
+								fmt.Sprintf(data.CheckAgent.Themed, logline.Content, testCase.Theme),
+								fmt.Sprintf(errorMsgThemed, logline.Content, testCase.Theme),
+							)
+						} else {
+							CheckAgent(
+								t, lang,
+								fmt.Sprintf(data.CheckAgent.Random, logline.Content),
+								fmt.Sprintf(errorMsgRandom, logline.Content),
+							)
+						}
+					}
+				})
 			}
 		})
 	}

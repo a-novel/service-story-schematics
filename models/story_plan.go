@@ -15,16 +15,16 @@ type StoryPlan struct {
 	Slug Slug `json:"slug"`
 
 	// Human-readable name of the story plan.
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 	// Description of the story plan.
-	Description string `json:"description"`
+	Description string `json:"description" yaml:"description"`
 
 	// A list of beats (ordered) that make up the story.
-	Beats []BeatDefinition `json:"beats"`
+	Beats []BeatDefinition `json:"beats" yaml:"beats"`
 
-	Lang Lang `json:"lang"`
+	Lang Lang `json:"lang" yaml:"lang"`
 
-	CreatedAt time.Time `json:"createdAt"`
+	CreatedAt time.Time `json:"createdAt" yaml:"createdAt"`
 }
 
 type StoryPlanPreview struct {
@@ -47,17 +47,17 @@ type StoryPlanPreview struct {
 // of the story.
 type BeatDefinition struct {
 	// Human-readable name of the beat.
-	Name string `json:"name"`
+	Name string `json:"name" yaml:"name"`
 	// Key used to uniquely identify the beat.
-	Key string `json:"key"`
+	Key string `json:"key" yaml:"key"`
 
 	// The important highlights of the beat.
-	KeyPoints []string `json:"goals"`
+	KeyPoints []string `json:"keyPoints" yaml:"keyPoints"`
 	// Summarize the purpose of the current beat.
-	Purpose string `json:"purpose"`
+	Purpose string `json:"purpose" yaml:"purpose"`
 
-	MinScenes int `json:"minScenes"`
-	MaxScenes int `json:"maxScenes"`
+	MinScenes int `json:"minScenes" yaml:"minScenes"`
+	MaxScenes int `json:"maxScenes" yaml:"maxScenes"`
 }
 
 func storyPlanStaticSceneCount(scenes int) string {

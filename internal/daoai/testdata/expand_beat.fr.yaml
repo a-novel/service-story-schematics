@@ -1,0 +1,89 @@
+cases:
+  success:
+    logline: |
+      L'Initiative Aurora
+
+      Alors qu'une équipe de scientifiques découvre comment exploiter l'énergie d'une supernova voisine, ils doivent 
+      également faire face aux implications de la modification du cours de l'histoire humaine et
+      l'émergence d'un nouvel ordre mondial technologiquement avancé.
+    targetKey: setup
+    plan:
+      name: Save The Cat Simplifiée
+      lang: fr
+      description: |
+        Le plan d'histoire "Save The Cat" simplifié se compose de 5 battements qui servent de
+        modèle pour créer des histoires captivantes.
+      beats:
+        - name: Ouverture
+          key: openingImage
+          keyPoints:
+            - Établir le monde du protagoniste avant le début du voyage.
+          purpose: Définit le ton, l'humeur et les enjeux ; offre une représentation visuelle du point de départ.
+          minScenes: 1
+          maxScenes: 1
+        - name: Thème Énoncé
+          key: themeStated
+          keyPoints:
+            - Introduire le thème central ou la morale de l'histoire.
+          purpose: Souvent livré par le dialogue ; préfigure la transformation du protagoniste.
+          minScenes: 1
+        - name: Mise en Place
+          key: setup
+          keyPoints:
+            - Introduire les personnages principaux.
+            - Mettre en évidence les défauts ou les défis du protagoniste.
+            - Établir les enjeux et le monde dans lequel ils vivent.
+          purpose: Crée de l'empathie et ancre le public dans l'histoire.
+          minScenes: 3
+          maxScenes: 5
+        - name: Catalyse
+          key: catalyst
+          keyPoints:
+            - Un événement qui perturbe le statu quo.
+          purpose: Propulse le protagoniste dans le conflit principal.
+          maxScenes: 1
+        - name: Débat
+          key: debate
+          keyPoints:
+            - Le protagoniste lutte avec la décision d'entreprendre le voyage.
+            - Met en évidence les conflits internes et les peurs.
+          purpose: Ajoute de la profondeur au personnage et augmente la tension.
+          minScenes: 2
+          maxScenes: 3
+    beats:
+      - key: openingImage
+        title: Introduction à la Communauté Scientifique
+        content: |
+          Une scène présentant l'équipe de scientifiques et leur monde ordinaire, mettant en évidence les limitations 
+          actuelles et les luttes dans le domaine de la production d'énergie.
+      - key: themeStated
+        title: L'Importance de l'Innovation Responsable
+        content: |
+          Une conversation entre les scientifiques discutant de l'éthique et des conséquences potentielles de
+          l'exploitation des sources d'énergie extraordinaires, préfigurant les thèmes de l'histoire.
+      - key: setup
+        title: Un monde au Bord du Changement
+        content: |
+          Introduction des personnages principaux, de leurs motivations et du monde dans lequel ils vivent,
+          mettant en évidence le travail pionnier de l'équipe et la crise énergétique actuelle du monde.
+      - key: catalyst
+        title: La Découverte de la Source d'Énergie de la Supernova
+        content: |
+          Une expérience ou une découverte critique qui révèle la possibilité d'exploiter l'énergie d'une supernova 
+          voisine, initiant le voyage de l'équipe dans l'inconnu.
+      - key: debate
+        title: Le Dilemme du Pouvoir et de la Responsabilité
+        content: |
+          L'équipe lutte avec les implications et les retombées potentielles de leur découverte, exprimant des 
+          inquiétudes et des points de vue conflictuels sur la manière de procéder, et préparant le terrain pour les 
+          arcs des personnages.
+checkAgent: |
+  Est-ce que le nouveau battement développe le battement original ?
+
+  Nouvelle fiche de battements
+
+  %s
+
+  Fiche de battements originale
+
+  %s

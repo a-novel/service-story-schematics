@@ -1,0 +1,167 @@
+cases:
+  regenerateOne:
+    logline: |
+      The Aurora Initiative
+
+      As a team of scientists discover a way to harness the energy of a nearby supernova, they must also contend with the 
+      implications of altering the course of human history and the emergence of a new, technologically advanced world order.
+    regenerateKeys:
+      - setup
+    plan:
+      name: Save The Cat Simplified
+      lang: en
+      description: |
+        The "Save The Cat" simplified story plan consists of 5 beats that serve as a
+        blueprint for crafting compelling stories.
+      beats:
+        - name: Opening Image
+          key: openingImage
+          keyPoints:
+            - Establish the protagonist's world before the journey begins.
+          purpose: Sets the tone, mood, and stakes; offers a visual representation of the starting point.
+          minScenes: 1
+          maxScenes: 1
+        - name: Theme Stated
+          key: themeStated
+          keyPoints:
+            - Introduce the story's central theme or moral.
+          purpose: Often delivered through dialogue; foreshadows the protagonist transformation
+          minScenes: 1
+        - name: Set-Up
+          key: setup
+          keyPoints:
+            - Introduce the main characters.
+            - Showcase the protagonist's flaws or challenges.
+            - Establish the stakes and the world they live in.
+          purpose: Builds empathy and grounds the audience in the story.
+          minScenes: 3
+          maxScenes: 5
+        - name: Catalyst
+          key: catalyst
+          keyPoints:
+            - An event that disrupts the status quo.
+          purpose: Propels the protagonist into the main conflict.
+          maxScenes: 1
+        - name: Debate
+          key: debate
+          keyPoints:
+            - The protagonist grapples with the decision to embark on the journey.
+            - Highlights internal conflicts and fears.
+          purpose: Adds depth to the character and heightens tension.
+          minScenes: 2
+          maxScenes: 3
+    beats:
+      - key: openingImage
+        title: Introduction to the Scientific Community
+        content: |
+          A scene showcasing the team of scientists and their ordinary world, highlighting the current limitations and
+          struggles in the field of energy production.
+      - key: themeStated
+        title: The Importance of Responsible Innovation
+        content: |
+          A conversation among the scientists discussing the ethics and potential consequences of tapping into 
+          extraordinary energy sources, foreshadowing the themes of the story.
+      - key: setup
+        title: The World on the Brink of Change
+        content: |
+          Introduction to the main characters, their motivations, and the world they live in, highlighting the team's 
+          pioneering work and the world's current energy crisis.
+      - key: catalyst
+        title: The Discovery of the Supernova Energy Source
+        content: |
+          A critical experiment or finding that reveals the possibility of harnessing 
+          the energy of a nearby supernova, initiating the team's journey into the unknown.
+      - key: debate
+        title: The Dilemma of Power and Responsibility
+        content: |
+          The team grapples with the implications and potential fallout of their discovery, voicing concerns and 
+          conflicting views on how to proceed, and setting the stage for character arcs.
+  regenerateMany:
+    logline: |
+      The Aurora Initiative
+
+      As a team of scientists discover a way to harness the energy of a nearby supernova, they must also contend with the 
+      implications of altering the course of human history and the emergence of a new, technologically advanced world order.
+    regenerateKeys:
+      - openingImage
+      - debate
+      - setup
+    plan:
+      name: Save The Cat Simplified
+      lang: en
+      description: |
+        The "Save The Cat" simplified story plan consists of 5 beats that serve as a
+        blueprint for crafting compelling stories.
+      beats:
+        - name: Opening Image
+          key: openingImage
+          keyPoints:
+            - Establish the protagonist's world before the journey begins.
+          purpose: Sets the tone, mood, and stakes; offers a visual representation of the starting point.
+          minScenes: 1
+          maxScenes: 1
+        - name: Theme Stated
+          key: themeStated
+          keyPoints:
+            - Introduce the story's central theme or moral.
+          purpose: Often delivered through dialogue; foreshadows the protagonist transformation
+          minScenes: 1
+        - name: Set-Up
+          key: setup
+          keyPoints:
+            - Introduce the main characters.
+            - Showcase the protagonist's flaws or challenges.
+            - Establish the stakes and the world they live in.
+          purpose: Builds empathy and grounds the audience in the story.
+          minScenes: 3
+          maxScenes: 5
+        - name: Catalyst
+          key: catalyst
+          keyPoints:
+            - An event that disrupts the status quo.
+          purpose: Propels the protagonist into the main conflict.
+          maxScenes: 1
+        - name: Debate
+          key: debate
+          keyPoints:
+            - The protagonist grapples with the decision to embark on the journey.
+            - Highlights internal conflicts and fears.
+          purpose: Adds depth to the character and heightens tension.
+          minScenes: 2
+          maxScenes: 3
+    beats:
+      - key: openingImage
+        title: Introduction to the Scientific Community
+        content: |
+          A scene showcasing the team of scientists and their ordinary world, highlighting the current limitations and
+          struggles in the field of energy production.
+      - key: themeStated
+        title: The Importance of Responsible Innovation
+        content: |
+          A conversation among the scientists discussing the ethics and potential consequences of tapping into 
+          extraordinary energy sources, foreshadowing the themes of the story.
+      - key: setup
+        title: The World on the Brink of Change
+        content: |
+          Introduction to the main characters, their motivations, and the world they live in, highlighting the team's 
+          pioneering work and the world's current energy crisis.
+      - key: catalyst
+        title: The Discovery of the Supernova Energy Source
+        content: |
+          A critical experiment or finding that reveals the possibility of harnessing 
+          the energy of a nearby supernova, initiating the team's journey into the unknown.
+      - key: debate
+        title: The Dilemma of Power and Responsibility
+        content: |
+          The team grapples with the implications and potential fallout of their discovery, voicing concerns and 
+          conflicting views on how to proceed, and setting the stage for character arcs.
+checkAgent: |
+  Does the below beats sheet form a coherent story about the below logline?
+
+  beats sheet:
+
+  %s
+
+  logline:
+
+  %s

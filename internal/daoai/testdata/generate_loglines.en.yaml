@@ -1,0 +1,21 @@
+cases:
+  success:
+    count: 3
+    theme: Sci-Fi
+  success/AnotherTheme:
+    count: 2
+    theme: old school detective story
+  random:
+    count: 3
+checkAgent:
+  themed: |
+    Does this logline:
+
+    %s
+
+    Matches this theme:
+
+    %s
+  random: Can this be used as a logline for a story ?
+
+    %s
