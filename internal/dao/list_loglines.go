@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 
 	"github.com/google/uuid"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 )
 
 var ErrListLoglinesRepository = errors.New("ListLoglinesRepository.ListLoglines")
@@ -27,7 +26,7 @@ type ListLoglinesData struct {
 func (repository *ListLoglinesRepository) ListLoglines(
 	ctx context.Context, data ListLoglinesData,
 ) ([]*LoglinePreviewEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrListLoglinesRepository(fmt.Errorf("get postgres client: %w", err))
 	}

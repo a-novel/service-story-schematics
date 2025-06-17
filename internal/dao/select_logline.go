@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 
 	"github.com/google/uuid"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 )
 
 var ErrSelectLoglineRepository = errors.New("SelectLoglineRepository.SelectLogline")
@@ -27,7 +26,7 @@ type SelectLoglineData struct {
 func (repository *SelectLoglineRepository) SelectLogline(
 	ctx context.Context, data SelectLoglineData,
 ) (*LoglineEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrSelectLoglineRepository(fmt.Errorf("get postgres client: %w", err))
 	}

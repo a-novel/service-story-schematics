@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 
 	"github.com/google/uuid"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -29,7 +28,7 @@ type SelectLoglineBySlugRepository struct{}
 func (repository *SelectLoglineBySlugRepository) SelectLoglineBySlug(
 	ctx context.Context, data SelectLoglineBySlugData,
 ) (*LoglineEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrSelectLoglineBySlugRepository(fmt.Errorf("get postgres client: %w", err))
 	}

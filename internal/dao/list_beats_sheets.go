@@ -4,10 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 
 	"github.com/google/uuid"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 )
 
 var ErrListBeatsSheetsRepository = errors.New("ListBeatsSheetsRepository.ListBeatsSheets")
@@ -27,7 +26,7 @@ type ListBeatsSheetsData struct {
 func (repository *ListBeatsSheetsRepository) ListBeatsSheets(
 	ctx context.Context, data ListBeatsSheetsData,
 ) ([]*BeatsSheetPreviewEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrListBeatsSheetsRepository(fmt.Errorf("get postgres client: %w", err))
 	}

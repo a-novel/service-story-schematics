@@ -5,9 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"regexp"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -32,7 +31,7 @@ type SelectSlugIterationRepository struct{}
 func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 	ctx context.Context, data SelectSlugIterationData,
 ) (models.Slug, int, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("get postgres client: %w", err))
 	}

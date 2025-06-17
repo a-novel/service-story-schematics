@@ -13,9 +13,10 @@ checkAgent:
 
     %s
 
-    Correspond à ce thème
+    Peut servir à créer une histoire sur ce thème
 
     %s
-  random: Est-ce que ceci peut être utilisé comme prémisse pour une fiction ?
+  random: |
+    Est-ce que ceci peut être utilisé comme prémisse pour une fiction ?
 
     %s
