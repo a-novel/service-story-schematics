@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/uptrace/bun/driver/pgdriver"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -37,7 +36,7 @@ type InsertLoglineRepository struct{}
 func (repository *InsertLoglineRepository) InsertLogline(
 	ctx context.Context, data InsertLoglineData,
 ) (*LoglineEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrInsertLoglineRepository(fmt.Errorf("get postgres client: %w", err))
 	}

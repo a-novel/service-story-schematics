@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 
 	"github.com/google/uuid"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 )
 
 var ErrSelectBeatsSheetRepository = errors.New("SelectBeatsSheetRepository.SelectBeatsSheet")
@@ -22,7 +21,7 @@ type SelectBeatsSheetRepository struct{}
 func (repository *SelectBeatsSheetRepository) SelectBeatsSheet(
 	ctx context.Context, data uuid.UUID,
 ) (*BeatsSheetEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrSelectBeatsSheetRepository(fmt.Errorf("get postgres client: %w", err))
 	}

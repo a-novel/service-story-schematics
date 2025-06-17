@@ -6,14 +6,11 @@ import (
 	"github.com/a-novel/service-story-schematics/config"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
-
-	"github.com/a-novel/service-story-schematics/migrations"
+	"os"
 )
 
 func NewAgoraContext(parentCTX context.Context) (context.Context, error) {
-	ctx, err := pgctx.NewContext(parentCTX, &migrations.Migrations)
+	ctx, err := NewPostgresContext(parentCTX, os.Getenv(PostgresDSNEnv))
 	if err != nil {
 		return nil, fmt.Errorf("create postgres context: %w", err)
 	}

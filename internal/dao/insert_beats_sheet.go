@@ -4,8 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -25,7 +24,7 @@ type InsertBeatsSheetRepository struct{}
 func (repository *InsertBeatsSheetRepository) InsertBeatsSheet(
 	ctx context.Context, data InsertBeatsSheetData,
 ) (*BeatsSheetEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrInsertBeatsSheetRepository(fmt.Errorf("get postgres client: %w", err))
 	}

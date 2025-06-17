@@ -2,13 +2,12 @@ package dao_test
 
 import (
 	"database/sql"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
@@ -457,14 +456,14 @@ func TestListStoryPlans(t *testing.T) {
 
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
-			tx, commit, err := pgctx.NewContextTX(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
+			tx, commit, err := lib.PostgresContextTx(ctx, &sql.TxOptions{Isolation: sql.LevelRepeatableRead})
 			require.NoError(t, err)
 
 			t.Cleanup(func() {
 				_ = commit(false)
 			})
 
-			db, err := pgctx.Context(tx)
+			db, err := lib.PostgresContext(tx)
 			require.NoError(t, err)
 
 			if len(testCase.fixtures) > 0 {

@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 
 	"github.com/google/uuid"
-
-	pgctx "github.com/a-novel-kit/context/pgbun"
 )
 
 var ErrSelectStoryPlanRepository = errors.New("SelectStoryPlanRepository.SelectStoryPlan")
@@ -22,7 +21,7 @@ type SelectStoryPlanRepository struct{}
 func (repository *SelectStoryPlanRepository) SelectStoryPlan(
 	ctx context.Context, data uuid.UUID,
 ) (*StoryPlanEntity, error) {
-	tx, err := pgctx.Context(ctx)
+	tx, err := lib.PostgresContext(ctx)
 	if err != nil {
 		return nil, NewErrSelectStoryPlanRepository(fmt.Errorf("get postgres client: %w", err))
 	}
