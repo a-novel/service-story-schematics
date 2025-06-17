@@ -1,0 +1,16 @@
+cases:
+  success:
+    logline: |
+      The Aurora Initiative
+
+      As a team of scientists discover a way to harness the energy of a nearby supernova, they must also contend with the 
+      implications of altering the course of human history and the emergence of a new, technologically advanced world order.
+
+checkAgent: |
+  Does this logline
+
+  %s
+
+  Expands this one while retaining its original themes
+
+  %s

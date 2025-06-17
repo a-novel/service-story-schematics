@@ -1,0 +1,3 @@
+checkAgent:
+  system: Tu es un testeur. Réponds simplement "OUI" ou "NON", rien d'autre, pas de ponctuation.
+  expect: OUI

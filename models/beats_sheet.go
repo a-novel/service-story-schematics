@@ -30,11 +30,11 @@ type BeatsSheetPreview struct {
 // Beat represents a single phrase that summarizes a beat of the story.
 type Beat struct {
 	// Key links the current Beat to a beat in the StoryPlan.
-	Key string `json:"key" jsonschema_description:"The jsonKey of the given beat"`
+	Key string `json:"key" jsonschema_description:"The jsonKey of the given beat" yaml:"key"`
 
 	// The human-readable title of the beat.
-	Title string `json:"title" jsonschema_description:"A short title for the beat"`
+	Title string `json:"title" jsonschema_description:"A short title for the beat" yaml:"title"`
 
 	// A summary of the beat.
-	Content string `json:"content" jsonschema_description:"A summary of the scenes in the beat"`
+	Content string `json:"content" jsonschema_description:"A summary of the scenes in the beat" yaml:"content"`
 }

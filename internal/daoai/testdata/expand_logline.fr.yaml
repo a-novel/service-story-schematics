@@ -1,0 +1,17 @@
+cases:
+  success:
+    logline: |
+      L'Initiative Aurora
+
+      Alors qu'une équipe de scientifiques découvre comment exploiter l'énergie d'une supernova voisine, ils doivent 
+      également faire face aux implications de la modification du cours de l'histoire humaine et
+      l'émergence d'un nouvel ordre mondial technologiquement avancé.
+
+checkAgent: |
+  Est-ce que cette prémisse
+
+  %s
+
+  Développe celle-ci tout en conservant ses thèmes initiaux
+
+  %s

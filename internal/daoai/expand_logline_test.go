@@ -2,6 +2,7 @@ package daoai_test
 
 import (
 	"fmt"
+	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 	"testing"
@@ -12,51 +13,41 @@ import (
 )
 
 func TestExpandLogline(t *testing.T) {
-	testCases := []struct {
-		name string
-
-		request daoai.ExpandLoglineRequest
-	}{
-		{
-			name: "Success",
-
-			request: daoai.ExpandLoglineRequest{
-				Logline: `The Aurora Initiative
-
-As a team of scientists discover a way to harness the energy of a nearby supernova, they must also contend with the 
-implications of altering the course of human history and the emergence of a new, technologically advanced world order.`,
-				Lang: models.LangEN,
-			},
-		},
-	}
+	const errorMsg = "The greater AI decreted that this logline:\n\n%s\n\nDoes not expand this one:\n\n%s"
 
 	repository := daoai.NewExpandLoglineRepository()
 
-	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
+	for _, lang := range []models.Lang{models.LangEN, models.LangFR} {
+		t.Run(lang.String(), func(t *testing.T) {
 			t.Parallel()
 
-			ctx := lib.NewOpenaiContext(t.Context())
+			data := testdata.ExpandLoglinePrompts[lang]
 
-			resp, err := repository.ExpandLogline(ctx, testCase.request)
-			require.NoError(t, err)
+			for name, testCase := range data.Cases {
+				t.Run(name, func(t *testing.T) {
+					t.Parallel()
 
-			require.NotNil(t, resp)
+					ctx := lib.NewOpenaiContext(t.Context())
 
-			require.NotEmpty(t, resp.Name)
-			require.NotEmpty(t, resp.Content)
+					resp, err := repository.ExpandLogline(ctx, daoai.ExpandLoglineRequest{
+						Logline: testCase.Logline,
+						Lang:    lang,
+						UserID:  TestUser,
+					})
+					require.NoError(t, err)
 
-			CheckAgent(
-				t,
-				fmt.Sprintf(
-					"Does this logline:\n\n%s\n\nExpands this one while retaining its original themes:\n\n%s",
-					resp.Content, testCase.request.Logline,
-				),
-				fmt.Sprintf(
-					"The greater AI decreted that this logline:\n\n%s\n\nDoes not expand this one:\n\n%s",
-					resp.Content, testCase.request.Logline,
-				),
-			)
+					require.NotNil(t, resp)
+
+					require.NotEmpty(t, resp.Name)
+					require.NotEmpty(t, resp.Content)
+
+					CheckAgent(
+						t, lang,
+						fmt.Sprintf(data.CheckAgent, resp.Content, testCase.Logline),
+						fmt.Sprintf(errorMsg, resp.Content, testCase.Logline),
+					)
+				})
+			}
 		})
 	}
 }

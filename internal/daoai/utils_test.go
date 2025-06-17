@@ -1,9 +1,11 @@
 package daoai_test
 
 import (
+	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -16,7 +18,11 @@ import (
 
 const TestUser = "agora-story-schematics-test"
 
-func CheckAgent(t *testing.T, prompt, message string) {
+// Remove punctuation and other extra characters from the check agent response.
+var checkAgentFormatter = regexp.MustCompile("[^a-zA-Z0-9 ]")
+
+// CheckAgent validates the response of an OpenAI agent to a given prompt.
+func CheckAgent(t *testing.T, lang models.Lang, prompt, message string) {
 	t.Helper()
 
 	ctx := lib.NewOpenaiContext(t.Context())
@@ -25,13 +31,19 @@ func CheckAgent(t *testing.T, prompt, message string) {
 		Temperature: param.NewOpt(0.2),
 		User:        param.NewOpt(TestUser),
 		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage("You are a tester. Just answer \"YES\" or \"NO\", nothing else, no dot."),
+			openai.SystemMessage(testdata.UtilsPrompts[lang].CheckAgent.System),
 			openai.UserMessage(prompt),
 		},
 	})
 
 	require.NoError(t, err)
-	require.Equal(t, "YES", chatCompletion.Choices[0].Message.Content, message)
+
+	// Prevent flakiness issues because LLMS just dont give a fuck.
+	formattedResponse := chatCompletion.Choices[0].Message.Content
+	formattedResponse = strings.TrimSpace(formattedResponse)
+	formattedResponse = strings.ToUpper(formattedResponse)
+	formattedResponse = checkAgentFormatter.ReplaceAllString(formattedResponse, "")
+	require.Equal(t, testdata.UtilsPrompts[lang].CheckAgent.Expect, formattedResponse, message)
 }
 
 func TestStoryPlanToPrompt(t *testing.T) {
