@@ -6,7 +6,7 @@ require (
 	github.com/a-novel-kit/configurator v1.4.2
 	github.com/a-novel-kit/middlewares/sentry v1.3.0
 	github.com/a-novel-kit/middlewares/zerolog v1.3.0
-	github.com/a-novel/service-authentication v0.3.1
+	github.com/a-novel/service-authentication v0.3.2
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-chi/cors v1.2.1
 	github.com/go-faster/errors v0.7.1
@@ -18,16 +18,15 @@ require (
 	github.com/rs/zerolog v1.34.0
 	github.com/samber/lo v1.51.0
 	github.com/stretchr/testify v1.10.0
-	github.com/uptrace/bun v1.2.13
-	github.com/uptrace/bun/dialect/pgdialect v1.2.13
-	github.com/uptrace/bun/driver/pgdriver v1.2.13
+	github.com/uptrace/bun v1.2.14
+	github.com/uptrace/bun/dialect/pgdialect v1.2.14
+	github.com/uptrace/bun/driver/pgdriver v1.2.14
 	go.opentelemetry.io/otel v1.36.0
 	go.opentelemetry.io/otel/metric v1.36.0
 	go.opentelemetry.io/otel/trace v1.36.0
 )
 
 require (
-	github.com/a-novel-kit/context/pgbun v1.4.1 // indirect
 	github.com/a-novel-kit/jwt v1.1.3 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
