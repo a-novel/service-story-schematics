@@ -32,7 +32,6 @@ Want to contribute? Check the [contribution guidelines](CONTRIBUTING.md).
 - [Python](https://www.python.org/downloads/)
   - Install [pipx](https://pipx.pypa.io/stable/installation/) to install command-line tools.
 - [Podman](https://podman.io/docs/installation)
-
   - Install [podman-compose](https://github.com/containers/podman-compose)
 
     ```bash
