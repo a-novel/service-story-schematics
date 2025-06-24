@@ -14,7 +14,7 @@ require (
 	github.com/goccy/go-yaml v1.18.0
 	github.com/google/uuid v1.6.0
 	github.com/ogen-go/ogen v1.14.0
-	github.com/openai/openai-go v1.6.0
+	github.com/openai/openai-go v1.7.0
 	github.com/rs/zerolog v1.34.0
 	github.com/samber/lo v1.51.0
 	github.com/stretchr/testify v1.10.0
