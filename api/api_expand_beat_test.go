@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 
 	"github.com/google/uuid"
@@ -133,7 +134,7 @@ func TestExpandBeat(t *testing.T) {
 
 			if testCase.expandBeatData != nil {
 				source.EXPECT().
-					ExpandBeat(ctx, services.ExpandBeatRequest{
+					ExpandBeat(mock.Anything, services.ExpandBeatRequest{
 						BeatsSheetID: uuid.UUID(testCase.form.GetBeatsSheetID()),
 						TargetKey:    testCase.form.GetTargetKey(),
 						UserID:       uuid.MustParse("00000000-1000-0000-0000-000000000001"),

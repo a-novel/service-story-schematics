@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -102,7 +103,7 @@ func TestCreateLogline(t *testing.T) {
 
 			if testCase.createLoglineData != nil {
 				source.EXPECT().
-					CreateLogline(ctx, services.CreateLoglineRequest{
+					CreateLogline(mock.Anything, services.CreateLoglineRequest{
 						UserID:  uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 						Slug:    models.Slug(testCase.form.GetSlug()),
 						Name:    testCase.form.GetName(),

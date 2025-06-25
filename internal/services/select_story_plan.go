@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -34,9 +35,17 @@ type SelectStoryPlanService struct {
 func (service *SelectStoryPlanService) SelectStoryPlan(
 	ctx context.Context, request SelectStoryPlanRequest,
 ) (*models.StoryPlan, error) {
+	span := sentry.StartSpan(ctx, "SelectStoryPlanService.SelectStoryPlan")
+	defer span.Finish()
+
+	span.SetData("request.slug", request.Slug)
+	span.SetData("request.id", request.ID)
+
 	if request.Slug != nil {
-		data, err := service.source.SelectStoryPlanBySlug(ctx, lo.FromPtr(request.Slug))
+		data, err := service.source.SelectStoryPlanBySlug(span.Context(), lo.FromPtr(request.Slug))
 		if err != nil {
+			span.SetData("dao.selectStoryPlanBySlug.err", err.Error())
+
 			return nil, NewErrSelectStoryPlanService(err)
 		}
 
@@ -51,8 +60,10 @@ func (service *SelectStoryPlanService) SelectStoryPlan(
 		}, nil
 	}
 
-	data, err := service.source.SelectStoryPlan(ctx, lo.FromPtr(request.ID))
+	data, err := service.source.SelectStoryPlan(span.Context(), lo.FromPtr(request.ID))
 	if err != nil {
+		span.SetData("dao.selectStoryPlan.err", err.Error())
+
 		return nil, NewErrSelectStoryPlanService(err)
 	}
 

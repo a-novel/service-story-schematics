@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -318,13 +319,13 @@ func TestExpandBeat(t *testing.T) {
 
 			if testCase.selectBeatsSheetData != nil {
 				source.EXPECT().
-					SelectBeatsSheet(ctx, testCase.request.BeatsSheetID).
+					SelectBeatsSheet(mock.Anything, testCase.request.BeatsSheetID).
 					Return(testCase.selectBeatsSheetData.resp, testCase.selectBeatsSheetData.err)
 			}
 
 			if testCase.selectLoglineData != nil {
 				source.EXPECT().
-					SelectLogline(ctx, dao.SelectLoglineData{
+					SelectLogline(mock.Anything, dao.SelectLoglineData{
 						ID:     testCase.selectBeatsSheetData.resp.LoglineID,
 						UserID: testCase.request.UserID,
 					}).
@@ -333,13 +334,13 @@ func TestExpandBeat(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(ctx, testCase.selectBeatsSheetData.resp.StoryPlanID).
+					SelectStoryPlan(mock.Anything, testCase.selectBeatsSheetData.resp.StoryPlanID).
 					Return(testCase.selectStoryPlanData.resp, testCase.selectStoryPlanData.err)
 			}
 
 			if testCase.expandBeatData != nil {
 				source.EXPECT().
-					ExpandBeat(ctx, daoai.ExpandBeatRequest{
+					ExpandBeat(mock.Anything, daoai.ExpandBeatRequest{
 						Logline: testCase.selectLoglineData.resp.Name + "\n\n" + testCase.selectLoglineData.resp.Content,
 						Beats:   testCase.selectBeatsSheetData.resp.Content,
 						Plan: models.StoryPlan{

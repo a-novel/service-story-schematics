@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/samber/lo"
 
@@ -20,18 +21,31 @@ type GenerateLoglinesService interface {
 func (api *API) GenerateLoglines(
 	ctx context.Context, req *codegen.GenerateLoglinesForm,
 ) (codegen.GenerateLoglinesRes, error) {
+	span := sentry.StartSpan(ctx, "API.GenerateLoglines")
+	defer span.Finish()
+
+	span.SetData("request.count", req.GetCount())
+	span.SetData("request.theme", req.GetTheme())
+	span.SetData("request.lang", req.GetLang())
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	loglines, err := api.GenerateLoglinesService.GenerateLoglines(ctx, services.GenerateLoglinesRequest{
+	span.SetData("request.userID", userID)
+
+	loglines, err := api.GenerateLoglinesService.GenerateLoglines(span.Context(), services.GenerateLoglinesRequest{
 		Count:  req.GetCount(),
 		Theme:  req.GetTheme(),
 		UserID: userID,
 		Lang:   models.Lang(req.GetLang()),
 	})
 	if err != nil {
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("generate loglines: %w", err)
 	}
 

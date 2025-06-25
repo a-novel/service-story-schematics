@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -19,15 +20,25 @@ type SelectStoryPlanService interface {
 }
 
 func (api *API) GetStoryPlan(ctx context.Context, params codegen.GetStoryPlanParams) (codegen.GetStoryPlanRes, error) {
-	storyPlan, err := api.SelectStoryPlanService.SelectStoryPlan(ctx, services.SelectStoryPlanRequest{
+	span := sentry.StartSpan(ctx, "API.GetStoryPlan")
+	defer span.Finish()
+
+	span.SetData("request.slug", params.Slug)
+	span.SetData("request.id", params.ID)
+
+	storyPlan, err := api.SelectStoryPlanService.SelectStoryPlan(span.Context(), services.SelectStoryPlanRequest{
 		Slug: lo.Ternary(params.Slug.IsSet(), lo.ToPtr(models.Slug(params.Slug.Value)), nil),
 		ID:   lo.Ternary(params.ID.IsSet(), lo.ToPtr(uuid.UUID(params.ID.Value)), nil),
 	})
 
 	switch {
 	case errors.Is(err, dao.ErrStoryPlanNotFound):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("get story plan: %w", err)
 	}
 

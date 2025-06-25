@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -23,12 +24,22 @@ type RegenerateBeatsService interface {
 func (api *API) RegenerateBeats(
 	ctx context.Context, req *codegen.RegenerateBeatsForm,
 ) (codegen.RegenerateBeatsRes, error) {
+	span := sentry.StartSpan(ctx, "API.RegenerateBeats")
+	defer span.Finish()
+
+	span.SetData("request.beatsSheetID", req.GetBeatsSheetID())
+	span.SetData("request.regenerateKeys", req.GetRegenerateKeys())
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	beats, err := api.RegenerateBeatsService.RegenerateBeats(ctx, services.RegenerateBeatsRequest{
+	span.SetData("request.userID", userID)
+
+	beats, err := api.RegenerateBeatsService.RegenerateBeats(span.Context(), services.RegenerateBeatsRequest{
 		BeatsSheetID:   uuid.UUID(req.GetBeatsSheetID()),
 		UserID:         userID,
 		RegenerateKeys: req.GetRegenerateKeys(),
@@ -38,8 +49,12 @@ func (api *API) RegenerateBeats(
 	case errors.Is(err, dao.ErrBeatsSheetNotFound),
 		errors.Is(err, dao.ErrLoglineNotFound),
 		errors.Is(err, dao.ErrStoryPlanNotFound):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("regenerate beats: %w", err)
 	}
 

@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/samber/lo"
 
@@ -18,11 +19,19 @@ type ListStoryPlansService interface {
 func (api *API) GetStoryPlans(
 	ctx context.Context, params codegen.GetStoryPlansParams,
 ) (codegen.GetStoryPlansRes, error) {
-	storyPlans, err := api.ListStoryPlansService.ListStoryPlans(ctx, services.ListStoryPlansRequest{
+	span := sentry.StartSpan(ctx, "API.GetStoryPlans")
+	defer span.Finish()
+
+	span.SetData("request.limit", params.Limit)
+	span.SetData("request.offset", params.Offset)
+
+	storyPlans, err := api.ListStoryPlansService.ListStoryPlans(span.Context(), services.ListStoryPlansRequest{
 		Limit:  params.Limit.Value,
 		Offset: params.Offset.Value,
 	})
 	if err != nil {
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("list story plans: %w", err)
 	}
 
@@ -36,8 +45,10 @@ func (api *API) GetStoryPlans(
 				Lang:        codegen.Lang(item.Lang),
 				CreatedAt:   item.CreatedAt,
 			}
-		},
-		))
+		}),
+	)
+
+	span.SetData("storyPlans.count", len(storyPlans))
 
 	return &res, nil
 }

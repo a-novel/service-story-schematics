@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 
@@ -38,20 +39,32 @@ type GenerateBeatsSheetService struct {
 func (service *GenerateBeatsSheetService) GenerateBeatsSheet(
 	ctx context.Context, request GenerateBeatsSheetRequest,
 ) ([]models.Beat, error) {
-	logline, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
+	span := sentry.StartSpan(ctx, "GenerateBeatsSheetService.GenerateBeatsSheet")
+	defer span.Finish()
+
+	span.SetData("request.loglineID", request.LoglineID)
+	span.SetData("request.storyPlanID", request.StoryPlanID)
+	span.SetData("request.lang", request.Lang)
+	span.SetData("request.userID", request.UserID)
+
+	logline, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
 		ID:     request.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
+		span.SetData("dao.selectLogline.err", err.Error())
+
 		return nil, NewErrGenerateBeatsSheetService(fmt.Errorf("get logline: %w", err))
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(ctx, request.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(span.Context(), request.StoryPlanID)
 	if err != nil {
+		span.SetData("dao.selectStoryPlan.err", err.Error())
+
 		return nil, NewErrGenerateBeatsSheetService(fmt.Errorf("get story plan: %w", err))
 	}
 
-	resp, err := service.source.GenerateBeatsSheet(ctx, daoai.GenerateBeatsSheetRequest{
+	resp, err := service.source.GenerateBeatsSheet(span.Context(), daoai.GenerateBeatsSheetRequest{
 		Logline: logline.Name + "\n\n" + logline.Content,
 		Plan: models.StoryPlan{
 			ID:          storyPlan.ID,
@@ -66,6 +79,8 @@ func (service *GenerateBeatsSheetService) GenerateBeatsSheet(
 		UserID: request.UserID.String(),
 	})
 	if err != nil {
+		span.SetData("daoai.generateBeatsSheet.err", err.Error())
+
 		return nil, NewErrGenerateBeatsSheetService(err)
 	}
 

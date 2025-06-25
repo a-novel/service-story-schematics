@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -143,7 +144,7 @@ func TestSelectBeatsSheet(t *testing.T) {
 
 			if testCase.selectBeatsSheetData != nil {
 				source.EXPECT().
-					SelectBeatsSheet(ctx, services.SelectBeatsSheetRequest{
+					SelectBeatsSheet(mock.Anything, services.SelectBeatsSheetRequest{
 						BeatsSheetID: uuid.UUID(testCase.params.BeatsSheetID),
 						UserID:       uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 					}).

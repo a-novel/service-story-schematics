@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/getsentry/sentry-go"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
 	"strings"
@@ -122,8 +123,19 @@ func (repository *RegenerateBeatsRepository) mergeSourceAndNewBeats(
 func (repository *RegenerateBeatsRepository) RegenerateBeats(
 	ctx context.Context, request RegenerateBeatsRequest,
 ) ([]models.Beat, error) {
+	span := sentry.StartSpan(ctx, "RegenerateBeatsRepository.RegenerateBeats")
+	defer span.Finish()
+
+	span.SetData("request.logline", request.Logline)
+	span.SetData("request.userID", request.UserID)
+	span.SetData("request.storyPlan.id", request.Plan.ID.String())
+	span.SetData("request.regenerateKeys", request.RegenerateKeys)
+	span.SetData("request.lang", request.Lang.String())
+
 	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
 	if err != nil {
+		span.SetData("storyPlan.toPrompt.error", err.Error())
+
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
@@ -134,6 +146,8 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		"Plan":      request.Plan,
 	})
 	if err != nil {
+		span.SetData("systemPrompt.error", err.Error())
+
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse system message: %w", err))
 	}
 
@@ -143,6 +157,8 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		"Logline": request.Logline,
 	})
 	if err != nil {
+		span.SetData("userPrompt1.error", err.Error())
+
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse user message: %w", err))
 	}
 
@@ -152,31 +168,37 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		"Beats": request.RegenerateKeys,
 	})
 	if err != nil {
+		span.SetData("userPrompt2.error", err.Error())
+
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse user message: %w", err))
 	}
 
-	chatCompletion, err := lib.OpenAIClient(ctx).Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Model:       config.Groq.Model,
-		Temperature: param.NewOpt(regenerateBeatsTemperature),
-		User:        param.NewOpt(request.UserID),
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(systemPrompt.String()),
-			openai.UserMessage(userPrompt1.String()),
-			openai.AssistantMessage(repository.extrudedBeatsSheet(request)),
-			openai.UserMessage(userPrompt2.String()),
-		},
-		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
-			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
-				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
-					Name:        "beats",
-					Description: openai.String(RegenerateBeatsDescriptions[request.Lang]),
-					Schema:      RegenerateBeatsSchemas[request.Lang],
-					Strict:      openai.Bool(true),
+	chatCompletion, err := lib.OpenAIClient(span.Context()).
+		Chat.Completions.
+		New(span.Context(), openai.ChatCompletionNewParams{
+			Model:       config.Groq.Model,
+			Temperature: param.NewOpt(regenerateBeatsTemperature),
+			User:        param.NewOpt(request.UserID),
+			Messages: []openai.ChatCompletionMessageParamUnion{
+				openai.SystemMessage(systemPrompt.String()),
+				openai.UserMessage(userPrompt1.String()),
+				openai.AssistantMessage(repository.extrudedBeatsSheet(request)),
+				openai.UserMessage(userPrompt2.String()),
+			},
+			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
+						Name:        "beats",
+						Description: openai.String(RegenerateBeatsDescriptions[request.Lang]),
+						Schema:      RegenerateBeatsSchemas[request.Lang],
+						Strict:      openai.Bool(true),
+					},
 				},
 			},
-		},
-	})
+		})
 	if err != nil {
+		span.SetData("chatCompletion.error", err.Error())
+
 		return nil, NewErrRegenerateBeatsRepository(err)
 	}
 
@@ -185,10 +207,14 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 	}
 
 	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats); err != nil {
+		span.SetData("unmarshal.error", err.Error())
+
 		return nil, NewErrRegenerateBeatsRepository(err)
 	}
 
 	if err = lib.CheckStoryPlan(beats.Beats, repository.buildExpectedStoryPlan(request)); err != nil {
+		span.SetData("checkStoryPlan.error", err.Error())
+
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("check story plan: %w", err))
 	}
 

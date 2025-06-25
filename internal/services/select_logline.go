@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -35,12 +36,21 @@ type SelectLoglineService struct {
 func (service *SelectLoglineService) SelectLogline(
 	ctx context.Context, request SelectLoglineRequest,
 ) (*models.Logline, error) {
+	span := sentry.StartSpan(ctx, "SelectLoglineService.SelectLogline")
+	defer span.Finish()
+
+	span.SetData("request.userID", request.UserID)
+	span.SetData("request.slug", request.Slug)
+	span.SetData("request.id", request.ID)
+
 	if request.Slug != nil {
-		data, err := service.source.SelectLoglineBySlug(ctx, dao.SelectLoglineBySlugData{
+		data, err := service.source.SelectLoglineBySlug(span.Context(), dao.SelectLoglineBySlugData{
 			Slug:   lo.FromPtr(request.Slug),
 			UserID: request.UserID,
 		})
 		if err != nil {
+			span.SetData("dao.selectLoglineBySlug.err", err.Error())
+
 			return nil, NewErrSelectLoglineService(err)
 		}
 
@@ -55,11 +65,13 @@ func (service *SelectLoglineService) SelectLogline(
 		}, nil
 	}
 
-	data, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
+	data, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
 		ID:     lo.FromPtr(request.ID),
 		UserID: request.UserID,
 	})
 	if err != nil {
+		span.SetData("dao.selectLogline.err", err.Error())
+
 		return nil, NewErrSelectLoglineService(err)
 	}
 

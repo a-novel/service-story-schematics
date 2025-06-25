@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/samber/lo"
 
@@ -20,7 +21,14 @@ type UpdateStoryPlanService interface {
 func (api *API) UpdateStoryPlan(
 	ctx context.Context, req *codegen.UpdateStoryPlanForm,
 ) (codegen.UpdateStoryPlanRes, error) {
-	storyPlan, err := api.UpdateStoryPlanService.UpdateStoryPlan(ctx, services.UpdateStoryPlanRequest{
+	span := sentry.StartSpan(ctx, "API.UpdateStoryPlan")
+	defer span.Finish()
+
+	span.SetData("request.slug", req.GetSlug())
+	span.SetData("request.name", req.GetName())
+	span.SetData("request.lang", req.GetLang())
+
+	storyPlan, err := api.UpdateStoryPlanService.UpdateStoryPlan(span.Context(), services.UpdateStoryPlanRequest{
 		Slug:        models.Slug(req.GetSlug()),
 		Name:        req.GetName(),
 		Description: req.GetDescription(),
@@ -39,8 +47,12 @@ func (api *API) UpdateStoryPlan(
 
 	switch {
 	case errors.Is(err, dao.ErrStoryPlanNotFound):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("update story plan: %w", err)
 	}
 

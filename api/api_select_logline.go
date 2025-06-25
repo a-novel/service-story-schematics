@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -21,12 +22,22 @@ type SelectLoglineService interface {
 }
 
 func (api *API) GetLogline(ctx context.Context, params codegen.GetLoglineParams) (codegen.GetLoglineRes, error) {
+	span := sentry.StartSpan(ctx, "API.GetLogline")
+	defer span.Finish()
+
+	span.SetData("request.slug", params.Slug)
+	span.SetData("request.id", params.ID)
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	logline, err := api.SelectLoglineService.SelectLogline(ctx, services.SelectLoglineRequest{
+	span.SetData("request.userID", userID)
+
+	logline, err := api.SelectLoglineService.SelectLogline(span.Context(), services.SelectLoglineRequest{
 		UserID: userID,
 		Slug:   lo.Ternary(params.Slug.IsSet(), lo.ToPtr(models.Slug(params.Slug.Value)), nil),
 		ID:     lo.Ternary(params.ID.IsSet(), lo.ToPtr(uuid.UUID(params.ID.Value)), nil),
@@ -34,8 +45,12 @@ func (api *API) GetLogline(ctx context.Context, params codegen.GetLoglineParams)
 
 	switch {
 	case errors.Is(err, dao.ErrLoglineNotFound):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("get logline: %w", err)
 	}
 

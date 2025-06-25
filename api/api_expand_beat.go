@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 
@@ -21,12 +22,22 @@ type ExpandBeatService interface {
 }
 
 func (api *API) ExpandBeat(ctx context.Context, req *codegen.ExpandBeatForm) (codegen.ExpandBeatRes, error) {
+	span := sentry.StartSpan(ctx, "API.ExpandBeat")
+	defer span.Finish()
+
+	span.SetData("request.beatsSheetID", req.GetBeatsSheetID())
+	span.SetData("request.targetKey", req.GetTargetKey())
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	beat, err := api.ExpandBeatService.ExpandBeat(ctx, services.ExpandBeatRequest{
+	span.SetData("request.userID", userID)
+
+	beat, err := api.ExpandBeatService.ExpandBeat(span.Context(), services.ExpandBeatRequest{
 		BeatsSheetID: uuid.UUID(req.GetBeatsSheetID()),
 		TargetKey:    req.GetTargetKey(),
 		UserID:       userID,
@@ -34,10 +45,16 @@ func (api *API) ExpandBeat(ctx context.Context, req *codegen.ExpandBeatForm) (co
 
 	switch {
 	case errors.Is(err, dao.ErrBeatsSheetNotFound), errors.Is(err, dao.ErrStoryPlanNotFound):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.NotFoundError{Error: err.Error()}, nil
 	case errors.Is(err, daoai.ErrUnknownTargetKey):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.UnprocessableEntityError{Error: err.Error()}, nil
 	case err != nil:
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("expand beat: %w", err)
 	}
 

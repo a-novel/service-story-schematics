@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 )
@@ -21,15 +22,24 @@ type SelectBeatsSheetRepository struct{}
 func (repository *SelectBeatsSheetRepository) SelectBeatsSheet(
 	ctx context.Context, data uuid.UUID,
 ) (*BeatsSheetEntity, error) {
-	tx, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "SelectBeatsSheetRepository.SelectBeatsSheet")
+	defer span.Finish()
+
+	span.SetData("sheet.id", data.String())
+
+	tx, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return nil, NewErrSelectBeatsSheetRepository(fmt.Errorf("get postgres client: %w", err))
 	}
 
 	entity := &BeatsSheetEntity{}
 
-	err = tx.NewSelect().Model(entity).Where("id = ?", data).Scan(ctx)
+	err = tx.NewSelect().Model(entity).Where("id = ?", data).Scan(span.Context())
 	if err != nil {
+		span.SetData("scan.error", err.Error())
+
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, NewErrSelectBeatsSheetRepository(ErrBeatsSheetNotFound)
 		}

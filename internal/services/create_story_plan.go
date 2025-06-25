@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 	"time"
 
 	"github.com/google/uuid"
@@ -37,6 +38,13 @@ type CreateStoryPlanService struct {
 func (service *CreateStoryPlanService) CreateStoryPlan(
 	ctx context.Context, request CreateStoryPlanRequest,
 ) (*models.StoryPlan, error) {
+	span := sentry.StartSpan(ctx, "CreateStoryPlanService.CreateStoryPlan")
+	defer span.Finish()
+
+	span.SetData("request.slug", request.Slug)
+	span.SetData("request.name", request.Name)
+	span.SetData("request.lang", request.Lang)
+
 	data := dao.InsertStoryPlanData{
 		Plan: models.StoryPlan{
 			ID:          uuid.New(),
@@ -49,25 +57,33 @@ func (service *CreateStoryPlanService) CreateStoryPlan(
 		},
 	}
 
-	resp, err := service.source.InsertStoryPlan(ctx, data)
+	resp, err := service.source.InsertStoryPlan(span.Context(), data)
 
 	// If slug is taken, try to modify it by appending a version number.
 	if errors.Is(err, dao.ErrStoryPlanAlreadyExists) {
-		data.Plan.Slug, _, err = service.source.SelectSlugIteration(ctx, dao.SelectSlugIterationData{
+		span.SetData("dao.insertStoryPlan.slug.taken", err.Error())
+
+		data.Plan.Slug, _, err = service.source.SelectSlugIteration(span.Context(), dao.SelectSlugIterationData{
 			Slug:  data.Plan.Slug,
 			Table: "story_plans",
 			Order: []string{"created_at DESC"},
 		})
 		if err != nil {
+			span.SetData("dao.selectSlugIteration.err", err.Error())
+
 			return nil, NewErrCreateStoryPlanService(err)
 		}
 
-		resp, err = service.source.InsertStoryPlan(ctx, data)
+		resp, err = service.source.InsertStoryPlan(span.Context(), data)
 	}
 
 	if err != nil {
+		span.SetData("dao.insertStoryPlan.err", err.Error())
+
 		return nil, NewErrCreateStoryPlanService(err)
 	}
+
+	span.SetData("dao.insertStoryPlan.id", resp.ID)
 
 	return &models.StoryPlan{
 		ID:          resp.ID,

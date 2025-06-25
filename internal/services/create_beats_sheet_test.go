@@ -357,7 +357,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 
 			if testCase.selectLoglineData != nil {
 				source.EXPECT().
-					SelectLogline(ctx, dao.SelectLoglineData{
+					SelectLogline(mock.Anything, dao.SelectLoglineData{
 						ID:     testCase.request.LoglineID,
 						UserID: testCase.request.UserID,
 					}).
@@ -366,13 +366,13 @@ func TestCreateBeatsSheet(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(ctx, testCase.request.StoryPlanID).
+					SelectStoryPlan(mock.Anything, testCase.request.StoryPlanID).
 					Return(testCase.selectStoryPlanData.resp, testCase.selectStoryPlanData.err)
 			}
 
 			if testCase.insertBeatsSheetData != nil {
 				source.EXPECT().
-					InsertBeatsSheet(ctx, mock.MatchedBy(func(data dao.InsertBeatsSheetData) bool {
+					InsertBeatsSheet(mock.Anything, mock.MatchedBy(func(data dao.InsertBeatsSheetData) bool {
 						return assert.NotEqual(t, data.Sheet.ID, uuid.Nil) &&
 							assert.Equal(t, testCase.request.LoglineID, data.Sheet.LoglineID) &&
 							assert.Equal(t, testCase.request.StoryPlanID, data.Sheet.StoryPlanID) &&

@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 	"time"
 
 	"github.com/google/uuid"
@@ -37,6 +38,14 @@ type CreateLoglineService struct {
 func (service *CreateLoglineService) CreateLogline(
 	ctx context.Context, request CreateLoglineRequest,
 ) (*models.Logline, error) {
+	span := sentry.StartSpan(ctx, "CreateLoglineService.CreateLogline")
+	defer span.Finish()
+
+	span.SetData("request.userID", request.UserID)
+	span.SetData("request.slug", request.Slug)
+	span.SetData("request.name", request.Name)
+	span.SetData("request.lang", request.Lang)
+
 	data := dao.InsertLoglineData{
 		ID:      uuid.New(),
 		UserID:  request.UserID,
@@ -47,11 +56,13 @@ func (service *CreateLoglineService) CreateLogline(
 		Now:     time.Now(),
 	}
 
-	resp, err := service.source.InsertLogline(ctx, data)
+	resp, err := service.source.InsertLogline(span.Context(), data)
 
 	// If slug is taken, try to modify it by appending a version number.
 	if errors.Is(err, dao.ErrLoglineAlreadyExists) {
-		data.Slug, _, err = service.source.SelectSlugIteration(ctx, dao.SelectSlugIterationData{
+		span.SetData("dao.insertLogline.slug.taken", err.Error())
+
+		data.Slug, _, err = service.source.SelectSlugIteration(span.Context(), dao.SelectSlugIterationData{
 			Slug:  data.Slug,
 			Table: "loglines",
 			Filter: map[string][]any{
@@ -60,15 +71,21 @@ func (service *CreateLoglineService) CreateLogline(
 			Order: []string{"created_at DESC"},
 		})
 		if err != nil {
+			span.SetData("dao.selectSlugIteration.err", err.Error())
+
 			return nil, NewErrCreateLoglineService(err)
 		}
 
-		resp, err = service.source.InsertLogline(ctx, data)
+		resp, err = service.source.InsertLogline(span.Context(), data)
 	}
 
 	if err != nil {
+		span.SetData("dao.insertLogline.err", err.Error())
+
 		return nil, NewErrCreateLoglineService(err)
 	}
+
+	span.SetData("dao.insertLogline.id", resp.ID)
 
 	return &models.Logline{
 		ID:        resp.ID,

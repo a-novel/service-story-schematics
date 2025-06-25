@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 
@@ -32,12 +33,21 @@ type ExpandLoglineService struct {
 func (service *ExpandLoglineService) ExpandLogline(
 	ctx context.Context, request ExpandLoglineRequest,
 ) (*models.LoglineIdea, error) {
-	resp, err := service.source.ExpandLogline(ctx, daoai.ExpandLoglineRequest{
+	span := sentry.StartSpan(ctx, "ExpandLoglineService.ExpandLogline")
+	defer span.Finish()
+
+	span.SetData("request.logline.name", request.Logline.Name)
+	span.SetData("request.logline.lang", request.Logline.Lang)
+	span.SetData("request.userID", request.UserID)
+
+	resp, err := service.source.ExpandLogline(span.Context(), daoai.ExpandLoglineRequest{
 		Logline: request.Logline.Name + "\n\n" + request.Logline.Content,
 		UserID:  request.UserID.String(),
 		Lang:    request.Logline.Lang,
 	})
 	if err != nil {
+		span.SetData("service.error", err.Error())
+
 		return nil, NewErrExpandLoglineService(err)
 	}
 

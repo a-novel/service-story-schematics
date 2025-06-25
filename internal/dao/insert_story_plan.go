@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -24,18 +25,32 @@ type InsertStoryPlanRepository struct{}
 func (repository *InsertStoryPlanRepository) InsertStoryPlan(
 	ctx context.Context, data InsertStoryPlanData,
 ) (*StoryPlanEntity, error) {
-	tx, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "InsertStoryPlanRepository.InsertStoryPlan")
+	defer span.Finish()
+
+	span.SetData("story_plan.id", data.Plan.ID.String())
+	span.SetData("story_plan.slug", data.Plan.Slug)
+	span.SetData("story_plan.name", data.Plan.Name)
+	span.SetData("story_plan.lang", data.Plan.Lang)
+
+	tx, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return nil, NewErrInsertStoryPlanRepository(fmt.Errorf("get postgres client: %w", err))
 	}
 
 	// Make sure the slug is unique.
-	exists, err := tx.NewSelect().Model(&StoryPlanEntity{}).Where("slug = ?", data.Plan.Slug).Exists(ctx)
+	exists, err := tx.NewSelect().Model(&StoryPlanEntity{}).Where("slug = ?", data.Plan.Slug).Exists(span.Context())
 	if err != nil {
+		span.SetData("check.slug.uniqueness.error", err.Error())
+
 		return nil, NewErrInsertStoryPlanRepository(fmt.Errorf("check slug uniqueness: %w", err))
 	}
 
 	if exists {
+		span.SetData("check.slug.uniqueness.exists", true)
+
 		return nil, NewErrInsertStoryPlanRepository(ErrStoryPlanAlreadyExists)
 	}
 
@@ -49,8 +64,10 @@ func (repository *InsertStoryPlanRepository) InsertStoryPlan(
 		CreatedAt:   data.Plan.CreatedAt,
 	}
 
-	_, err = tx.NewInsert().Model(entity).Returning("*").Exec(ctx)
+	_, err = tx.NewInsert().Model(entity).Returning("*").Exec(span.Context())
 	if err != nil {
+		span.SetData("insert.error", err.Error())
+
 		return nil, NewErrInsertStoryPlanRepository(fmt.Errorf("insert story plan: %w", err))
 	}
 

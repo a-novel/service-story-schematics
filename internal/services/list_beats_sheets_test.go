@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -146,7 +147,7 @@ func TestListBeatsSheets(t *testing.T) {
 
 			if testCase.listBeatsSheetsData != nil {
 				source.EXPECT().
-					ListBeatsSheets(ctx, dao.ListBeatsSheetsData{
+					ListBeatsSheets(mock.Anything, dao.ListBeatsSheetsData{
 						LoglineID: testCase.request.LoglineID,
 						Limit:     testCase.request.Limit,
 						Offset:    testCase.request.Offset,
@@ -156,7 +157,7 @@ func TestListBeatsSheets(t *testing.T) {
 
 			if testCase.selectLoglineData != nil {
 				source.EXPECT().
-					SelectLogline(ctx, dao.SelectLoglineData{
+					SelectLogline(mock.Anything, dao.SelectLoglineData{
 						ID:     testCase.request.LoglineID,
 						UserID: testCase.request.UserID,
 					}).

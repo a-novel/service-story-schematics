@@ -366,7 +366,7 @@ func TestCreateStoryPlan(t *testing.T) {
 
 			if testCase.insertStoryPlanData != nil {
 				initialCall := source.EXPECT().
-					InsertStoryPlan(ctx, mock.MatchedBy(func(data dao.InsertStoryPlanData) bool {
+					InsertStoryPlan(mock.Anything, mock.MatchedBy(func(data dao.InsertStoryPlanData) bool {
 						return assert.NotEqual(t, data.Plan.ID, uuid.Nil) &&
 							testCase.request.Slug == data.Plan.Slug &&
 							assert.Equal(t, testCase.request.Name, data.Plan.Name) &&
@@ -380,7 +380,7 @@ func TestCreateStoryPlan(t *testing.T) {
 
 				if testCase.reinsertStoryPlanData != nil {
 					source.EXPECT().
-						InsertStoryPlan(ctx, mock.MatchedBy(func(data dao.InsertStoryPlanData) bool {
+						InsertStoryPlan(mock.Anything, mock.MatchedBy(func(data dao.InsertStoryPlanData) bool {
 							return assert.NotEqual(t, data.Plan.ID, uuid.Nil) &&
 								testCase.selectSlugIterationData.slug == data.Plan.Slug &&
 								assert.Equal(t, testCase.request.Name, data.Plan.Name) &&
@@ -396,7 +396,7 @@ func TestCreateStoryPlan(t *testing.T) {
 
 			if testCase.selectSlugIterationData != nil {
 				source.EXPECT().
-					SelectSlugIteration(ctx, dao.SelectSlugIterationData{
+					SelectSlugIteration(mock.Anything, dao.SelectSlugIterationData{
 						Slug:  testCase.request.Slug,
 						Table: "story_plans",
 						Order: []string{"created_at DESC"},

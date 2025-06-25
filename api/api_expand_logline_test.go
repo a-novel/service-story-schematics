@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 
 	"github.com/google/uuid"
@@ -91,7 +92,7 @@ func TestExpandLogline(t *testing.T) {
 
 			if testCase.expandLoglineData != nil {
 				source.EXPECT().
-					ExpandLogline(ctx, services.ExpandLoglineRequest{
+					ExpandLogline(mock.Anything, services.ExpandLoglineRequest{
 						Logline: models.LoglineIdea{
 							Name:    testCase.form.GetName(),
 							Content: testCase.form.GetContent(),

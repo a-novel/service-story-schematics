@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 
@@ -37,26 +38,39 @@ type RegenerateBeatsService struct {
 func (service *RegenerateBeatsService) RegenerateBeats(
 	ctx context.Context, request RegenerateBeatsRequest,
 ) ([]models.Beat, error) {
-	beatsSheet, err := service.source.SelectBeatsSheet(ctx, request.BeatsSheetID)
+	span := sentry.StartSpan(ctx, "RegenerateBeatsService.RegenerateBeats")
+	defer span.Finish()
+
+	span.SetData("request.beatsSheetID", request.BeatsSheetID)
+	span.SetData("request.userID", request.UserID)
+	span.SetData("request.regenerateKeys", request.RegenerateKeys)
+
+	beatsSheet, err := service.source.SelectBeatsSheet(span.Context(), request.BeatsSheetID)
 	if err != nil {
+		span.SetData("dao.selectBeatsSheet.err", err.Error())
+
 		return nil, NewErrRegenerateBeatsService(err)
 	}
 
 	// Make sure the selected beats sheet is linked to a logline that belongs to the user.
-	logline, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
+	logline, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
 		ID:     beatsSheet.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
+		span.SetData("dao.selectLogline.err", err.Error())
+
 		return nil, NewErrRegenerateBeatsService(err)
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(ctx, beatsSheet.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(span.Context(), beatsSheet.StoryPlanID)
 	if err != nil {
+		span.SetData("dao.selectStoryPlan.err", err.Error())
+
 		return nil, NewErrRegenerateBeatsService(err)
 	}
 
-	regenerated, err := service.source.RegenerateBeats(ctx, daoai.RegenerateBeatsRequest{
+	regenerated, err := service.source.RegenerateBeats(span.Context(), daoai.RegenerateBeatsRequest{
 		Logline: logline.Name + "\n\n" + logline.Content,
 		Plan: models.StoryPlan{
 			ID:          storyPlan.ID,
@@ -73,6 +87,8 @@ func (service *RegenerateBeatsService) RegenerateBeats(
 		RegenerateKeys: request.RegenerateKeys,
 	})
 	if err != nil {
+		span.SetData("daoai.regenerateBeats.err", err.Error())
+
 		return nil, NewErrRegenerateBeatsService(err)
 	}
 

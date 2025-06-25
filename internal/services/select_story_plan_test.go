@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -196,13 +197,13 @@ func TestSelectStoryPlan(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(ctx, lo.FromPtr(testCase.request.ID)).
+					SelectStoryPlan(mock.Anything, lo.FromPtr(testCase.request.ID)).
 					Return(testCase.selectStoryPlanData.resp, testCase.selectStoryPlanData.err)
 			}
 
 			if testCase.selectStoryPlanBySlugData != nil {
 				source.EXPECT().
-					SelectStoryPlanBySlug(ctx, lo.FromPtr(testCase.request.Slug)).
+					SelectStoryPlanBySlug(mock.Anything, lo.FromPtr(testCase.request.Slug)).
 					Return(testCase.selectStoryPlanBySlugData.resp, testCase.selectStoryPlanBySlugData.err)
 			}
 

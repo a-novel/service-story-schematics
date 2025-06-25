@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	authapi "github.com/a-novel/service-authentication/api"
 
@@ -16,12 +17,23 @@ type CreateLoglineService interface {
 }
 
 func (api *API) CreateLogline(ctx context.Context, req *codegen.CreateLoglineForm) (codegen.CreateLoglineRes, error) {
+	span := sentry.StartSpan(ctx, "API.CreateLogline")
+	defer span.Finish()
+
+	span.SetData("request.slug", req.GetSlug())
+	span.SetData("request.name", req.GetName())
+	span.SetData("request.lang", req.GetLang())
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	logline, err := api.CreateLoglineService.CreateLogline(ctx, services.CreateLoglineRequest{
+	span.SetData("request.userID", userID)
+
+	logline, err := api.CreateLoglineService.CreateLogline(span.Context(), services.CreateLoglineRequest{
 		UserID:  userID,
 		Slug:    models.Slug(req.GetSlug()),
 		Name:    req.GetName(),
@@ -29,8 +41,12 @@ func (api *API) CreateLogline(ctx context.Context, req *codegen.CreateLoglineFor
 		Lang:    models.Lang(req.GetLang()),
 	})
 	if err != nil {
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("create logline: %w", err)
 	}
+
+	span.SetData("logline.id", logline.ID.String())
 
 	return &codegen.Logline{
 		ID:        codegen.LoglineID(logline.ID),

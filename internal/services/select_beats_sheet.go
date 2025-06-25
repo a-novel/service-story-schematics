@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 
@@ -33,17 +34,27 @@ type SelectBeatsSheetService struct {
 func (service *SelectBeatsSheetService) SelectBeatsSheet(
 	ctx context.Context, request SelectBeatsSheetRequest,
 ) (*models.BeatsSheet, error) {
-	data, err := service.source.SelectBeatsSheet(ctx, request.BeatsSheetID)
+	span := sentry.StartSpan(ctx, "SelectBeatsSheetService.SelectBeatsSheet")
+	defer span.Finish()
+
+	span.SetData("request.beatsSheetID", request.BeatsSheetID)
+	span.SetData("request.userID", request.UserID)
+
+	data, err := service.source.SelectBeatsSheet(span.Context(), request.BeatsSheetID)
 	if err != nil {
+		span.SetData("dao.selectBeatsSheet.err", err.Error())
+
 		return nil, NewErrSelectBeatsSheetService(err)
 	}
 
 	// Make sure the selected beats sheet is linked to a logline that belongs to the user.
-	_, err = service.source.SelectLogline(ctx, dao.SelectLoglineData{
+	_, err = service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
 		ID:     data.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
+		span.SetData("dao.selectLogline.err", err.Error())
+
 		return nil, NewErrSelectBeatsSheetService(err)
 	}
 

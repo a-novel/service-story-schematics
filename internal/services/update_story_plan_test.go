@@ -174,7 +174,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 
 			if testCase.updateStoryPlanData != nil {
 				source.EXPECT().
-					UpdateStoryPlan(ctx, mock.MatchedBy(func(data dao.UpdateStoryPlanData) bool {
+					UpdateStoryPlan(mock.Anything, mock.MatchedBy(func(data dao.UpdateStoryPlanData) bool {
 						return assert.NotEqual(t, data.Plan.ID, uuid.Nil) &&
 							assert.Equal(t, testCase.request.Slug, data.Plan.Slug) &&
 							assert.Equal(t, testCase.request.Name, data.Plan.Name) &&
