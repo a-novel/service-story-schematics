@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -23,20 +24,33 @@ type SelectBeatsSheetService interface {
 func (api *API) GetBeatsSheet(
 	ctx context.Context, params codegen.GetBeatsSheetParams,
 ) (codegen.GetBeatsSheetRes, error) {
+	span := sentry.StartSpan(ctx, "API.GetBeatsSheet")
+	defer span.Finish()
+
+	span.SetData("request.beatsSheetID", params.BeatsSheetID)
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	beatsSheet, err := api.SelectBeatsSheetService.SelectBeatsSheet(ctx, services.SelectBeatsSheetRequest{
+	span.SetData("request.userID", userID)
+
+	beatsSheet, err := api.SelectBeatsSheetService.SelectBeatsSheet(span.Context(), services.SelectBeatsSheetRequest{
 		BeatsSheetID: uuid.UUID(params.BeatsSheetID),
 		UserID:       userID,
 	})
 
 	switch {
 	case errors.Is(err, dao.ErrBeatsSheetNotFound), errors.Is(err, dao.ErrLoglineNotFound):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("get beats sheet: %w", err)
 	}
 

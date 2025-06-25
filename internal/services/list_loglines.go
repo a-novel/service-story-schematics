@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -34,14 +35,25 @@ type ListLoglinesService struct {
 func (service *ListLoglinesService) ListLoglines(
 	ctx context.Context, request ListLoglinesRequest,
 ) ([]*models.LoglinePreview, error) {
-	resp, err := service.source.ListLoglines(ctx, dao.ListLoglinesData{
+	span := sentry.StartSpan(ctx, "ListLoglinesService.ListLoglines")
+	defer span.Finish()
+
+	span.SetData("request.userID", request.UserID)
+	span.SetData("request.limit", request.Limit)
+	span.SetData("request.offset", request.Offset)
+
+	resp, err := service.source.ListLoglines(span.Context(), dao.ListLoglinesData{
 		UserID: request.UserID,
 		Limit:  request.Limit,
 		Offset: request.Offset,
 	})
 	if err != nil {
+		span.SetData("dao.listLoglines.err", err.Error())
+
 		return nil, NewErrListLoglinesService(err)
 	}
+
+	span.SetData("dao.listLoglines.count", len(resp))
 
 	return lo.Map(resp, func(item *dao.LoglinePreviewEntity, _ int) *models.LoglinePreview {
 		return &models.LoglinePreview{

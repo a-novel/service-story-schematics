@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -112,7 +113,7 @@ func TestListLoglines(t *testing.T) {
 
 			if testCase.listLoglinesData != nil {
 				source.EXPECT().
-					ListLoglines(ctx, services.ListLoglinesRequest{
+					ListLoglines(mock.Anything, services.ListLoglinesRequest{
 						UserID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 						Limit:  testCase.params.Limit.Value,
 						Offset: testCase.params.Offset.Value,

@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 
 	"github.com/google/uuid"
@@ -161,7 +162,7 @@ func TestRegenerateBeats(t *testing.T) {
 
 			if testCase.regenerateBeatsData != nil {
 				source.EXPECT().
-					RegenerateBeats(ctx, services.RegenerateBeatsRequest{
+					RegenerateBeats(mock.Anything, services.RegenerateBeatsRequest{
 						BeatsSheetID:   uuid.UUID(testCase.form.GetBeatsSheetID()),
 						UserID:         uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 						RegenerateKeys: testCase.form.GetRegenerateKeys(),

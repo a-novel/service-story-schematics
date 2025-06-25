@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/samber/lo"
 
@@ -18,17 +19,29 @@ type ListLoglinesService interface {
 }
 
 func (api *API) GetLoglines(ctx context.Context, params codegen.GetLoglinesParams) (codegen.GetLoglinesRes, error) {
+	span := sentry.StartSpan(ctx, "API.GetLoglines")
+	defer span.Finish()
+
+	span.SetData("request.limit", params.Limit)
+	span.SetData("request.offset", params.Offset)
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	loglines, err := api.ListLoglinesService.ListLoglines(ctx, services.ListLoglinesRequest{
+	span.SetData("request.userID", userID)
+
+	loglines, err := api.ListLoglinesService.ListLoglines(span.Context(), services.ListLoglinesRequest{
 		UserID: userID,
 		Limit:  params.Limit.Value,
 		Offset: params.Offset.Value,
 	})
 	if err != nil {
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("list loglines: %w", err)
 	}
 
@@ -43,6 +56,8 @@ func (api *API) GetLoglines(ctx context.Context, params codegen.GetLoglinesParam
 			}
 		}),
 	)
+
+	span.SetData("loglines.count", len(loglines))
 
 	return &res, nil
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 )
@@ -26,8 +27,17 @@ type ListLoglinesData struct {
 func (repository *ListLoglinesRepository) ListLoglines(
 	ctx context.Context, data ListLoglinesData,
 ) ([]*LoglinePreviewEntity, error) {
-	tx, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "ListLoglinesRepository.ListLoglines")
+	defer span.Finish()
+
+	span.SetData("user.id", data.UserID.String())
+	span.SetData("limit", data.Limit)
+	span.SetData("offset", data.Offset)
+
+	tx, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return nil, NewErrListLoglinesRepository(fmt.Errorf("get postgres client: %w", err))
 	}
 
@@ -39,8 +49,10 @@ func (repository *ListLoglinesRepository) ListLoglines(
 		Order("created_at DESC", "name DESC", "slug DESC").
 		Limit(data.Limit).
 		Offset(data.Offset).
-		Scan(ctx)
+		Scan(span.Context())
 	if err != nil {
+		span.SetData("scan.error", err.Error())
+
 		return nil, NewErrListLoglinesRepository(fmt.Errorf("list loglines: %w", err))
 	}
 

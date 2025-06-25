@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 
@@ -37,26 +38,39 @@ type ExpandBeatService struct {
 func (service *ExpandBeatService) ExpandBeat(
 	ctx context.Context, request ExpandBeatRequest,
 ) (*models.Beat, error) {
-	beatsSheet, err := service.source.SelectBeatsSheet(ctx, request.BeatsSheetID)
+	span := sentry.StartSpan(ctx, "ExpandBeatService.ExpandBeat")
+	defer span.Finish()
+
+	span.SetData("request.beatsSheetID", request.BeatsSheetID)
+	span.SetData("request.targetKey", request.TargetKey)
+	span.SetData("request.userID", request.UserID)
+
+	beatsSheet, err := service.source.SelectBeatsSheet(span.Context(), request.BeatsSheetID)
 	if err != nil {
+		span.SetData("dao.selectBeatsSheet.err", err.Error())
+
 		return nil, NewErrExpandBeatService(err)
 	}
 
 	// Make sure the selected beats sheet is linked to a logline that belongs to the user.
-	logline, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
+	logline, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
 		ID:     beatsSheet.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
+		span.SetData("dao.selectLogline.err", err.Error())
+
 		return nil, NewErrExpandBeatService(err)
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(ctx, beatsSheet.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(span.Context(), beatsSheet.StoryPlanID)
 	if err != nil {
+		span.SetData("dao.selectStoryPlan.err", err.Error())
+
 		return nil, NewErrExpandBeatService(err)
 	}
 
-	expanded, err := service.source.ExpandBeat(ctx, daoai.ExpandBeatRequest{
+	expanded, err := service.source.ExpandBeat(span.Context(), daoai.ExpandBeatRequest{
 		Logline: logline.Name + "\n\n" + logline.Content,
 		Beats:   beatsSheet.Content,
 		Plan: models.StoryPlan{
@@ -73,6 +87,8 @@ func (service *ExpandBeatService) ExpandBeat(
 		UserID:    request.UserID.String(),
 	})
 	if err != nil {
+		span.SetData("daoai.expandBeat.err", err.Error())
+
 		return nil, NewErrExpandBeatService(err)
 	}
 

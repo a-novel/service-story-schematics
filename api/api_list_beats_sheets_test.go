@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -106,7 +107,7 @@ func TestListBeatsSheets(t *testing.T) {
 
 			if testCase.listBeatsSheetsData != nil {
 				source.EXPECT().
-					ListBeatsSheets(ctx, services.ListBeatsSheetsRequest{
+					ListBeatsSheets(mock.Anything, services.ListBeatsSheetsRequest{
 						UserID:    uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 						LoglineID: uuid.UUID(testCase.params.LoglineID),
 						Limit:     testCase.params.Limit.Value,

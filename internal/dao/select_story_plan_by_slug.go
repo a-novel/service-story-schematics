@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -21,15 +22,24 @@ type SelectStoryPlanBySlugRepository struct{}
 func (repository *SelectStoryPlanBySlugRepository) SelectStoryPlanBySlug(
 	ctx context.Context, data models.Slug,
 ) (*StoryPlanEntity, error) {
-	db, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "SelectStoryPlanBySlugRepository.SelectStoryPlanBySlug")
+	defer span.Finish()
+
+	span.SetData("story_plan.slug", data)
+
+	db, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return nil, NewErrSelectStoryPlanBySlugRepository(fmt.Errorf("get postgres client: %w", err))
 	}
 
 	entity := &StoryPlanEntity{}
 
-	err = db.NewSelect().Model(entity).Where("slug = ?", data).Scan(ctx)
+	err = db.NewSelect().Model(entity).Where("slug = ?", data).Scan(span.Context())
 	if err != nil {
+		span.SetData("scan.error", err.Error())
+
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, NewErrSelectStoryPlanBySlugRepository(ErrStoryPlanNotFound)
 		}

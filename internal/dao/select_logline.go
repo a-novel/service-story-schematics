@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 )
@@ -26,8 +27,16 @@ type SelectLoglineData struct {
 func (repository *SelectLoglineRepository) SelectLogline(
 	ctx context.Context, data SelectLoglineData,
 ) (*LoglineEntity, error) {
-	tx, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "SelectLoglineRepository.SelectLogline")
+	defer span.Finish()
+
+	span.SetData("logline.id", data.ID.String())
+	span.SetData("logline.user_id", data.UserID.String())
+
+	tx, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return nil, NewErrSelectLoglineRepository(fmt.Errorf("get postgres client: %w", err))
 	}
 
@@ -37,8 +46,10 @@ func (repository *SelectLoglineRepository) SelectLogline(
 		Model(entity).
 		Where("id = ?", data.ID).
 		Where("user_id = ?", data.UserID).
-		Scan(ctx)
+		Scan(span.Context())
 	if err != nil {
+		span.SetData("scan.error", err.Error())
+
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, NewErrSelectLoglineRepository(ErrLoglineNotFound)
 		}

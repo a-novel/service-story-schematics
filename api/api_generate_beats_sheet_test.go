@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 
 	"github.com/google/uuid"
@@ -139,7 +140,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 
 			if testCase.generateBeatsSheetData != nil {
 				source.EXPECT().
-					GenerateBeatsSheet(ctx, services.GenerateBeatsSheetRequest{
+					GenerateBeatsSheet(mock.Anything, services.GenerateBeatsSheetRequest{
 						LoglineID:   uuid.UUID(testCase.form.GetLoglineID()),
 						StoryPlanID: uuid.UUID(testCase.form.GetStoryPlanID()),
 						UserID:      uuid.MustParse("00000000-1000-0000-0000-000000000001"),

@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -227,7 +228,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 
 			if testCase.generateBeatsSheetData != nil {
 				source.EXPECT().
-					GenerateBeatsSheet(ctx, daoai.GenerateBeatsSheetRequest{
+					GenerateBeatsSheet(mock.Anything, daoai.GenerateBeatsSheetRequest{
 						Logline: testCase.selectLoglineData.resp.Name + "\n\n" + testCase.selectLoglineData.resp.Content,
 						Plan: models.StoryPlan{
 							ID:          testCase.selectStoryPlanData.resp.ID,
@@ -246,7 +247,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 
 			if testCase.selectLoglineData != nil {
 				source.EXPECT().
-					SelectLogline(ctx, dao.SelectLoglineData{
+					SelectLogline(mock.Anything, dao.SelectLoglineData{
 						ID:     testCase.request.LoglineID,
 						UserID: testCase.request.UserID,
 					}).
@@ -255,7 +256,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(ctx, testCase.request.StoryPlanID).
+					SelectStoryPlan(mock.Anything, testCase.request.StoryPlanID).
 					Return(testCase.selectStoryPlanData.resp, testCase.selectStoryPlanData.err)
 			}
 

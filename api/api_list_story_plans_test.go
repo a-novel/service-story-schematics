@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -117,7 +118,7 @@ func TestListStoryPlans(t *testing.T) {
 
 			if testCase.listStoryPlansData != nil {
 				source.EXPECT().
-					ListStoryPlans(ctx, services.ListStoryPlansRequest{
+					ListStoryPlans(mock.Anything, services.ListStoryPlansRequest{
 						Limit:  testCase.params.Limit.Value,
 						Offset: testCase.params.Offset.Value,
 					}).

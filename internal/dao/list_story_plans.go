@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 )
 
 var ErrListStoryPlansRepository = errors.New("ListStoryPlansRepository.ListStoryPlans")
@@ -23,8 +24,16 @@ type ListStoryPlansData struct {
 func (repository *ListStoryPlansRepository) ListStoryPlans(
 	ctx context.Context, data ListStoryPlansData,
 ) ([]*StoryPlanPreviewEntity, error) {
-	tx, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "ListStoryPlansRepository.ListStoryPlans")
+	defer span.Finish()
+
+	span.SetData("limit", data.Limit)
+	span.SetData("offset", data.Offset)
+
+	tx, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return nil, NewErrListStoryPlansRepository(fmt.Errorf("get postgres client: %w", err))
 	}
 
@@ -35,8 +44,10 @@ func (repository *ListStoryPlansRepository) ListStoryPlans(
 		Order("created_at DESC").
 		Limit(data.Limit).
 		Offset(data.Offset).
-		Scan(ctx)
+		Scan(span.Context())
 	if err != nil {
+		span.SetData("scan.error", err.Error())
+
 		return nil, NewErrListStoryPlansRepository(fmt.Errorf("list story plans: %w", err))
 	}
 

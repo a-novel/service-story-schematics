@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -36,11 +37,21 @@ type ListBeatsSheetsService struct {
 func (service *ListBeatsSheetsService) ListBeatsSheets(
 	ctx context.Context, request ListBeatsSheetsRequest,
 ) ([]*models.BeatsSheetPreview, error) {
-	_, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
+	span := sentry.StartSpan(ctx, "ListBeatsSheetsService.ListBeatsSheets")
+	defer span.Finish()
+
+	span.SetData("request.userID", request.UserID)
+	span.SetData("request.loglineID", request.LoglineID)
+	span.SetData("request.limit", request.Limit)
+	span.SetData("request.offset", request.Offset)
+
+	_, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
 		ID:     request.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
+		span.SetData("dao.selectLogline.err", err.Error())
+
 		return nil, NewErrListBeatsSheetsService(err)
 	}
 
@@ -50,10 +61,14 @@ func (service *ListBeatsSheetsService) ListBeatsSheets(
 		Offset:    request.Offset,
 	}
 
-	resp, err := service.source.ListBeatsSheets(ctx, data)
+	resp, err := service.source.ListBeatsSheets(span.Context(), data)
 	if err != nil {
+		span.SetData("dao.listBeatsSheets.err", err.Error())
+
 		return nil, NewErrListBeatsSheetsService(err)
 	}
+
+	span.SetData("dao.listBeatsSheets.count", len(resp))
 
 	return lo.Map(resp, func(item *dao.BeatsSheetPreviewEntity, _ int) *models.BeatsSheetPreview {
 		return &models.BeatsSheetPreview{

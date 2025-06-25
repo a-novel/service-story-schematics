@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 	"time"
 
 	"github.com/google/uuid"
@@ -40,25 +41,39 @@ type CreateBeatsSheetService struct {
 func (service *CreateBeatsSheetService) CreateBeatsSheet(
 	ctx context.Context, request CreateBeatsSheetRequest,
 ) (*models.BeatsSheet, error) {
-	_, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
+	span := sentry.StartSpan(ctx, "CreateBeatsSheetService.CreateBeatsSheet")
+	defer span.Finish()
+
+	span.SetData("request.loglineID", request.LoglineID)
+	span.SetData("request.storyPlanID", request.StoryPlanID)
+	span.SetData("request.lang", request.Lang)
+	span.SetData("request.userID", request.UserID)
+
+	_, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
 		ID:     request.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
+		span.SetData("dao.selectLogline.err", err.Error())
+
 		return nil, NewErrCreateBeatsSheetService(fmt.Errorf("check logline: %w", err))
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(ctx, request.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(span.Context(), request.StoryPlanID)
 	if err != nil {
+		span.SetData("dao.selectStoryPlan.err", err.Error())
+
 		return nil, NewErrCreateBeatsSheetService(fmt.Errorf("check story plan: %w", err))
 	}
 
 	// Ensure story plan matches the beats sheet.
 	if err = lib.CheckStoryPlan(request.Content, storyPlan.Beats); err != nil {
+		span.SetData("lib.checkStoryPlan.err", err.Error())
+
 		return nil, NewErrCreateBeatsSheetService(fmt.Errorf("check story plan: %w", err))
 	}
 
-	resp, err := service.source.InsertBeatsSheet(ctx, dao.InsertBeatsSheetData{
+	resp, err := service.source.InsertBeatsSheet(span.Context(), dao.InsertBeatsSheetData{
 		Sheet: models.BeatsSheet{
 			ID:          uuid.New(),
 			LoglineID:   request.LoglineID,
@@ -69,8 +84,12 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 		},
 	})
 	if err != nil {
+		span.SetData("dao.insertBeatsSheet.err", err.Error())
+
 		return nil, NewErrCreateBeatsSheetService(fmt.Errorf("insert beats sheet: %w", err))
 	}
+
+	span.SetData("dao.insertBeatsSheet.id", resp.ID)
 
 	return &models.BeatsSheet{
 		ID:          resp.ID,

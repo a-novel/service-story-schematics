@@ -195,7 +195,7 @@ func TestCreateLogline(t *testing.T) {
 
 			if testCase.insertLoglineData != nil {
 				initialCall := source.EXPECT().
-					InsertLogline(ctx, mock.MatchedBy(func(data dao.InsertLoglineData) bool {
+					InsertLogline(mock.Anything, mock.MatchedBy(func(data dao.InsertLoglineData) bool {
 						return assert.NotEqual(t, data.ID, uuid.Nil) &&
 							assert.Equal(t, testCase.request.UserID, data.UserID) &&
 							testCase.request.Slug == data.Slug &&
@@ -209,7 +209,7 @@ func TestCreateLogline(t *testing.T) {
 
 				if testCase.reinsertLoglineData != nil {
 					source.EXPECT().
-						InsertLogline(ctx, mock.MatchedBy(func(data dao.InsertLoglineData) bool {
+						InsertLogline(mock.Anything, mock.MatchedBy(func(data dao.InsertLoglineData) bool {
 							return assert.NotEqual(t, data.ID, uuid.Nil) &&
 								assert.Equal(t, testCase.request.UserID, data.UserID) &&
 								testCase.selectSlugIterationData.slug == data.Slug &&
@@ -225,7 +225,7 @@ func TestCreateLogline(t *testing.T) {
 
 			if testCase.selectSlugIterationData != nil {
 				source.EXPECT().
-					SelectSlugIteration(ctx, dao.SelectSlugIterationData{
+					SelectSlugIteration(mock.Anything, dao.SelectSlugIterationData{
 						Slug:   testCase.request.Slug,
 						Table:  "loglines",
 						Filter: map[string][]any{"user_id = ?": {testCase.request.UserID}},

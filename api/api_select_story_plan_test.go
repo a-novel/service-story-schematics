@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -213,7 +214,7 @@ func TestSelectStoryPlan(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(ctx, services.SelectStoryPlanRequest{
+					SelectStoryPlan(mock.Anything, services.SelectStoryPlanRequest{
 						Slug: lo.Ternary(
 							testCase.params.Slug.IsSet(),
 							lo.ToPtr(models.Slug(testCase.params.Slug.Value)),

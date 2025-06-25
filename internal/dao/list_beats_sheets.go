@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 )
@@ -26,8 +27,17 @@ type ListBeatsSheetsData struct {
 func (repository *ListBeatsSheetsRepository) ListBeatsSheets(
 	ctx context.Context, data ListBeatsSheetsData,
 ) ([]*BeatsSheetPreviewEntity, error) {
-	tx, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "ListBeatsSheetsRepository.ListBeatsSheets")
+	defer span.Finish()
+
+	span.SetData("logline.id", data.LoglineID.String())
+	span.SetData("limit", data.Limit)
+	span.SetData("offset", data.Offset)
+
+	tx, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return nil, NewErrListBeatsSheetsRepository(fmt.Errorf("get postgres client: %w", err))
 	}
 
@@ -39,8 +49,10 @@ func (repository *ListBeatsSheetsRepository) ListBeatsSheets(
 		Order("created_at DESC").
 		Limit(data.Limit).
 		Offset(data.Offset).
-		Scan(ctx)
+		Scan(span.Context())
 	if err != nil {
+		span.SetData("scan.error", err.Error())
+
 		return nil, NewErrListBeatsSheetsRepository(fmt.Errorf("list beats sheet: %w", err))
 	}
 

@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -164,7 +165,7 @@ func TestCreateStoryPlan(t *testing.T) {
 
 			if testCase.createStoryPlanData != nil {
 				source.EXPECT().
-					CreateStoryPlan(t.Context(), services.CreateStoryPlanRequest{
+					CreateStoryPlan(mock.Anything, services.CreateStoryPlanRequest{
 						Slug:        models.Slug(testCase.form.GetSlug()),
 						Name:        testCase.form.GetName(),
 						Description: testCase.form.GetDescription(),

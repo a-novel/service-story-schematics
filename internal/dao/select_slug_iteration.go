@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 	"regexp"
 
 	"github.com/a-novel/service-story-schematics/models"
@@ -31,8 +32,18 @@ type SelectSlugIterationRepository struct{}
 func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 	ctx context.Context, data SelectSlugIterationData,
 ) (models.Slug, int, error) {
-	tx, err := lib.PostgresContext(ctx)
+	span := sentry.StartSpan(ctx, "SelectSlugIterationRepository.SelectSlugIteration")
+	defer span.Finish()
+
+	span.SetData("slug", data.Slug)
+	span.SetData("table", data.Table)
+	span.SetData("filter", data.Filter)
+	span.SetData("order", data.Order)
+
+	tx, err := lib.PostgresContext(span.Context())
 	if err != nil {
+		span.SetData("postgres.context.error", err.Error())
+
 		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("get postgres client: %w", err))
 	}
 
@@ -42,6 +53,8 @@ func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 
 	reg, err := regexp.CompilePOSIX(`^` + regexp.QuoteMeta(string(data.Slug)) + `-([0-9]+)$`)
 	if err != nil {
+		span.SetData("regex.compile.error", err.Error())
+
 		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("compile regex: %w", err))
 	}
 
@@ -59,7 +72,9 @@ func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 		query = query.Order(order)
 	}
 
-	if err = query.Scan(ctx); err != nil {
+	if err = query.Scan(span.Context()); err != nil {
+		span.SetData("scan.error", err.Error())
+
 		if errors.Is(err, sql.ErrNoRows) {
 			return data.Slug + "-1", 1, nil
 		}
@@ -72,6 +87,8 @@ func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 
 	_, err = fmt.Sscanf(string(output.Slug), string(data.Slug)+"-%d", &index)
 	if err != nil {
+		span.SetData("parse.slug.iteration.error", err.Error())
+
 		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("parse slug iteration: %w", err))
 	}
 

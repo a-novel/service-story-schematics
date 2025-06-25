@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 
 	"github.com/google/uuid"
@@ -89,7 +90,7 @@ func TestExpandLogline(t *testing.T) {
 
 			if testCase.expandLoglineData != nil {
 				source.EXPECT().
-					ExpandLogline(ctx, daoai.ExpandLoglineRequest{
+					ExpandLogline(mock.Anything, daoai.ExpandLoglineRequest{
 						Logline: testCase.request.Logline.Name + "\n\n" + testCase.request.Logline.Content,
 						UserID:  testCase.request.UserID.String(),
 						Lang:    testCase.request.Logline.Lang,

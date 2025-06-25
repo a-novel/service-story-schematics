@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/getsentry/sentry-go"
 	"time"
 
 	"github.com/google/uuid"
@@ -36,7 +37,14 @@ type UpdateStoryPlanService struct {
 func (service *UpdateStoryPlanService) UpdateStoryPlan(
 	ctx context.Context, request UpdateStoryPlanRequest,
 ) (*models.StoryPlan, error) {
-	resp, err := service.source.UpdateStoryPlan(ctx, dao.UpdateStoryPlanData{
+	span := sentry.StartSpan(ctx, "UpdateStoryPlanService.UpdateStoryPlan")
+	defer span.Finish()
+
+	span.SetData("request.slug", request.Slug)
+	span.SetData("request.name", request.Name)
+	span.SetData("request.lang", request.Lang)
+
+	resp, err := service.source.UpdateStoryPlan(span.Context(), dao.UpdateStoryPlanData{
 		Plan: models.StoryPlan{
 			ID:          uuid.New(),
 			Slug:        request.Slug,
@@ -48,6 +56,8 @@ func (service *UpdateStoryPlanService) UpdateStoryPlan(
 		},
 	})
 	if err != nil {
+		span.SetData("dao.updateStoryPlan.err", err.Error())
+
 		return nil, NewErrUpdateStoryPlanService(err)
 	}
 

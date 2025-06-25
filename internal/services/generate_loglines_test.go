@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 
 	"github.com/google/uuid"
@@ -99,7 +100,7 @@ func TestGenerateLoglines(t *testing.T) {
 
 			if testCase.generateLoglinesData != nil {
 				source.EXPECT().
-					GenerateLoglines(ctx, daoai.GenerateLoglinesRequest{
+					GenerateLoglines(mock.Anything, daoai.GenerateLoglinesRequest{
 						Count:  testCase.request.Count,
 						Theme:  testCase.request.Theme,
 						UserID: testCase.request.UserID.String(),

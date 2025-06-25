@@ -2,6 +2,7 @@ package services_test
 
 import (
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -136,7 +137,7 @@ func TestSelectLogline(t *testing.T) {
 
 			if testCase.selectLoglineData != nil {
 				source.EXPECT().
-					SelectLogline(ctx, dao.SelectLoglineData{
+					SelectLogline(mock.Anything, dao.SelectLoglineData{
 						ID:     lo.FromPtr(testCase.request.ID),
 						UserID: testCase.request.UserID,
 					}).
@@ -145,7 +146,7 @@ func TestSelectLogline(t *testing.T) {
 
 			if testCase.selectLoglineBySlugData != nil {
 				source.EXPECT().
-					SelectLoglineBySlug(ctx, dao.SelectLoglineBySlugData{
+					SelectLoglineBySlug(mock.Anything, dao.SelectLoglineBySlugData{
 						Slug:   lo.FromPtr(testCase.request.Slug),
 						UserID: testCase.request.UserID,
 					}).

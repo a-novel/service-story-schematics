@@ -8,6 +8,7 @@ import (
 	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/config/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/getsentry/sentry-go"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
 	"strings"
@@ -61,6 +62,14 @@ type GenerateLoglinesRepository struct{}
 func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	ctx context.Context, request GenerateLoglinesRequest,
 ) ([]models.LoglineIdea, error) {
+	span := sentry.StartSpan(ctx, "GenerateLoglinesRepository.GenerateLoglines")
+	defer span.Finish()
+
+	span.SetData("request.count", request.Count)
+	span.SetData("request.theme", request.Theme)
+	span.SetData("request.user_id", request.UserID)
+	span.SetData("request.lang", request.Lang.String())
+
 	var (
 		err      error
 		messages []openai.ChatCompletionMessageParamUnion
@@ -84,26 +93,32 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	}
 
 	if err != nil {
+		span.SetData("prompt.error", err.Error())
+
 		return nil, NewErrGenerateLoglinesRepository(fmt.Errorf("parse system message: %w", err))
 	}
 
-	chatCompletion, err := lib.OpenAIClient(ctx).Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Model:       config.Groq.Model,
-		Temperature: param.NewOpt(generateLoglineTemperature),
-		User:        param.NewOpt(request.UserID),
-		Messages:    messages,
-		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
-			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
-				JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
-					Name:        "logline",
-					Description: openai.String(GenerateLoglinesDescriptions[request.Lang]),
-					Schema:      GenerateLoglinesSchemas[request.Lang],
-					Strict:      openai.Bool(true),
+	chatCompletion, err := lib.OpenAIClient(span.Context()).
+		Chat.Completions.
+		New(span.Context(), openai.ChatCompletionNewParams{
+			Model:       config.Groq.Model,
+			Temperature: param.NewOpt(generateLoglineTemperature),
+			User:        param.NewOpt(request.UserID),
+			Messages:    messages,
+			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
+						Name:        "logline",
+						Description: openai.String(GenerateLoglinesDescriptions[request.Lang]),
+						Schema:      GenerateLoglinesSchemas[request.Lang],
+						Strict:      openai.Bool(true),
+					},
 				},
 			},
-		},
-	})
+		})
 	if err != nil {
+		span.SetData("chatCompletion.error", err.Error())
+
 		return nil, NewErrGenerateLoglinesRepository(err)
 	}
 
@@ -112,6 +127,8 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	}
 
 	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &loglines); err != nil {
+		span.SetData("unmarshal.error", err.Error())
+
 		return nil, NewErrGenerateLoglinesRepository(err)
 	}
 

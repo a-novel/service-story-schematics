@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
@@ -24,12 +25,23 @@ type CreateBeatsSheetService interface {
 func (api *API) CreateBeatsSheet(
 	ctx context.Context, req *codegen.CreateBeatsSheetForm,
 ) (codegen.CreateBeatsSheetRes, error) {
+	span := sentry.StartSpan(ctx, "API.CreateBeatsSheet")
+	defer span.Finish()
+
+	span.SetData("request.loglineID", req.GetLoglineID())
+	span.SetData("request.storyPlanID", req.GetStoryPlanID())
+	span.SetData("request.lang", req.GetLang())
+
 	userID, err := authapi.RequireUserID(ctx)
 	if err != nil {
+		span.SetData("request.userID.err", err.Error())
+
 		return nil, fmt.Errorf("get user ID: %w", err)
 	}
 
-	beatsSheet, err := api.CreateBeatsSheetService.CreateBeatsSheet(ctx, services.CreateBeatsSheetRequest{
+	span.SetData("request.userID", userID)
+
+	beatsSheet, err := api.CreateBeatsSheetService.CreateBeatsSheet(span.Context(), services.CreateBeatsSheetRequest{
 		LoglineID:   uuid.UUID(req.GetLoglineID()),
 		UserID:      userID,
 		StoryPlanID: uuid.UUID(req.GetStoryPlanID()),
@@ -45,12 +57,20 @@ func (api *API) CreateBeatsSheet(
 
 	switch {
 	case errors.Is(err, dao.ErrLoglineNotFound), errors.Is(err, dao.ErrStoryPlanNotFound):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.NotFoundError{Error: err.Error()}, nil
 	case errors.Is(err, lib.ErrInvalidStoryPlan):
+		span.SetData("service.err", err.Error())
+
 		return &codegen.UnprocessableEntityError{Error: err.Error()}, nil
 	case err != nil:
+		span.SetData("service.err", err.Error())
+
 		return nil, fmt.Errorf("create beats sheet: %w", err)
 	}
+
+	span.SetData("service.beatsSheet.id", beatsSheet.ID)
 
 	return &codegen.BeatsSheet{
 		ID:          codegen.BeatsSheetID(beatsSheet.ID),

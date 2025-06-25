@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 
 	"github.com/google/uuid"
@@ -105,7 +106,7 @@ func TestGenerateLoglines(t *testing.T) {
 
 			if testCase.generateLoglinesData != nil {
 				source.EXPECT().
-					GenerateLoglines(ctx, services.GenerateLoglinesRequest{
+					GenerateLoglines(mock.Anything, services.GenerateLoglinesRequest{
 						Count:  testCase.form.GetCount(),
 						Theme:  testCase.form.GetTheme(),
 						UserID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),

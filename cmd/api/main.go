@@ -2,20 +2,19 @@ package main
 
 import (
 	"context"
-	sentrymiddleware "github.com/a-novel-kit/middlewares/sentry"
+	"github.com/getsentry/sentry-go"
+	"go.opentelemetry.io/otel"
+	"log"
 	"net"
 	"net/http"
-	"os"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/rs/zerolog"
 
 	authapiclient "github.com/a-novel/service-authentication/api/apiclient"
-
-	zeromiddleware "github.com/a-novel-kit/middlewares/zerolog"
 
 	"github.com/a-novel/service-story-schematics/api"
 	"github.com/a-novel/service-story-schematics/api/codegen"
@@ -24,27 +23,40 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/internal/services"
+	"github.com/getsentry/sentry-go/attribute"
+	sentryhttp "github.com/getsentry/sentry-go/http"
+	sentryotel "github.com/getsentry/sentry-go/otel"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
+const SentryFlushTimeout = 2 * time.Second
+
 func main() {
+	ctx := context.Background()
 	// =================================================================================================================
 	// LOAD DEPENDENCIES (EXTERNAL)
 	// =================================================================================================================
-	logger := zerolog.New(os.Stderr).With().
-		Str("app", "story-schematics").
-		Timestamp().
-		Logger()
-
-	if config.LoggerColor {
-		logger = logger.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	if err := sentry.Init(config.SentryClient); err != nil {
+		log.Fatalf("initialize sentry: %v", err)
 	}
+	defer sentry.Flush(SentryFlushTimeout)
 
-	logger.Info().Msg("starting application...")
+	tp := sdktrace.NewTracerProvider(sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()))
+	otel.SetTracerProvider(tp)
+	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
+
+	logger := sentry.NewLogger(ctx)
+	logger.SetAttributes(
+		attribute.String("app", "agora"),
+		attribute.String("service", "authentication"),
+	)
+
+	logger.Info(ctx, "starting application")
 
 	// Initialize all contexts at once.
-	ctx, err := lib.NewAgoraContext(context.Background())
+	ctx, err := lib.NewAgoraContext(context.Background(), config.DSN)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("initialize agora context")
+		logger.Fatalf(ctx, "initialize agora context: %v", err)
 	}
 
 	// =================================================================================================================
@@ -158,7 +170,6 @@ func main() {
 
 	router.Use(middleware.RequestID)
 	router.Use(middleware.Recoverer)
-	router.Use(zeromiddleware.ZeroLog(&logger))
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Timeout(config.API.Timeouts.Request))
 	router.Use(cors.Handler(cors.Options{
@@ -176,14 +187,8 @@ func main() {
 		MaxAge: config.API.Cors.MaxAge,
 	}))
 
-	if config.Sentry.DSN != "" {
-		sentryHandler, err := sentrymiddleware.Sentry(config.Sentry.DSN)
-		if err != nil {
-			logger.Fatal().Err(err).Msg("initialize sentry")
-		}
-
-		router.Use(sentryHandler)
-	}
+	sentryHandler := sentryhttp.New(sentryhttp.Options{})
+	router.Use(sentryHandler.Handle)
 
 	// RUN -------------------------------------------------------------------------------------------------------------
 
@@ -215,12 +220,12 @@ func main() {
 
 	securityHandler, err := api.NewSecurity(config.Permissions, authSecurityService)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("initialize security handler")
+		logger.Fatalf(ctx, "start security handler: %v", err)
 	}
 
 	apiServer, err := codegen.NewServer(handler, securityHandler)
 	if err != nil {
-		logger.Fatal().Err(err).Msg("initialize server")
+		logger.Fatalf(ctx, "start server: %v", err)
 	}
 
 	router.Mount("/v1/", http.StripPrefix("/v1", apiServer))
@@ -235,11 +240,10 @@ func main() {
 		BaseContext:       func(_ net.Listener) context.Context { return ctx },
 	}
 
-	logger.Info().
-		Str("address", httpServer.Addr).
-		Msg("application started!")
+	logger.SetAttributes(attribute.Int("server.port", config.API.Port))
+	logger.Info(ctx, "start http server")
 
 	if err = httpServer.ListenAndServe(); err != nil {
-		logger.Fatal().Err(err).Msg("application stopped")
+		logger.Fatalf(ctx, "start http server: %v", err)
 	}
 }

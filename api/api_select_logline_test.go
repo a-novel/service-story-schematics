@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"testing"
 	"time"
 
@@ -155,7 +156,7 @@ func TestSelectLogline(t *testing.T) {
 
 			if testCase.selectLoglineData != nil {
 				source.EXPECT().
-					SelectLogline(ctx, services.SelectLoglineRequest{
+					SelectLogline(mock.Anything, services.SelectLoglineRequest{
 						UserID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 						Slug: lo.Ternary(
 							testCase.params.Slug.IsSet(),

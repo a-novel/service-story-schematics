@@ -3,14 +3,11 @@ package api
 import (
 	"context"
 	"errors"
-	"fmt"
-	sentrymiddleware "github.com/a-novel-kit/middlewares/sentry"
+	"github.com/getsentry/sentry-go"
 	"net/http"
 
-	"github.com/ogen-go/ogen/ogenerrors"
-	"github.com/rs/zerolog"
-
 	authapi "github.com/a-novel/service-authentication/api"
+	"github.com/ogen-go/ogen/ogenerrors"
 
 	"github.com/a-novel/service-story-schematics/api/codegen"
 )
@@ -62,14 +59,10 @@ func (api *API) NewError(ctx context.Context, err error) *codegen.UnexpectedErro
 		return nil
 	}
 
-	logger := zerolog.Ctx(ctx)
-
 	// Return a different error if authentication failed. Also do not log error (we will still have the API log from
 	// the default middleware if needed).
 	var securityError *ogenerrors.SecurityError
 	if ok := errors.As(err, &securityError); ok {
-		logger.Warn().Err(err).Msg("authentication failed")
-
 		switch {
 		case errors.Is(err, authapi.ErrAuthentication):
 			return ErrUnauthorized
@@ -80,8 +73,8 @@ func (api *API) NewError(ctx context.Context, err error) *codegen.UnexpectedErro
 		}
 	}
 
-	// Unhandled, unexpected error occurred.
-	sentrymiddleware.CaptureError(ctx, fmt.Errorf("new api: %w", err))
-
+	logger := sentry.NewLogger(ctx)
+	logger.Errorf(ctx, "security error: %v", err)
+	
 	return ErrInternalServerError
 }
