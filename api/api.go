@@ -3,11 +3,12 @@ package api
 import (
 	"context"
 	"errors"
-	"github.com/getsentry/sentry-go"
 	"net/http"
 
-	authapi "github.com/a-novel/service-authentication/api"
+	"github.com/getsentry/sentry-go"
 	"github.com/ogen-go/ogen/ogenerrors"
+
+	authapi "github.com/a-novel/service-authentication/api"
 
 	"github.com/a-novel/service-story-schematics/api/codegen"
 )
@@ -75,6 +76,6 @@ func (api *API) NewError(ctx context.Context, err error) *codegen.UnexpectedErro
 
 	logger := sentry.NewLogger(ctx)
 	logger.Errorf(ctx, "security error: %v", err)
-	
+
 	return ErrInternalServerError
 }

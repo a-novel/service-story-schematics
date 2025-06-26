@@ -5,16 +5,17 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/a-novel/service-story-schematics/config"
-	"github.com/a-novel/service-story-schematics/config/schemas"
-	"github.com/a-novel/service-story-schematics/internal/lib"
-	"github.com/getsentry/sentry-go"
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/packages/param"
 	"strings"
 	"text/template"
 
+	"github.com/getsentry/sentry-go"
+	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/packages/param"
+
+	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/config/prompts"
+	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
 

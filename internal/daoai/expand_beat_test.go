@@ -2,14 +2,14 @@ package daoai_test
 
 import (
 	"fmt"
-	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"testing"
 
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
 
@@ -24,7 +24,7 @@ func TestExpandBeat(t *testing.T) {
 			t.Parallel()
 
 			data := testdata.ExpandBeatPrompts[lang]
-			
+
 			for name, testCase := range data.Cases {
 				t.Run(name, func(t *testing.T) {
 					t.Parallel()

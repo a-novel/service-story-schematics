@@ -3,8 +3,8 @@ package services
 import (
 	"context"
 	"errors"
-	"github.com/getsentry/sentry-go"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"

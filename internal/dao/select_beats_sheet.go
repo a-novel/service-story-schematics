@@ -5,10 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/a-novel/service-story-schematics/internal/lib"
-	"github.com/getsentry/sentry-go"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+
+	"github.com/a-novel/service-story-schematics/internal/lib"
 )
 
 var ErrSelectBeatsSheetRepository = errors.New("SelectBeatsSheetRepository.SelectBeatsSheet")

@@ -2,6 +2,7 @@ package config
 
 import (
 	_ "embed"
+
 	"github.com/openai/openai-go"
 
 	"github.com/a-novel-kit/configurator"

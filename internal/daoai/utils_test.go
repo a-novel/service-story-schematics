@@ -1,18 +1,18 @@
 package daoai_test
 
 import (
-	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/packages/param"
 	"regexp"
 	"strings"
 	"testing"
 
+	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/packages/param"
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
 

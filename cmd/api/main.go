@@ -2,17 +2,21 @@ package main
 
 import (
 	"context"
-	"github.com/getsentry/sentry-go"
-	"go.opentelemetry.io/otel"
 	"log"
 	"net"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/getsentry/sentry-go"
+	"github.com/getsentry/sentry-go/attribute"
+	sentryhttp "github.com/getsentry/sentry-go/http"
+	sentryotel "github.com/getsentry/sentry-go/otel"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"go.opentelemetry.io/otel"
+	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	authapiclient "github.com/a-novel/service-authentication/api/apiclient"
 
@@ -23,10 +27,6 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/internal/services"
-	"github.com/getsentry/sentry-go/attribute"
-	sentryhttp "github.com/getsentry/sentry-go/http"
-	sentryotel "github.com/getsentry/sentry-go/otel"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 const SentryFlushTimeout = 2 * time.Second

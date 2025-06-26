@@ -2,14 +2,14 @@ package daoai_test
 
 import (
 	"fmt"
-	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
-	"github.com/a-novel/service-story-schematics/models"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
+	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 func TestExpandLogline(t *testing.T) {

@@ -3,9 +3,11 @@ package lib
 import (
 	"context"
 	"fmt"
-	"github.com/a-novel/service-story-schematics/config"
+
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
+
+	"github.com/a-novel/service-story-schematics/config"
 )
 
 func NewAgoraContext(parentCTX context.Context, dsn string) (context.Context, error) {
