@@ -26,6 +26,8 @@ jobs:
     services:
       postgres:
         image: postgres:17-alpine
+        ports:
+          - "5433:5432"
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -35,22 +37,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_DB: postgres
-
-      pg-bouncer:
-        image: docker.io/bitnami/pgbouncer:latest
-        ports:
-          - "6432:6432"
-        env:
-          PGBOUNCER_PORT: 6432
-          POSTGRESQL_PORT: 5432
-          POSTGRESQL_HOST: postgres
-          POSTGRESQL_PASSWORD: postgres
-          POSTGRESQL_USER: postgres
-          POSTGRESQL_DATABASE: postgres
-          PGBOUNCER_DATABASE: postgres
-          PGBOUNCER_USERLIST: '"postgres" "postgres"'
     env:
-      DSN: postgres://postgres:postgres@localhost:6432/postgres?sslmode=disable
+      DSN: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
       GROQ_TOKEN: ${{ secrets.GROQ_TOKEN }}
     steps:
       - uses: a-novel-kit/workflows/build-actions/docker-rest-api@master

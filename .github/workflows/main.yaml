@@ -83,6 +83,8 @@ jobs:
       contents: read
     services:
       postgres:
+        ports:
+          - "5431:5432"
         image: docker.io/library/postgres:17
         options: >-
           --health-cmd pg_isready
@@ -98,6 +100,8 @@ jobs:
 
       postgres-integration:
         image: docker.io/library/postgres:17
+        ports:
+          - "5433:5432"
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -109,25 +113,9 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_HOST_AUTH_METHOD: scram-sha-256
           POSTGRES_INITDB_ARGS: --auth=scram-sha-256
-
-      pg-bouncer:
-        image: docker.io/bitnami/pgbouncer:latest
-        ports:
-          - "6432:6432"
-        env:
-          PGBOUNCER_PORT: 6432
-          POSTGRESQL_PORT: 5432
-          POSTGRESQL_HOST: postgres
-          POSTGRESQL_PASSWORD: postgres
-          POSTGRESQL_USER: postgres
-          POSTGRESQL_DATABASE: postgres
-          PGBOUNCER_DATABASE: postgres
-          PGBOUNCER_USERLIST: '"postgres" "postgres"'
-          PGBOUNCER_DSN_0: "pg0=host=postgres port=5432 dbname=postgres"
-          PGBOUNCER_DSN_1: "pg1=host=postgres-integration port=5432 dbname=postgres"
     env:
-      DAO_DSN: postgres://postgres:postgres@localhost:6432/pg0?sslmode=disable
-      DSN: postgres://postgres:postgres@localhost:6432/pg1?sslmode=disable
+      DAO_DSN: postgres://postgres:postgres@localhost:5431/postgres?sslmode=disable
+      DSN: postgres://postgres:postgres@localhost:5433/postgres?sslmode=disable
       PORT: 8080
       GROQ_TOKEN: ${{ secrets.GROQ_TOKEN }}
     steps:
@@ -179,6 +167,8 @@ jobs:
     services:
       postgres:
         image: postgres:17-alpine
+        ports:
+          - "5432:5432"
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -188,22 +178,8 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_DB: postgres
-
-      pg-bouncer:
-        image: docker.io/bitnami/pgbouncer:latest
-        ports:
-          - "6432:6432"
-        env:
-          PGBOUNCER_PORT: 6432
-          POSTGRESQL_PORT: 5432
-          POSTGRESQL_HOST: postgres
-          POSTGRESQL_PASSWORD: postgres
-          POSTGRESQL_USER: postgres
-          POSTGRESQL_DATABASE: postgres
-          PGBOUNCER_DATABASE: postgres
-          PGBOUNCER_USERLIST: '"postgres" "postgres"'
     env:
-      DSN: postgres://postgres:postgres@localhost:6432/postgres?sslmode=disable
+      DSN: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
       GROQ_TOKEN: ${{ secrets.GROQ_TOKEN }}
     steps:
       - uses: a-novel-kit/workflows/build-actions/docker-rest-api@master

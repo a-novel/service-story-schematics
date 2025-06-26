@@ -28,14 +28,17 @@ openapi-lint:
 openapi-generate:
 	go generate ./...
 
+run-infra:
+	podman compose -p "${APP_NAME}" -f "${PWD}/build/podman-compose.yaml" up -d
+
+run-infra-down:
+	podman compose -p "${APP_NAME}" -f "${PWD}/build/podman-compose.yaml" down
+
 # Run the API
-api:
+run-api:
 	bash -c "set -m; bash '$(CURDIR)/scripts/run.sh'"
 
 install:
 	pipx install sqlfluff
-
-postgres-local:
-	psql postgres://postgres:postgres@127.0.0.1:5002/story-schematics
 
 .PHONY: api
