@@ -1,19 +1,32 @@
 # App.
-export PORT=4002
+export PORT=4011
+export PORT_TEST=5011
 export ENV="local"
 export APP_NAME="story-schematics"
+export DEBUG=true
 
-export AUTH_API_URL="http://127.0.0.1:4001/v1"
+export AUTH_API_PORT=4001
+export AUTH_API_URL="http://127.0.0.1:${AUTH_API_PORT}/v1"
+export AUTH_API_TEST_PORT=5001
+export AUTH_API_TEST_URL="http://127.0.0.1:${AUTH_API_TEST_PORT}/v1"
 
 # Postgres.
 export POSTGRES_USER="postgres"
 export POSTGRES_PASSWORD="postgres"
-export POSTGRES_DB="story-schematics"
-export POSTGRES_PORT=5002
+export POSTGRES_DB="authentication"
+export POSTGRES_PORT=4012
+export POSTGRES_TEST_PORT=5012
 export POSTGRES_HOST="0.0.0.0"
 
 # Secrets.
 export GROQ_TOKEN="[SECRET]"
+
+# Tracing.
+# Used for tracing purposes, can be omitted.
+#export SENTRY_DSN=[your_sentry_dsn]
+#export SERVER_NAME=authentication-service-prod
+#export RELEASE=v0.1.2
+#export ENV=production
 
 # Other.
 export PODMAN_IGNORE_CGROUPSV1_WARNING="true"

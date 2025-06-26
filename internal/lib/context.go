@@ -13,7 +13,7 @@ import (
 func NewAgoraContext(parentCTX context.Context, dsn string) (context.Context, error) {
 	ctx, err := NewPostgresContext(parentCTX, dsn)
 	if err != nil {
-		return nil, fmt.Errorf("create postgres context: %w", err)
+		return parentCTX, fmt.Errorf("create postgres context: %w", err)
 	}
 
 	return NewOpenaiContext(ctx), nil
