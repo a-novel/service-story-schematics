@@ -2,10 +2,11 @@ package config
 
 import (
 	_ "embed"
-	"github.com/getsentry/sentry-go"
-	"github.com/samber/lo"
 	"net/http"
 	"os"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/samber/lo"
 
 	"github.com/a-novel-kit/configurator"
 )

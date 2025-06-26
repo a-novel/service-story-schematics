@@ -2,8 +2,9 @@ package dao_test
 
 import (
 	"context"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"os"
+
+	"github.com/a-novel/service-story-schematics/internal/lib"
 )
 
 var ctx context.Context

@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/a-novel/service-story-schematics/internal/lib"
-	"github.com/getsentry/sentry-go"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+
+	"github.com/a-novel/service-story-schematics/internal/lib"
 )
 
 var ErrListLoglinesRepository = errors.New("ListLoglinesRepository.ListLoglines")

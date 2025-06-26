@@ -2,8 +2,6 @@ package dao_test
 
 import (
 	"database/sql"
-	"github.com/a-novel/service-story-schematics/internal/lib"
-	"github.com/a-novel/service-story-schematics/models"
 	"testing"
 	"time"
 
@@ -11,6 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
+	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/service-story-schematics/models"
 )
 
 func TestListLoglines(t *testing.T) {

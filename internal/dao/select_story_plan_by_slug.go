@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/a-novel/service-story-schematics/internal/lib"
+
 	"github.com/getsentry/sentry-go"
 
+	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
 
