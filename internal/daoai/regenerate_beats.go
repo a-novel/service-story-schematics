@@ -68,56 +68,8 @@ type RegenerateBeatsRequest struct {
 
 type RegenerateBeatsRepository struct{}
 
-func (repository *RegenerateBeatsRepository) extrudedBeatsSheet(request RegenerateBeatsRequest) string {
-	parts := make([]string, 0, len(request.Beats))
-
-	for _, beat := range request.Beats {
-		if lo.Contains(request.RegenerateKeys, beat.Key) {
-			continue
-		}
-
-		parts = append(parts, fmt.Sprintf("%s\n%s", beat.Key, beat.Content))
-	}
-
-	return strings.Join(parts, "\n\n")
-}
-
-func (repository *RegenerateBeatsRepository) buildExpectedStoryPlan(
-	request RegenerateBeatsRequest,
-) []models.BeatDefinition {
-	beats := make([]models.BeatDefinition, 0, len(request.Plan.Beats))
-
-	for _, beat := range request.Plan.Beats {
-		if !lo.Contains(request.RegenerateKeys, beat.Key) {
-			continue
-		}
-
-		beats = append(beats, beat)
-	}
-
-	return beats
-}
-
-func (repository *RegenerateBeatsRepository) mergeSourceAndNewBeats(
-	request RegenerateBeatsRequest, newBeats []models.Beat,
-) []models.Beat {
-	var output []models.Beat
-
-	for _, beat := range request.Beats {
-		if lo.Contains(request.RegenerateKeys, beat.Key) {
-			for _, newBeat := range newBeats {
-				if newBeat.Key == beat.Key {
-					output = append(output, newBeat)
-
-					break
-				}
-			}
-		} else {
-			output = append(output, beat)
-		}
-	}
-
-	return output
+func NewRegenerateBeatsRepository() *RegenerateBeatsRepository {
+	return &RegenerateBeatsRepository{}
 }
 
 func (repository *RegenerateBeatsRepository) RegenerateBeats(
@@ -206,13 +158,15 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		Beats []models.Beat `json:"beats"`
 	}
 
-	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats); err != nil {
+	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats)
+	if err != nil {
 		span.SetData("unmarshal.error", err.Error())
 
 		return nil, NewErrRegenerateBeatsRepository(err)
 	}
 
-	if err = lib.CheckStoryPlan(beats.Beats, repository.buildExpectedStoryPlan(request)); err != nil {
+	err = lib.CheckStoryPlan(beats.Beats, repository.buildExpectedStoryPlan(request))
+	if err != nil {
 		span.SetData("checkStoryPlan.error", err.Error())
 
 		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("check story plan: %w", err))
@@ -221,6 +175,54 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 	return repository.mergeSourceAndNewBeats(request, beats.Beats), nil
 }
 
-func NewRegenerateBeatsRepository() *RegenerateBeatsRepository {
-	return &RegenerateBeatsRepository{}
+func (repository *RegenerateBeatsRepository) extrudedBeatsSheet(request RegenerateBeatsRequest) string {
+	parts := make([]string, 0, len(request.Beats))
+
+	for _, beat := range request.Beats {
+		if lo.Contains(request.RegenerateKeys, beat.Key) {
+			continue
+		}
+
+		parts = append(parts, fmt.Sprintf("%s\n%s", beat.Key, beat.Content))
+	}
+
+	return strings.Join(parts, "\n\n")
+}
+
+func (repository *RegenerateBeatsRepository) buildExpectedStoryPlan(
+	request RegenerateBeatsRequest,
+) []models.BeatDefinition {
+	beats := make([]models.BeatDefinition, 0, len(request.Plan.Beats))
+
+	for _, beat := range request.Plan.Beats {
+		if !lo.Contains(request.RegenerateKeys, beat.Key) {
+			continue
+		}
+
+		beats = append(beats, beat)
+	}
+
+	return beats
+}
+
+func (repository *RegenerateBeatsRepository) mergeSourceAndNewBeats(
+	request RegenerateBeatsRequest, newBeats []models.Beat,
+) []models.Beat {
+	var output []models.Beat
+
+	for _, beat := range request.Beats {
+		if lo.Contains(request.RegenerateKeys, beat.Key) {
+			for _, newBeat := range newBeats {
+				if newBeat.Key == beat.Key {
+					output = append(output, newBeat)
+
+					break
+				}
+			}
+		} else {
+			output = append(output, beat)
+		}
+	}
+
+	return output
 }

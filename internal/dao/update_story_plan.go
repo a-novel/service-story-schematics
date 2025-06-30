@@ -23,6 +23,10 @@ type UpdateStoryPlanData struct {
 
 type UpdateStoryPlanRepository struct{}
 
+func NewUpdateStoryPlanRepository() *UpdateStoryPlanRepository {
+	return &UpdateStoryPlanRepository{}
+}
+
 func (repository *UpdateStoryPlanRepository) UpdateStoryPlan(
 	ctx context.Context, data UpdateStoryPlanData,
 ) (*StoryPlanEntity, error) {
@@ -73,8 +77,4 @@ func (repository *UpdateStoryPlanRepository) UpdateStoryPlan(
 	}
 
 	return entity, nil
-}
-
-func NewUpdateStoryPlanRepository() *UpdateStoryPlanRepository {
-	return &UpdateStoryPlanRepository{}
 }

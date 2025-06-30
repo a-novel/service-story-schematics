@@ -23,6 +23,19 @@ type SelectLoglineSource interface {
 	SelectLoglineBySlug(ctx context.Context, data dao.SelectLoglineBySlugData) (*dao.LoglineEntity, error)
 }
 
+func NewSelectLoglineServiceSource(
+	selectDAO *dao.SelectLoglineRepository,
+	selectBySlugRepository *dao.SelectLoglineBySlugRepository,
+) SelectLoglineSource {
+	return &struct {
+		*dao.SelectLoglineRepository
+		*dao.SelectLoglineBySlugRepository
+	}{
+		SelectLoglineRepository:       selectDAO,
+		SelectLoglineBySlugRepository: selectBySlugRepository,
+	}
+}
+
 type SelectLoglineRequest struct {
 	UserID uuid.UUID
 	Slug   *models.Slug
@@ -31,6 +44,10 @@ type SelectLoglineRequest struct {
 
 type SelectLoglineService struct {
 	source SelectLoglineSource
+}
+
+func NewSelectLoglineService(source SelectLoglineSource) *SelectLoglineService {
+	return &SelectLoglineService{source: source}
 }
 
 func (service *SelectLoglineService) SelectLogline(
@@ -84,21 +101,4 @@ func (service *SelectLoglineService) SelectLogline(
 		Lang:      data.Lang,
 		CreatedAt: data.CreatedAt,
 	}, nil
-}
-
-func NewSelectLoglineServiceSource(
-	selectDAO *dao.SelectLoglineRepository,
-	selectBySlugRepository *dao.SelectLoglineBySlugRepository,
-) SelectLoglineSource {
-	return &struct {
-		*dao.SelectLoglineRepository
-		*dao.SelectLoglineBySlugRepository
-	}{
-		SelectLoglineRepository:       selectDAO,
-		SelectLoglineBySlugRepository: selectBySlugRepository,
-	}
-}
-
-func NewSelectLoglineService(source SelectLoglineSource) *SelectLoglineService {
-	return &SelectLoglineService{source: source}
 }

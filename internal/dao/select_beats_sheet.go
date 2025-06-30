@@ -20,6 +20,10 @@ func NewErrSelectBeatsSheetRepository(err error) error {
 
 type SelectBeatsSheetRepository struct{}
 
+func NewSelectBeatsSheetRepository() *SelectBeatsSheetRepository {
+	return &SelectBeatsSheetRepository{}
+}
+
 func (repository *SelectBeatsSheetRepository) SelectBeatsSheet(
 	ctx context.Context, data uuid.UUID,
 ) (*BeatsSheetEntity, error) {
@@ -49,8 +53,4 @@ func (repository *SelectBeatsSheetRepository) SelectBeatsSheet(
 	}
 
 	return entity, nil
-}
-
-func NewSelectBeatsSheetRepository() *SelectBeatsSheetRepository {
-	return &SelectBeatsSheetRepository{}
 }

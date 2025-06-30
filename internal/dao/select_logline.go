@@ -18,11 +18,15 @@ func NewErrSelectLoglineRepository(err error) error {
 	return errors.Join(err, ErrSelectLoglineRepository)
 }
 
-type SelectLoglineRepository struct{}
-
 type SelectLoglineData struct {
 	ID     uuid.UUID
 	UserID uuid.UUID
+}
+
+type SelectLoglineRepository struct{}
+
+func NewSelectLoglineRepository() *SelectLoglineRepository {
+	return &SelectLoglineRepository{}
 }
 
 func (repository *SelectLoglineRepository) SelectLogline(
@@ -59,8 +63,4 @@ func (repository *SelectLoglineRepository) SelectLogline(
 	}
 
 	return entity, nil
-}
-
-func NewSelectLoglineRepository() *SelectLoglineRepository {
-	return &SelectLoglineRepository{}
 }

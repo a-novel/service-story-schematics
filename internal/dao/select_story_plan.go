@@ -20,6 +20,10 @@ func NewErrSelectStoryPlanRepository(err error) error {
 
 type SelectStoryPlanRepository struct{}
 
+func NewSelectStoryPlanRepository() *SelectStoryPlanRepository {
+	return &SelectStoryPlanRepository{}
+}
+
 func (repository *SelectStoryPlanRepository) SelectStoryPlan(
 	ctx context.Context, data uuid.UUID,
 ) (*StoryPlanEntity, error) {
@@ -49,8 +53,4 @@ func (repository *SelectStoryPlanRepository) SelectStoryPlan(
 	}
 
 	return entity, nil
-}
-
-func NewSelectStoryPlanRepository() *SelectStoryPlanRepository {
-	return &SelectStoryPlanRepository{}
 }

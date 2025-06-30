@@ -25,6 +25,25 @@ type ExpandBeatSource interface {
 	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
 }
 
+func NewExpandBeatServiceSource(
+	expandBeatDAO *daoai.ExpandBeatRepository,
+	selectBeatsSheetDAO *dao.SelectBeatsSheetRepository,
+	selectLoglineDAO *dao.SelectLoglineRepository,
+	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
+) ExpandBeatSource {
+	return &struct {
+		*daoai.ExpandBeatRepository
+		*dao.SelectBeatsSheetRepository
+		*dao.SelectLoglineRepository
+		*dao.SelectStoryPlanRepository
+	}{
+		ExpandBeatRepository:       expandBeatDAO,
+		SelectBeatsSheetRepository: selectBeatsSheetDAO,
+		SelectLoglineRepository:    selectLoglineDAO,
+		SelectStoryPlanRepository:  selectStoryPlanDAO,
+	}
+}
+
 type ExpandBeatRequest struct {
 	BeatsSheetID uuid.UUID
 	TargetKey    string
@@ -33,6 +52,10 @@ type ExpandBeatRequest struct {
 
 type ExpandBeatService struct {
 	source ExpandBeatSource
+}
+
+func NewExpandBeatService(source ExpandBeatSource) *ExpandBeatService {
+	return &ExpandBeatService{source: source}
 }
 
 func (service *ExpandBeatService) ExpandBeat(
@@ -93,27 +116,4 @@ func (service *ExpandBeatService) ExpandBeat(
 	}
 
 	return expanded, nil
-}
-
-func NewExpandBeatServiceSource(
-	expandBeatDAO *daoai.ExpandBeatRepository,
-	selectBeatsSheetDAO *dao.SelectBeatsSheetRepository,
-	selectLoglineDAO *dao.SelectLoglineRepository,
-	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
-) ExpandBeatSource {
-	return &struct {
-		*daoai.ExpandBeatRepository
-		*dao.SelectBeatsSheetRepository
-		*dao.SelectLoglineRepository
-		*dao.SelectStoryPlanRepository
-	}{
-		ExpandBeatRepository:       expandBeatDAO,
-		SelectBeatsSheetRepository: selectBeatsSheetDAO,
-		SelectLoglineRepository:    selectLoglineDAO,
-		SelectStoryPlanRepository:  selectStoryPlanDAO,
-	}
-}
-
-func NewExpandBeatService(source ExpandBeatSource) *ExpandBeatService {
-	return &ExpandBeatService{source: source}
 }

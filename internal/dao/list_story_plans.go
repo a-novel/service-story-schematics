@@ -16,11 +16,15 @@ func NewErrListStoryPlansRepository(err error) error {
 	return errors.Join(err, ErrListStoryPlansRepository)
 }
 
-type ListStoryPlansRepository struct{}
-
 type ListStoryPlansData struct {
 	Limit  int
 	Offset int
+}
+
+type ListStoryPlansRepository struct{}
+
+func NewListStoryPlansRepository() *ListStoryPlansRepository {
+	return &ListStoryPlansRepository{}
 }
 
 func (repository *ListStoryPlansRepository) ListStoryPlans(
@@ -54,8 +58,4 @@ func (repository *ListStoryPlansRepository) ListStoryPlans(
 	}
 
 	return entities, nil
-}
-
-func NewListStoryPlansRepository() *ListStoryPlansRepository {
-	return &ListStoryPlansRepository{}
 }

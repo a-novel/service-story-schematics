@@ -30,6 +30,10 @@ type ExpandLoglineService struct {
 	source ExpandLoglineSource
 }
 
+func NewExpandLoglineService(source ExpandLoglineSource) *ExpandLoglineService {
+	return &ExpandLoglineService{source: source}
+}
+
 func (service *ExpandLoglineService) ExpandLogline(
 	ctx context.Context, request ExpandLoglineRequest,
 ) (*models.LoglineIdea, error) {
@@ -52,8 +56,4 @@ func (service *ExpandLoglineService) ExpandLogline(
 	}
 
 	return resp, nil
-}
-
-func NewExpandLoglineService(source ExpandLoglineSource) *ExpandLoglineService {
-	return &ExpandLoglineService{source: source}
 }

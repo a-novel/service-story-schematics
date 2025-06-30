@@ -32,6 +32,10 @@ type ListLoglinesService struct {
 	source ListLoglinesSource
 }
 
+func NewListLoglinesService(source ListLoglinesSource) *ListLoglinesService {
+	return &ListLoglinesService{source: source}
+}
+
 func (service *ListLoglinesService) ListLoglines(
 	ctx context.Context, request ListLoglinesRequest,
 ) ([]*models.LoglinePreview, error) {
@@ -64,8 +68,4 @@ func (service *ListLoglinesService) ListLoglines(
 			CreatedAt: item.CreatedAt,
 		}
 	}), nil
-}
-
-func NewListLoglinesService(source ListLoglinesSource) *ListLoglinesService {
-	return &ListLoglinesService{source: source}
 }

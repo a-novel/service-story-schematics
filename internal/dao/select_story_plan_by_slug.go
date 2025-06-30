@@ -20,6 +20,10 @@ func NewErrSelectStoryPlanBySlugRepository(err error) error {
 
 type SelectStoryPlanBySlugRepository struct{}
 
+func NewSelectStoryPlanBySlugRepository() *SelectStoryPlanBySlugRepository {
+	return &SelectStoryPlanBySlugRepository{}
+}
+
 func (repository *SelectStoryPlanBySlugRepository) SelectStoryPlanBySlug(
 	ctx context.Context, data models.Slug,
 ) (*StoryPlanEntity, error) {
@@ -49,8 +53,4 @@ func (repository *SelectStoryPlanBySlugRepository) SelectStoryPlanBySlug(
 	}
 
 	return entity, nil
-}
-
-func NewSelectStoryPlanBySlugRepository() *SelectStoryPlanBySlugRepository {
-	return &SelectStoryPlanBySlugRepository{}
 }

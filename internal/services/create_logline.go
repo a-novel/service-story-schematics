@@ -23,6 +23,19 @@ type CreateLoglineSource interface {
 	SelectSlugIteration(ctx context.Context, data dao.SelectSlugIterationData) (models.Slug, int, error)
 }
 
+func NewCreateLoglineServiceSource(
+	insertLoglineDAO *dao.InsertLoglineRepository,
+	selectSlugIterationDAO *dao.SelectSlugIterationRepository,
+) CreateLoglineSource {
+	return &struct {
+		*dao.InsertLoglineRepository
+		*dao.SelectSlugIterationRepository
+	}{
+		InsertLoglineRepository:       insertLoglineDAO,
+		SelectSlugIterationRepository: selectSlugIterationDAO,
+	}
+}
+
 type CreateLoglineRequest struct {
 	UserID  uuid.UUID
 	Slug    models.Slug
@@ -33,6 +46,10 @@ type CreateLoglineRequest struct {
 
 type CreateLoglineService struct {
 	source CreateLoglineSource
+}
+
+func NewCreateLoglineService(source CreateLoglineSource) *CreateLoglineService {
+	return &CreateLoglineService{source: source}
 }
 
 func (service *CreateLoglineService) CreateLogline(
@@ -96,21 +113,4 @@ func (service *CreateLoglineService) CreateLogline(
 		Lang:      resp.Lang,
 		CreatedAt: resp.CreatedAt,
 	}, nil
-}
-
-func NewCreateLoglineServiceSource(
-	insertLoglineDAO *dao.InsertLoglineRepository,
-	selectSlugIterationDAO *dao.SelectSlugIterationRepository,
-) CreateLoglineSource {
-	return &struct {
-		*dao.InsertLoglineRepository
-		*dao.SelectSlugIterationRepository
-	}{
-		InsertLoglineRepository:       insertLoglineDAO,
-		SelectSlugIterationRepository: selectSlugIterationDAO,
-	}
-}
-
-func NewCreateLoglineService(source CreateLoglineSource) *CreateLoglineService {
-	return &CreateLoglineService{source: source}
 }

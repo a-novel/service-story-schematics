@@ -25,6 +25,25 @@ type RegenerateBeatsSource interface {
 	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
 }
 
+func NewRegenerateBeatsServiceSource(
+	regenerateBeatsDAO *daoai.RegenerateBeatsRepository,
+	selectBeatsSheetDAO *dao.SelectBeatsSheetRepository,
+	selectLoglineDAO *dao.SelectLoglineRepository,
+	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
+) RegenerateBeatsSource {
+	return &struct {
+		*daoai.RegenerateBeatsRepository
+		*dao.SelectBeatsSheetRepository
+		*dao.SelectLoglineRepository
+		*dao.SelectStoryPlanRepository
+	}{
+		RegenerateBeatsRepository:  regenerateBeatsDAO,
+		SelectBeatsSheetRepository: selectBeatsSheetDAO,
+		SelectLoglineRepository:    selectLoglineDAO,
+		SelectStoryPlanRepository:  selectStoryPlanDAO,
+	}
+}
+
 type RegenerateBeatsRequest struct {
 	BeatsSheetID   uuid.UUID
 	UserID         uuid.UUID
@@ -33,6 +52,10 @@ type RegenerateBeatsRequest struct {
 
 type RegenerateBeatsService struct {
 	source RegenerateBeatsSource
+}
+
+func NewRegenerateBeatsService(source RegenerateBeatsSource) *RegenerateBeatsService {
+	return &RegenerateBeatsService{source: source}
 }
 
 func (service *RegenerateBeatsService) RegenerateBeats(
@@ -93,27 +116,4 @@ func (service *RegenerateBeatsService) RegenerateBeats(
 	}
 
 	return regenerated, nil
-}
-
-func NewRegenerateBeatsServiceSource(
-	regenerateBeatsDAO *daoai.RegenerateBeatsRepository,
-	selectBeatsSheetDAO *dao.SelectBeatsSheetRepository,
-	selectLoglineDAO *dao.SelectLoglineRepository,
-	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
-) RegenerateBeatsSource {
-	return &struct {
-		*daoai.RegenerateBeatsRepository
-		*dao.SelectBeatsSheetRepository
-		*dao.SelectLoglineRepository
-		*dao.SelectStoryPlanRepository
-	}{
-		RegenerateBeatsRepository:  regenerateBeatsDAO,
-		SelectBeatsSheetRepository: selectBeatsSheetDAO,
-		SelectLoglineRepository:    selectLoglineDAO,
-		SelectStoryPlanRepository:  selectStoryPlanDAO,
-	}
-}
-
-func NewRegenerateBeatsService(source RegenerateBeatsSource) *RegenerateBeatsService {
-	return &RegenerateBeatsService{source: source}
 }

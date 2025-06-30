@@ -32,6 +32,10 @@ type GenerateLoglinesService struct {
 	source GenerateLoglinesSource
 }
 
+func NewGenerateLoglinesService(source GenerateLoglinesSource) *GenerateLoglinesService {
+	return &GenerateLoglinesService{source: source}
+}
+
 func (service *GenerateLoglinesService) GenerateLoglines(
 	ctx context.Context, request GenerateLoglinesRequest,
 ) ([]models.LoglineIdea, error) {
@@ -56,8 +60,4 @@ func (service *GenerateLoglinesService) GenerateLoglines(
 	}
 
 	return resp, nil
-}
-
-func NewGenerateLoglinesService(source GenerateLoglinesSource) *GenerateLoglinesService {
-	return &GenerateLoglinesService{source: source}
 }

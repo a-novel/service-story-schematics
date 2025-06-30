@@ -26,6 +26,22 @@ type CreateBeatsSheetSource interface {
 	SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)
 }
 
+func NewCreateBeatsSheetServiceSource(
+	insertBeatSheetDAO *dao.InsertBeatsSheetRepository,
+	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
+	selectLoglineDAO *dao.SelectLoglineRepository,
+) CreateBeatsSheetSource {
+	return &struct {
+		*dao.InsertBeatsSheetRepository
+		*dao.SelectStoryPlanRepository
+		*dao.SelectLoglineRepository
+	}{
+		InsertBeatsSheetRepository: insertBeatSheetDAO,
+		SelectStoryPlanRepository:  selectStoryPlanDAO,
+		SelectLoglineRepository:    selectLoglineDAO,
+	}
+}
+
 type CreateBeatsSheetRequest struct {
 	LoglineID   uuid.UUID
 	UserID      uuid.UUID
@@ -36,6 +52,10 @@ type CreateBeatsSheetRequest struct {
 
 type CreateBeatsSheetService struct {
 	source CreateBeatsSheetSource
+}
+
+func NewCreateBeatsSheetService(source CreateBeatsSheetSource) *CreateBeatsSheetService {
+	return &CreateBeatsSheetService{source: source}
 }
 
 func (service *CreateBeatsSheetService) CreateBeatsSheet(
@@ -67,7 +87,8 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 	}
 
 	// Ensure story plan matches the beats sheet.
-	if err = lib.CheckStoryPlan(request.Content, storyPlan.Beats); err != nil {
+	err = lib.CheckStoryPlan(request.Content, storyPlan.Beats)
+	if err != nil {
 		span.SetData("lib.checkStoryPlan.err", err.Error())
 
 		return nil, NewErrCreateBeatsSheetService(fmt.Errorf("check story plan: %w", err))
@@ -99,24 +120,4 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 		Lang:        resp.Lang,
 		CreatedAt:   resp.CreatedAt,
 	}, nil
-}
-
-func NewCreateBeatsSheetServiceSource(
-	insertBeatSheetDAO *dao.InsertBeatsSheetRepository,
-	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
-	selectLoglineDAO *dao.SelectLoglineRepository,
-) CreateBeatsSheetSource {
-	return &struct {
-		*dao.InsertBeatsSheetRepository
-		*dao.SelectStoryPlanRepository
-		*dao.SelectLoglineRepository
-	}{
-		InsertBeatsSheetRepository: insertBeatSheetDAO,
-		SelectStoryPlanRepository:  selectStoryPlanDAO,
-		SelectLoglineRepository:    selectLoglineDAO,
-	}
-}
-
-func NewCreateBeatsSheetService(source CreateBeatsSheetSource) *CreateBeatsSheetService {
-	return &CreateBeatsSheetService{source: source}
 }
