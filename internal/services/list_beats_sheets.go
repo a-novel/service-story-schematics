@@ -23,6 +23,19 @@ type ListBeatsSheetsSource interface {
 	SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)
 }
 
+func NewListBeatsSheetsServiceSource(
+	listBeatsSheetsDAO *dao.ListBeatsSheetsRepository,
+	selectLoglineDAO *dao.SelectLoglineRepository,
+) ListBeatsSheetsSource {
+	return &struct {
+		*dao.ListBeatsSheetsRepository
+		*dao.SelectLoglineRepository
+	}{
+		ListBeatsSheetsRepository: listBeatsSheetsDAO,
+		SelectLoglineRepository:   selectLoglineDAO,
+	}
+}
+
 type ListBeatsSheetsRequest struct {
 	UserID    uuid.UUID
 	LoglineID uuid.UUID
@@ -32,6 +45,10 @@ type ListBeatsSheetsRequest struct {
 
 type ListBeatsSheetsService struct {
 	source ListBeatsSheetsSource
+}
+
+func NewListBeatsSheetsService(source ListBeatsSheetsSource) *ListBeatsSheetsService {
+	return &ListBeatsSheetsService{source: source}
 }
 
 func (service *ListBeatsSheetsService) ListBeatsSheets(
@@ -77,21 +94,4 @@ func (service *ListBeatsSheetsService) ListBeatsSheets(
 			CreatedAt: item.CreatedAt,
 		}
 	}), nil
-}
-
-func NewListBeatsSheetsServiceSource(
-	listBeatsSheetsDAO *dao.ListBeatsSheetsRepository,
-	selectLoglineDAO *dao.SelectLoglineRepository,
-) ListBeatsSheetsSource {
-	return &struct {
-		*dao.ListBeatsSheetsRepository
-		*dao.SelectLoglineRepository
-	}{
-		ListBeatsSheetsRepository: listBeatsSheetsDAO,
-		SelectLoglineRepository:   selectLoglineDAO,
-	}
-}
-
-func NewListBeatsSheetsService(source ListBeatsSheetsSource) *ListBeatsSheetsService {
-	return &ListBeatsSheetsService{source: source}
 }

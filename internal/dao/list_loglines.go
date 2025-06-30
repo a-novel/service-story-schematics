@@ -17,12 +17,16 @@ func NewErrListLoglinesRepository(err error) error {
 	return errors.Join(err, ErrListLoglinesRepository)
 }
 
-type ListLoglinesRepository struct{}
-
 type ListLoglinesData struct {
 	UserID uuid.UUID
 	Limit  int
 	Offset int
+}
+
+type ListLoglinesRepository struct{}
+
+func NewListLoglinesRepository() *ListLoglinesRepository {
+	return &ListLoglinesRepository{}
 }
 
 func (repository *ListLoglinesRepository) ListLoglines(
@@ -58,8 +62,4 @@ func (repository *ListLoglinesRepository) ListLoglines(
 	}
 
 	return entities, nil
-}
-
-func NewListLoglinesRepository() *ListLoglinesRepository {
-	return &ListLoglinesRepository{}
 }

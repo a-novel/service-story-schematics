@@ -23,6 +23,10 @@ type InsertBeatsSheetData struct {
 
 type InsertBeatsSheetRepository struct{}
 
+func NewInsertBeatsSheetRepository() *InsertBeatsSheetRepository {
+	return &InsertBeatsSheetRepository{}
+}
+
 func (repository *InsertBeatsSheetRepository) InsertBeatsSheet(
 	ctx context.Context, data InsertBeatsSheetData,
 ) (*BeatsSheetEntity, error) {
@@ -66,8 +70,4 @@ func (repository *InsertBeatsSheetRepository) InsertBeatsSheet(
 	}
 
 	return entity, nil
-}
-
-func NewInsertBeatsSheetRepository() *InsertBeatsSheetRepository {
-	return &InsertBeatsSheetRepository{}
 }

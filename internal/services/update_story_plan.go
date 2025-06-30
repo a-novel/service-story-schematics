@@ -34,6 +34,10 @@ type UpdateStoryPlanService struct {
 	source UpdateStoryPlanSource
 }
 
+func NewUpdateStoryPlanService(source UpdateStoryPlanSource) *UpdateStoryPlanService {
+	return &UpdateStoryPlanService{source: source}
+}
+
 func (service *UpdateStoryPlanService) UpdateStoryPlan(
 	ctx context.Context, request UpdateStoryPlanRequest,
 ) (*models.StoryPlan, error) {
@@ -70,8 +74,4 @@ func (service *UpdateStoryPlanService) UpdateStoryPlan(
 		Lang:        resp.Lang,
 		CreatedAt:   resp.CreatedAt,
 	}, nil
-}
-
-func NewUpdateStoryPlanService(source UpdateStoryPlanSource) *UpdateStoryPlanService {
-	return &UpdateStoryPlanService{source: source}
 }

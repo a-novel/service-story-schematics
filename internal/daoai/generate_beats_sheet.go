@@ -57,6 +57,10 @@ type GenerateBeatsSheetRequest struct {
 
 type GenerateBeatsSheetRepository struct{}
 
+func NewGenerateBeatsSheetRepository() *GenerateBeatsSheetRepository {
+	return &GenerateBeatsSheetRepository{}
+}
+
 func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 	ctx context.Context, request GenerateBeatsSheetRequest,
 ) ([]models.Beat, error) {
@@ -118,21 +122,19 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 		Beats []models.Beat `json:"beats"`
 	}
 
-	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats); err != nil {
+	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats)
+	if err != nil {
 		span.SetData("unmarshal.error", err.Error())
 
 		return nil, NewErrGenerateBeatsSheetRepository(err)
 	}
 
-	if err = lib.CheckStoryPlan(beats.Beats, request.Plan.Beats); err != nil {
+	err = lib.CheckStoryPlan(beats.Beats, request.Plan.Beats)
+	if err != nil {
 		span.SetData("checkStoryPlan.error", err.Error())
 
 		return nil, NewErrGenerateBeatsSheetRepository(errors.Join(err, ErrInvalidBeatSheet))
 	}
 
 	return beats.Beats, nil
-}
-
-func NewGenerateBeatsSheetRepository() *GenerateBeatsSheetRepository {
-	return &GenerateBeatsSheetRepository{}
 }

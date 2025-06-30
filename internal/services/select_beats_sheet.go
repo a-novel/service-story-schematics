@@ -22,6 +22,19 @@ type SelectBeatsSheetSource interface {
 	SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)
 }
 
+func NewSelectBeatsSheetServiceSource(
+	selectBeatsSheetDAO *dao.SelectBeatsSheetRepository,
+	selectLoglineDAO *dao.SelectLoglineRepository,
+) SelectBeatsSheetSource {
+	return &struct {
+		*dao.SelectBeatsSheetRepository
+		*dao.SelectLoglineRepository
+	}{
+		SelectBeatsSheetRepository: selectBeatsSheetDAO,
+		SelectLoglineRepository:    selectLoglineDAO,
+	}
+}
+
 type SelectBeatsSheetRequest struct {
 	BeatsSheetID uuid.UUID
 	UserID       uuid.UUID
@@ -29,6 +42,10 @@ type SelectBeatsSheetRequest struct {
 
 type SelectBeatsSheetService struct {
 	source SelectBeatsSheetSource
+}
+
+func NewSelectBeatsSheetService(source SelectBeatsSheetSource) *SelectBeatsSheetService {
+	return &SelectBeatsSheetService{source: source}
 }
 
 func (service *SelectBeatsSheetService) SelectBeatsSheet(
@@ -66,21 +83,4 @@ func (service *SelectBeatsSheetService) SelectBeatsSheet(
 		Lang:        data.Lang,
 		CreatedAt:   data.CreatedAt,
 	}, nil
-}
-
-func NewSelectBeatsSheetServiceSource(
-	selectBeatsSheetDAO *dao.SelectBeatsSheetRepository,
-	selectLoglineDAO *dao.SelectLoglineRepository,
-) SelectBeatsSheetSource {
-	return &struct {
-		*dao.SelectBeatsSheetRepository
-		*dao.SelectLoglineRepository
-	}{
-		SelectBeatsSheetRepository: selectBeatsSheetDAO,
-		SelectLoglineRepository:    selectLoglineDAO,
-	}
-}
-
-func NewSelectBeatsSheetService(source SelectBeatsSheetSource) *SelectBeatsSheetService {
-	return &SelectBeatsSheetService{source: source}
 }

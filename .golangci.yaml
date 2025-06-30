@@ -19,23 +19,20 @@ linters:
   disable:
     - depguard
     - dupl
+    - revive
     - exhaustruct
     - varnamelen
-    - revive
     - ireturn
     - gochecknoinits
     - gochecknoglobals
-    - iface
     - funlen
-    - funcorder
-    - cyclop
+    - iface
     - err113
     - contextcheck # Conflicts with Sentry context propagation.
 
   settings:
-    gosec:
-      excludes:
-        - G115
+    cyclop:
+      max-complexity: 15
     tagliatelle:
       case:
         rules:

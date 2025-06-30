@@ -54,6 +54,10 @@ type ExpandLoglineRequest struct {
 
 type ExpandLoglineRepository struct{}
 
+func NewExpandLoglineRepository() *ExpandLoglineRepository {
+	return &ExpandLoglineRepository{}
+}
+
 func (repository *ExpandLoglineRepository) ExpandLogline(
 	ctx context.Context, request ExpandLoglineRequest,
 ) (*models.LoglineIdea, error) {
@@ -65,7 +69,9 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 	span.SetData("request.lang", request.Lang.String())
 
 	systemPrompt := new(strings.Builder)
-	if err := ExpandLoglinePrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), nil); err != nil {
+
+	err := ExpandLoglinePrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), nil)
+	if err != nil {
 		span.SetData("prompt.error", err.Error())
 
 		return nil, NewErrExpandLoglineRepository(fmt.Errorf("execute system prompt: %w", err))
@@ -100,7 +106,8 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 
 	var logline models.LoglineIdea
 
-	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &logline); err != nil {
+	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &logline)
+	if err != nil {
 		span.SetData("unmarshal.error", err.Error())
 
 		return nil, NewErrExpandLoglineRepository(err)
@@ -109,8 +116,4 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 	logline.Lang = request.Lang
 
 	return &logline, nil
-}
-
-func NewExpandLoglineRepository() *ExpandLoglineRepository {
-	return &ExpandLoglineRepository{}
 }

@@ -70,16 +70,8 @@ type ExpandBeatRequest struct {
 
 type ExpandBeatRepository struct{}
 
-func (repository *ExpandBeatRepository) buildBeatsSheetResponse(
-	request ExpandBeatRequest,
-) openai.ChatCompletionMessageParamUnion {
-	parts := make([]string, len(request.Beats))
-
-	for i, beat := range request.Beats {
-		parts[i] = fmt.Sprintf("%s\n%s", beat.Key, beat.Content)
-	}
-
-	return openai.AssistantMessage(strings.Join(parts, "\n\n"))
+func NewExpandBeatRepository() *ExpandBeatRepository {
+	return &ExpandBeatRepository{}
 }
 
 func (repository *ExpandBeatRepository) ExpandBeat(
@@ -172,7 +164,8 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 
 	var beat models.Beat
 
-	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beat); err != nil {
+	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beat)
+	if err != nil {
 		span.SetData("unmarshal.error", err.Error())
 
 		return nil, NewErrExpandBeatRepository(err)
@@ -181,6 +174,14 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 	return &beat, nil
 }
 
-func NewExpandBeatRepository() *ExpandBeatRepository {
-	return &ExpandBeatRepository{}
+func (repository *ExpandBeatRepository) buildBeatsSheetResponse(
+	request ExpandBeatRequest,
+) openai.ChatCompletionMessageParamUnion {
+	parts := make([]string, len(request.Beats))
+
+	for i, beat := range request.Beats {
+		parts[i] = fmt.Sprintf("%s\n%s", beat.Key, beat.Content)
+	}
+
+	return openai.AssistantMessage(strings.Join(parts, "\n\n"))
 }

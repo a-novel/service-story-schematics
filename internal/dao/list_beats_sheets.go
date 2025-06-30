@@ -17,12 +17,16 @@ func NewErrListBeatsSheetsRepository(err error) error {
 	return errors.Join(err, ErrListBeatsSheetsRepository)
 }
 
-type ListBeatsSheetsRepository struct{}
-
 type ListBeatsSheetsData struct {
 	LoglineID uuid.UUID
 	Limit     int
 	Offset    int
+}
+
+type ListBeatsSheetsRepository struct{}
+
+func NewListBeatsSheetsRepository() *ListBeatsSheetsRepository {
+	return &ListBeatsSheetsRepository{}
 }
 
 func (repository *ListBeatsSheetsRepository) ListBeatsSheets(
@@ -58,8 +62,4 @@ func (repository *ListBeatsSheetsRepository) ListBeatsSheets(
 	}
 
 	return entities, nil
-}
-
-func NewListBeatsSheetsRepository() *ListBeatsSheetsRepository {
-	return &ListBeatsSheetsRepository{}
 }

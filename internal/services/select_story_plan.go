@@ -23,6 +23,19 @@ type SelectStoryPlanSource interface {
 	SelectStoryPlanBySlug(ctx context.Context, data models.Slug) (*dao.StoryPlanEntity, error)
 }
 
+func NewSelectStoryPlanServiceSource(
+	selectDAO *dao.SelectStoryPlanRepository,
+	selectBySlugRepository *dao.SelectStoryPlanBySlugRepository,
+) SelectStoryPlanSource {
+	return &struct {
+		*dao.SelectStoryPlanRepository
+		*dao.SelectStoryPlanBySlugRepository
+	}{
+		SelectStoryPlanRepository:       selectDAO,
+		SelectStoryPlanBySlugRepository: selectBySlugRepository,
+	}
+}
+
 type SelectStoryPlanRequest struct {
 	Slug *models.Slug
 	ID   *uuid.UUID
@@ -30,6 +43,10 @@ type SelectStoryPlanRequest struct {
 
 type SelectStoryPlanService struct {
 	source SelectStoryPlanSource
+}
+
+func NewSelectStoryPlanService(source SelectStoryPlanSource) *SelectStoryPlanService {
+	return &SelectStoryPlanService{source: source}
 }
 
 func (service *SelectStoryPlanService) SelectStoryPlan(
@@ -76,21 +93,4 @@ func (service *SelectStoryPlanService) SelectStoryPlan(
 		Lang:        data.Lang,
 		CreatedAt:   data.CreatedAt,
 	}, nil
-}
-
-func NewSelectStoryPlanServiceSource(
-	selectDAO *dao.SelectStoryPlanRepository,
-	selectBySlugRepository *dao.SelectStoryPlanBySlugRepository,
-) SelectStoryPlanSource {
-	return &struct {
-		*dao.SelectStoryPlanRepository
-		*dao.SelectStoryPlanBySlugRepository
-	}{
-		SelectStoryPlanRepository:       selectDAO,
-		SelectStoryPlanBySlugRepository: selectBySlugRepository,
-	}
-}
-
-func NewSelectStoryPlanService(source SelectStoryPlanSource) *SelectStoryPlanService {
-	return &SelectStoryPlanService{source: source}
 }

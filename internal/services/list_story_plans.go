@@ -30,6 +30,10 @@ type ListStoryPlansService struct {
 	source ListStoryPlansSource
 }
 
+func NewListStoryPlansService(source ListStoryPlansSource) *ListStoryPlansService {
+	return &ListStoryPlansService{source: source}
+}
+
 func (service *ListStoryPlansService) ListStoryPlans(
 	ctx context.Context, request ListStoryPlansRequest,
 ) ([]*models.StoryPlanPreview, error) {
@@ -61,8 +65,4 @@ func (service *ListStoryPlansService) ListStoryPlans(
 			CreatedAt:   item.CreatedAt,
 		}
 	}), nil
-}
-
-func NewListStoryPlansService(source ListStoryPlansSource) *ListStoryPlansService {
-	return &ListStoryPlansService{source: source}
 }

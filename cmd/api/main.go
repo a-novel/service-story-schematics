@@ -36,7 +36,8 @@ func main() {
 	// =================================================================================================================
 	// LOAD DEPENDENCIES (EXTERNAL)
 	// =================================================================================================================
-	if err := sentry.Init(config.SentryClient); err != nil {
+	err := sentry.Init(config.SentryClient)
+	if err != nil {
 		log.Fatalf("initialize sentry: %v", err)
 	}
 	defer sentry.Flush(SentryFlushTimeout)
@@ -54,7 +55,7 @@ func main() {
 	logger.Info(ctx, "starting application")
 
 	// Initialize all contexts at once.
-	ctx, err := lib.NewAgoraContext(context.Background(), config.DSN)
+	ctx, err = lib.NewAgoraContext(context.Background(), config.DSN)
 	if err != nil {
 		logger.Fatalf(ctx, "initialize agora context: %v", err)
 	}
@@ -243,7 +244,8 @@ func main() {
 	logger.SetAttributes(attribute.Int("server.port", config.API.Port))
 	logger.Info(ctx, "start http server")
 
-	if err = httpServer.ListenAndServe(); err != nil {
+	err = httpServer.ListenAndServe()
+	if err != nil {
 		logger.Fatalf(ctx, "start http server: %v", err)
 	}
 }

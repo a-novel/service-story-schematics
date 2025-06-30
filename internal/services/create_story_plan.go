@@ -23,6 +23,19 @@ type CreateStoryPlanSource interface {
 	SelectSlugIteration(ctx context.Context, data dao.SelectSlugIterationData) (models.Slug, int, error)
 }
 
+func NewCreateStoryPlanServiceSource(
+	insertStoryPlanDAO *dao.InsertStoryPlanRepository,
+	selectSlugIterationDAO *dao.SelectSlugIterationRepository,
+) CreateStoryPlanSource {
+	return &struct {
+		*dao.InsertStoryPlanRepository
+		*dao.SelectSlugIterationRepository
+	}{
+		InsertStoryPlanRepository:     insertStoryPlanDAO,
+		SelectSlugIterationRepository: selectSlugIterationDAO,
+	}
+}
+
 type CreateStoryPlanRequest struct {
 	Slug        models.Slug
 	Name        string
@@ -33,6 +46,10 @@ type CreateStoryPlanRequest struct {
 
 type CreateStoryPlanService struct {
 	source CreateStoryPlanSource
+}
+
+func NewCreateStoryPlanService(source CreateStoryPlanSource) *CreateStoryPlanService {
+	return &CreateStoryPlanService{source: source}
 }
 
 func (service *CreateStoryPlanService) CreateStoryPlan(
@@ -94,21 +111,4 @@ func (service *CreateStoryPlanService) CreateStoryPlan(
 		Lang:        resp.Lang,
 		CreatedAt:   resp.CreatedAt,
 	}, nil
-}
-
-func NewCreateStoryPlanServiceSource(
-	insertStoryPlanDAO *dao.InsertStoryPlanRepository,
-	selectSlugIterationDAO *dao.SelectSlugIterationRepository,
-) CreateStoryPlanSource {
-	return &struct {
-		*dao.InsertStoryPlanRepository
-		*dao.SelectSlugIterationRepository
-	}{
-		InsertStoryPlanRepository:     insertStoryPlanDAO,
-		SelectSlugIterationRepository: selectSlugIterationDAO,
-	}
-}
-
-func NewCreateStoryPlanService(source CreateStoryPlanSource) *CreateStoryPlanService {
-	return &CreateStoryPlanService{source: source}
 }

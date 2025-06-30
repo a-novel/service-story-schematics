@@ -23,6 +23,10 @@ type InsertStoryPlanData struct {
 
 type InsertStoryPlanRepository struct{}
 
+func NewInsertStoryPlanRepository() *InsertStoryPlanRepository {
+	return &InsertStoryPlanRepository{}
+}
+
 func (repository *InsertStoryPlanRepository) InsertStoryPlan(
 	ctx context.Context, data InsertStoryPlanData,
 ) (*StoryPlanEntity, error) {
@@ -73,8 +77,4 @@ func (repository *InsertStoryPlanRepository) InsertStoryPlan(
 	}
 
 	return entity, nil
-}
-
-func NewInsertStoryPlanRepository() *InsertStoryPlanRepository {
-	return &InsertStoryPlanRepository{}
 }

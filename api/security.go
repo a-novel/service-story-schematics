@@ -21,20 +21,6 @@ type SecurityHandler struct {
 	authHandler *authapi.SecurityHandler
 }
 
-func (security *SecurityHandler) HandleBearerAuth(
-	ctx context.Context, operationName codegen.OperationName, auth codegen.BearerAuth,
-) (context.Context, error) {
-	ctx, err := security.authHandler.HandleBearerAuth(ctx, operationName, authcodegen.BearerAuth{
-		Token: auth.Token,
-		Roles: auth.Roles,
-	})
-	if err != nil {
-		return nil, NewErrStorySchematicsSecurityHandler(err)
-	}
-
-	return ctx, nil
-}
-
 func NewSecurity(
 	granted models.PermissionsConfig,
 	authService authapi.SecurityHandlerService,
@@ -47,4 +33,18 @@ func NewSecurity(
 	return &SecurityHandler{
 		authHandler: authHandler,
 	}, nil
+}
+
+func (security *SecurityHandler) HandleBearerAuth(
+	ctx context.Context, operationName codegen.OperationName, auth codegen.BearerAuth,
+) (context.Context, error) {
+	ctx, err := security.authHandler.HandleBearerAuth(ctx, operationName, authcodegen.BearerAuth{
+		Token: auth.Token,
+		Roles: auth.Roles,
+	})
+	if err != nil {
+		return nil, NewErrStorySchematicsSecurityHandler(err)
+	}
+
+	return ctx, nil
 }

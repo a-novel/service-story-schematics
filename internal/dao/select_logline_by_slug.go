@@ -26,6 +26,10 @@ type SelectLoglineBySlugData struct {
 
 type SelectLoglineBySlugRepository struct{}
 
+func NewSelectLoglineBySlugRepository() *SelectLoglineBySlugRepository {
+	return &SelectLoglineBySlugRepository{}
+}
+
 func (repository *SelectLoglineBySlugRepository) SelectLoglineBySlug(
 	ctx context.Context, data SelectLoglineBySlugData,
 ) (*LoglineEntity, error) {
@@ -59,8 +63,4 @@ func (repository *SelectLoglineBySlugRepository) SelectLoglineBySlug(
 	}
 
 	return entity, nil
-}
-
-func NewSelectLoglineBySlugRepository() *SelectLoglineBySlugRepository {
-	return &SelectLoglineBySlugRepository{}
 }

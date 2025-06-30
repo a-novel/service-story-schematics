@@ -25,6 +25,22 @@ type GenerateBeatsSheetSource interface {
 	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
 }
 
+func NewGenerateBeatsSheetServiceSource(
+	generateDAO *daoai.GenerateBeatsSheetRepository,
+	selectLoglineDAO *dao.SelectLoglineRepository,
+	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
+) GenerateBeatsSheetSource {
+	return &struct {
+		*daoai.GenerateBeatsSheetRepository
+		*dao.SelectLoglineRepository
+		*dao.SelectStoryPlanRepository
+	}{
+		GenerateBeatsSheetRepository: generateDAO,
+		SelectLoglineRepository:      selectLoglineDAO,
+		SelectStoryPlanRepository:    selectStoryPlanDAO,
+	}
+}
+
 type GenerateBeatsSheetRequest struct {
 	LoglineID   uuid.UUID
 	StoryPlanID uuid.UUID
@@ -34,6 +50,10 @@ type GenerateBeatsSheetRequest struct {
 
 type GenerateBeatsSheetService struct {
 	source GenerateBeatsSheetSource
+}
+
+func NewGenerateBeatsSheetService(source GenerateBeatsSheetSource) *GenerateBeatsSheetService {
+	return &GenerateBeatsSheetService{source: source}
 }
 
 func (service *GenerateBeatsSheetService) GenerateBeatsSheet(
@@ -85,24 +105,4 @@ func (service *GenerateBeatsSheetService) GenerateBeatsSheet(
 	}
 
 	return resp, nil
-}
-
-func NewGenerateBeatsSheetServiceSource(
-	generateDAO *daoai.GenerateBeatsSheetRepository,
-	selectLoglineDAO *dao.SelectLoglineRepository,
-	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
-) GenerateBeatsSheetSource {
-	return &struct {
-		*daoai.GenerateBeatsSheetRepository
-		*dao.SelectLoglineRepository
-		*dao.SelectStoryPlanRepository
-	}{
-		GenerateBeatsSheetRepository: generateDAO,
-		SelectLoglineRepository:      selectLoglineDAO,
-		SelectStoryPlanRepository:    selectStoryPlanDAO,
-	}
-}
-
-func NewGenerateBeatsSheetService(source GenerateBeatsSheetSource) *GenerateBeatsSheetService {
-	return &GenerateBeatsSheetService{source: source}
 }

@@ -34,6 +34,10 @@ type InsertLoglineData struct {
 
 type InsertLoglineRepository struct{}
 
+func NewInsertLoglineRepository() *InsertLoglineRepository {
+	return &InsertLoglineRepository{}
+}
+
 func (repository *InsertLoglineRepository) InsertLogline(
 	ctx context.Context, data InsertLoglineData,
 ) (*LoglineEntity, error) {
@@ -63,7 +67,8 @@ func (repository *InsertLoglineRepository) InsertLogline(
 		CreatedAt: data.Now,
 	}
 
-	if _, err = tx.NewInsert().Model(entity).Returning("*").Exec(span.Context()); err != nil {
+	_, err = tx.NewInsert().Model(entity).Returning("*").Exec(span.Context())
+	if err != nil {
 		span.SetData("insert.error", err.Error())
 
 		var pgErr pgdriver.Error
@@ -75,8 +80,4 @@ func (repository *InsertLoglineRepository) InsertLogline(
 	}
 
 	return entity, nil
-}
-
-func NewInsertLoglineRepository() *InsertLoglineRepository {
-	return &InsertLoglineRepository{}
 }

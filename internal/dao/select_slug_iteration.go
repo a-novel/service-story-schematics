@@ -30,6 +30,10 @@ type SelectSlugIterationData struct {
 
 type SelectSlugIterationRepository struct{}
 
+func NewSelectSlugIterationRepository() *SelectSlugIterationRepository {
+	return &SelectSlugIterationRepository{}
+}
+
 func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 	ctx context.Context, data SelectSlugIterationData,
 ) (models.Slug, int, error) {
@@ -73,7 +77,8 @@ func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 		query = query.Order(order)
 	}
 
-	if err = query.Scan(span.Context()); err != nil {
+	err = query.Scan(span.Context())
+	if err != nil {
 		span.SetData("scan.error", err.Error())
 
 		if errors.Is(err, sql.ErrNoRows) {
@@ -94,8 +99,4 @@ func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 	}
 
 	return models.Slug(fmt.Sprintf("%s-%d", data.Slug, index+1)), index + 1, nil
-}
-
-func NewSelectSlugIterationRepository() *SelectSlugIterationRepository {
-	return &SelectSlugIterationRepository{}
 }

@@ -60,6 +60,10 @@ type GenerateLoglinesRequest struct {
 
 type GenerateLoglinesRepository struct{}
 
+func NewGenerateLoglinesRepository() *GenerateLoglinesRepository {
+	return &GenerateLoglinesRepository{}
+}
+
 func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	ctx context.Context, request GenerateLoglinesRequest,
 ) ([]models.LoglineIdea, error) {
@@ -127,7 +131,8 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 		Loglines []models.LoglineIdea `json:"loglines"`
 	}
 
-	if err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &loglines); err != nil {
+	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &loglines)
+	if err != nil {
 		span.SetData("unmarshal.error", err.Error())
 
 		return nil, NewErrGenerateLoglinesRepository(err)
@@ -138,8 +143,4 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	}
 
 	return loglines.Loglines, nil
-}
-
-func NewGenerateLoglinesRepository() *GenerateLoglinesRepository {
-	return &GenerateLoglinesRepository{}
 }
