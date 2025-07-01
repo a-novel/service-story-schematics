@@ -4,7 +4,7 @@ go 1.24.4
 
 require (
 	github.com/a-novel-kit/configurator v1.4.3
-	github.com/a-novel/service-authentication v0.4.4
+	github.com/a-novel/service-authentication v0.5.0
 	github.com/getsentry/sentry-go v0.34.0
 	github.com/getsentry/sentry-go/otel v0.34.0
 	github.com/go-chi/chi/v5 v5.2.2
@@ -27,7 +27,7 @@ require (
 )
 
 require (
-	github.com/a-novel-kit/jwt v1.1.3 // indirect
+	github.com/a-novel-kit/jwt v1.1.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/fatih/color v1.18.0 // indirect
