@@ -1,9 +1,7 @@
 github.com/a-novel-kit/configurator v1.4.3 h1:fF7i98yWb3I9ZV6jUp4JHrabqgfte6vYIJcQqDlGjuo=
 github.com/a-novel-kit/configurator v1.4.3/go.mod h1:teWtbk40EKAaluOKUjnMsCxl3FzB09qiEAUukaAgwM4=
-github.com/a-novel-kit/jwt v1.1.4 h1:+ZTNxoCGx9MQP06XRnpdg82qhseBqNY9U77kTpdajSA=
-github.com/a-novel-kit/jwt v1.1.4/go.mod h1:VAQw0tHzVpLGIC5uaql6QiBqKp8sAQx66YOJO/98Oj0=
-github.com/a-novel/service-authentication v0.5.0 h1:KOOmB1pYKjxosaSDT1DRICq/FMs6cviNUIfJ7pQECzo=
-github.com/a-novel/service-authentication v0.5.0/go.mod h1:oTrS5cdZUyd3chBatAaYSWKQ2uSY9s3q4Rg31uqRyPs=
+github.com/a-novel/service-authentication v0.6.1 h1:B2nM6g3Ova/ra0I1N0zGS0QdDcshHqwSQri54+P8NDg=
+github.com/a-novel/service-authentication v0.6.1/go.mod h1:euPLs2m11HGc8myGx7jqlFeZioQ0kwddqXHmKyPLH4o=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dlclark/regexp2 v1.11.5 h1:Q/sSnsKerHeCkc/jSTNq1oCm7KiVgUMZRDUoRu0JQZQ=
