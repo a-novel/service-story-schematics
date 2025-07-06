@@ -10,7 +10,6 @@ COPY ../internal/daoai ./internal/daoai
 COPY ../internal/lib ./internal/lib
 COPY ../internal/services ./internal/services
 COPY ../migrations ./migrations
-COPY ../pkg ./pkg
 COPY ../models ./models
 COPY ../go.mod ./go.mod
 COPY ../go.sum ./go.sum

@@ -80,4 +80,9 @@ jobs:
           file: build/api.Dockerfile
           image_name: ${{ github.repository }}/api
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          run_args: -e DSN="${DSN}" -e MASTER_KEY="${MASTER_KEY}"
+          run_args: >-
+            -e DSN="${DSN}"
+            -e GROQ_TOKEN="${GROQ_TOKEN}"
+            -e JSON_KEYS_URL="${JSON_KEYS_URL}"
+            -e PORT="${PORT}"
+            -e DEBUG="${DEBUG}"
