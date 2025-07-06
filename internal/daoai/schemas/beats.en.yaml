@@ -1,0 +1,26 @@
+description: |
+  A collection of beats that make up the story structure, based on the chosen story plan.
+schema:
+  type: object
+  additionalProperties: false
+  required:
+    - beats
+  properties:
+    beats:
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - key
+          - title
+          - content
+        properties:
+          key:
+            type: string
+            description: The json key of the given beat
+          title:
+            type: string
+            description: A short title representing the beat
+          content:
+            type: string
+            description: A summary of the scenes in the beat

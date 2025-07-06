@@ -1,0 +1,15 @@
+description: |
+  A logline is a one-sentence summary of a story that captures its essence and hooks the reader's interest.
+schema:
+  type: object
+  additionalProperties: false
+  required:
+    - name
+    - content
+  properties:
+    name:
+      type: string
+      description: The title of the story.
+    content:
+      type: string
+      description: A short summary of the story.

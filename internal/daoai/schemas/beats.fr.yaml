@@ -1,0 +1,26 @@
+description: |
+  Une collection de battements qui composent la structure narrative, basée sur le plan d'histoire choisi.
+schema:
+  type: object
+  additionalProperties: false
+  required:
+    - beats
+  properties:
+    beats:
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - key
+          - title
+          - content
+        properties:
+          key:
+            type: string
+            description: La clé JSON du battement
+          title:
+            type: string
+            description: Un titre court décrivant le battement
+          content:
+            type: string
+            description: Un résumé des scènes dans le battement

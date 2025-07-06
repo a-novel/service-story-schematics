@@ -1,0 +1,23 @@
+description: |
+  A collection of loglines that make up the story structure, based on the chosen story plan.
+schema:
+  type: object
+  additionalProperties: false
+  required:
+    - loglines
+  properties:
+    loglines:
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - name
+          - content
+        properties:
+          name:
+            type: string
+            description: The title of the story.
+          content:
+            type: string
+            description: A short summary of the story.

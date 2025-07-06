@@ -13,8 +13,8 @@ import (
 	"github.com/openai/openai-go/packages/param"
 
 	"github.com/a-novel/service-story-schematics/config"
-	"github.com/a-novel/service-story-schematics/config/prompts"
-	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
+	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -24,20 +24,20 @@ const expandLoglineTemperature = 0.8
 var ExpandLoglinePrompts = struct {
 	System *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.Config.En.ExpandLogline, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.ExpandLogline,
-		models.LangFR: prompts.Config.Fr.ExpandLogline,
+	System: RegisterTemplateLocales(prompts.ExpandLogline[models.LangEN].System, map[models.Lang]string{
+		models.LangEN: prompts.ExpandLogline[models.LangEN].System,
+		models.LangFR: prompts.ExpandLogline[models.LangFR].System,
 	}),
 }
 
 var ExpandLoglineSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Config.En.Logline.Schema,
-	models.LangFR: schemas.Config.Fr.Logline.Schema,
+	models.LangEN: schemas.Logline[models.LangEN].Schema,
+	models.LangFR: schemas.Logline[models.LangFR].Schema,
 }
 
 var ExpandLoglineDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Config.En.Logline.Description,
-	models.LangFR: schemas.Config.Fr.Logline.Description,
+	models.LangEN: schemas.Logline[models.LangEN].Description,
+	models.LangFR: schemas.Logline[models.LangFR].Description,
 }
 
 var ErrExpandLoglineRepository = errors.New("ExpandLoglineRepository.ExpandLogline")

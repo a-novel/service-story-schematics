@@ -13,8 +13,8 @@ import (
 	"github.com/openai/openai-go/packages/param"
 
 	"github.com/a-novel/service-story-schematics/config"
-	"github.com/a-novel/service-story-schematics/config/prompts"
-	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
+	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -25,24 +25,24 @@ var GenerateLoglinesPrompts = struct {
 	Themed *template.Template
 	Random *template.Template
 }{
-	Themed: RegisterTemplateLocales(prompts.Config.En.GenerateLogline.System.Themed, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.GenerateLogline.System.Themed,
-		models.LangFR: prompts.Config.Fr.GenerateLogline.System.Themed,
+	Themed: RegisterTemplateLocales(prompts.GenerateLoglines[models.LangEN].System.Themed, map[models.Lang]string{
+		models.LangEN: prompts.GenerateLoglines[models.LangEN].System.Themed,
+		models.LangFR: prompts.GenerateLoglines[models.LangFR].System.Themed,
 	}),
-	Random: RegisterTemplateLocales(prompts.Config.En.GenerateLogline.System.Random, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.GenerateLogline.System.Random,
-		models.LangFR: prompts.Config.Fr.GenerateLogline.System.Random,
+	Random: RegisterTemplateLocales(prompts.GenerateLoglines[models.LangEN].System.Random, map[models.Lang]string{
+		models.LangEN: prompts.GenerateLoglines[models.LangEN].System.Random,
+		models.LangFR: prompts.GenerateLoglines[models.LangFR].System.Random,
 	}),
 }
 
 var GenerateLoglinesSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Config.En.Loglines.Schema,
-	models.LangFR: schemas.Config.Fr.Loglines.Schema,
+	models.LangEN: schemas.Loglines[models.LangEN].Schema,
+	models.LangFR: schemas.Loglines[models.LangFR].Schema,
 }
 
 var GenerateLoglinesDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Config.En.Loglines.Description,
-	models.LangFR: schemas.Config.Fr.Loglines.Description,
+	models.LangEN: schemas.Loglines[models.LangEN].Description,
+	models.LangFR: schemas.Loglines[models.LangFR].Description,
 }
 
 var ErrGenerateLoglinesRepository = errors.New("GenerateLoglinesRepository.GenerateLoglines")

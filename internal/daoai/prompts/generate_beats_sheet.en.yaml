@@ -1,0 +1,4 @@
+system: |
+  You are a writer. Create a story based on the "{{.Plan.Name}}" story plan and the logline provided by the user.
+
+  {{.StoryPlan}}

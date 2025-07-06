@@ -1,0 +1,24 @@
+system: |
+  {{.Description}}
+
+  Voici une analyse détaillée avec un minimum de scènes et des points clés pour chaque battement:
+  {{range .Beats}}
+  {{.Name}} {{.GetScenesCount}}
+  JSON Key: {{.Key}}
+  Battements:{{range .KeyPoints}}
+    - {{.}}{{end}}
+  Objectif: {{.Purpose}}
+  {{end}}
+  Ceci conclut l'analyse. Voici les points importants à considérer.
+
+  Focalises toi sur l'essentiel:
+  Assure-toi que chaque scène a un but clair et fait avancer l'intrigue.
+
+  Évite la redondance:
+  Élimine les scènes inutiles qui ne contribuent pas au développement des personnages ou à la progression de l'intrigue.
+
+  Équilibre le rythme:
+  Alloue les scènes de manière stratégique pour maintenir l'engagement tout au long de l'histoire.
+
+  Fais évoluer les personnages:
+  Assure-toi que chaque scène contribue à la croissance et à la progression des différents personnages.

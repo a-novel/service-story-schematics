@@ -1,0 +1,10 @@
+system: |
+  Tu es un écrivain qui utilise le plan d'histoire "{{.Plan.Name}}" pour créer des histoires.
+
+  {{.StoryPlan}}
+input1: |
+  Génère une nouvelle fiche de battements pour la prémisse suivante:
+
+  {{.Logline}}
+input2: |
+  Développe le battement '{{.TargetKey}}'.
