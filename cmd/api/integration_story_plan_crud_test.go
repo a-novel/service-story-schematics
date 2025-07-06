@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/rand"
 	"strings"
 	"testing"
 
@@ -9,10 +8,9 @@ import (
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/service-authentication/api/apiclient/testapiclient"
-	authmodels "github.com/a-novel/service-authentication/models"
+	authModels "github.com/a-novel/service-authentication/models"
 
-	"github.com/a-novel/service-story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 )
 
 var saveTheCatPartialPlanForm = &codegen.CreateStoryPlanForm{
@@ -74,43 +72,43 @@ func TestStoryPlanCRUD(t *testing.T) {
 	client, securityClient, err := getServerClient()
 	require.NoError(t, err)
 
-	userLambda := rand.Text()
-	userSuperAdmin := rand.Text()
-
-	testapiclient.AddPool(userLambda, &authmodels.AccessTokenClaims{
-		UserID: lo.ToPtr(uuid.New()),
-		Roles:  []authmodels.Role{authmodels.RoleUser},
-	})
-	testapiclient.AddPool(userSuperAdmin, &authmodels.AccessTokenClaims{
-		UserID: lo.ToPtr(uuid.New()),
-		Roles:  []authmodels.Role{authmodels.RoleSuperAdmin},
-	})
-
 	storyPlanSlug := "story-plan-crud-integration-test"
 	planForm := *saveTheCatPartialPlanForm
 	planForm.Slug = codegen.Slug(storyPlanSlug)
 
+	userLambdaClaims := authModels.AccessTokenClaims{
+		UserID: lo.ToPtr(uuid.New()),
+		Roles:  []authModels.Role{authModels.RoleUser},
+	}
+	userSuperAdminClaims := authModels.AccessTokenClaims{
+		UserID: lo.ToPtr(uuid.New()),
+		Roles:  []authModels.Role{authModels.RoleSuperAdmin},
+	}
+
+	userLambdaAccessToken := mustAccessToken(userLambdaClaims)
+	userSuperAdminAccessToken := mustAccessToken(userSuperAdminClaims)
+
 	t.Log("CreateStoryPlanNotAllowed")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawRes, err := client.CreateStoryPlan(t.Context(), &planForm)
 
 		require.NoError(t, err)
 
 		_, ok := rawRes.(*codegen.ForbiddenError)
-		require.True(t, ok)
+		require.True(t, ok, rawRes)
 	}
 
 	t.Log("CreateStoryPlan")
 	{
-		securityClient.SetToken(userSuperAdmin)
+		securityClient.SetToken(userSuperAdminAccessToken)
 
 		planRaw, err := client.CreateStoryPlan(t.Context(), &planForm)
 		require.NoError(t, err)
 
 		plan, ok := planRaw.(*codegen.StoryPlan)
-		require.True(t, ok)
+		require.True(t, ok, planRaw)
 		require.NotEmpty(t, plan.GetID())
 		require.Equal(t, planForm.Slug, plan.GetSlug())
 		require.Equal(t, planForm.Name, plan.GetName())
@@ -120,13 +118,13 @@ func TestStoryPlanCRUD(t *testing.T) {
 
 	t.Log("CreateStoryPlan/SlugResolution")
 	{
-		securityClient.SetToken(userSuperAdmin)
+		securityClient.SetToken(userSuperAdminAccessToken)
 
 		planRaw, err := client.CreateStoryPlan(t.Context(), &planForm)
 		require.NoError(t, err)
 
 		plan, ok := planRaw.(*codegen.StoryPlan)
-		require.True(t, ok)
+		require.True(t, ok, planRaw)
 		require.NotEmpty(t, plan.GetID())
 		require.Equal(t, planForm.Slug+"-1", plan.GetSlug())
 		require.Equal(t, planForm.Name, plan.GetName())
@@ -136,13 +134,13 @@ func TestStoryPlanCRUD(t *testing.T) {
 
 	t.Log("ListStoryPlans")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawRes, err := client.GetStoryPlans(t.Context(), codegen.GetStoryPlansParams{})
 		require.NoError(t, err)
 
 		res, ok := rawRes.(*codegen.GetStoryPlansOKApplicationJSON)
-		require.True(t, ok)
+		require.True(t, ok, rawRes)
 
 		versions := lo.Filter(*res, func(item codegen.StoryPlanPreview, _ int) bool {
 			return strings.HasPrefix(string(item.GetSlug()), storyPlanSlug)
@@ -155,7 +153,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 
 	t.Log("GetStoryPlan")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawRes, err := client.GetStoryPlan(t.Context(), codegen.GetStoryPlanParams{
 			Slug: codegen.OptSlug{Value: codegen.Slug(storyPlanSlug), Set: true},
@@ -163,7 +161,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 		require.NoError(t, err)
 
 		res, ok := rawRes.(*codegen.StoryPlan)
-		require.True(t, ok)
+		require.True(t, ok, rawRes)
 
 		require.Equal(t, codegen.Slug(storyPlanSlug), res.GetSlug())
 		require.Equal(t, planForm.Slug, res.GetSlug())
@@ -174,7 +172,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 
 	t.Log("UpdateStoryPlanNotAllowed")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawRes, err := client.UpdateStoryPlan(t.Context(), &codegen.UpdateStoryPlanForm{
 			Slug:        codegen.Slug(storyPlanSlug),
@@ -187,12 +185,12 @@ func TestStoryPlanCRUD(t *testing.T) {
 		require.NoError(t, err)
 
 		_, ok := rawRes.(*codegen.ForbiddenError)
-		require.True(t, ok)
+		require.True(t, ok, rawRes)
 	}
 
 	t.Log("UpdateStoryPlan")
 	{
-		securityClient.SetToken(userSuperAdmin)
+		securityClient.SetToken(userSuperAdminAccessToken)
 
 		planRaw, err := client.UpdateStoryPlan(t.Context(), &codegen.UpdateStoryPlanForm{
 			Slug:        codegen.Slug(storyPlanSlug),
@@ -204,7 +202,7 @@ func TestStoryPlanCRUD(t *testing.T) {
 		require.NoError(t, err)
 
 		plan, ok := planRaw.(*codegen.StoryPlan)
-		require.True(t, ok)
+		require.True(t, ok, planRaw)
 		require.NotEmpty(t, plan.GetID())
 		require.Equal(t, planForm.Slug, plan.GetSlug())
 		require.Equal(t, planForm.Name+" Updated", plan.GetName())

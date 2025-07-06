@@ -6,14 +6,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/a-novel/service-authentication/api/apiclient/testapiclient"
-
 	"github.com/a-novel-kit/configurator/chans"
 	"github.com/a-novel-kit/configurator/utilstest"
 
-	"github.com/a-novel/service-story-schematics/api/apiclient"
-	"github.com/a-novel/service-story-schematics/api/codegen"
 	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/service-story-schematics/internal/api/apiclient"
+	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 )
 
 var logs *chans.MultiChan[string]
@@ -63,9 +61,6 @@ func _patchSTD() {
 // Create a separate database to run integration tests.
 func init() {
 	_patchSTD()
-
-	config.API.ExternalAPIs.Auth = fmt.Sprintf("http://127.0.0.1:%v/v1", testapiclient.AuthAPIPort)
-	testapiclient.InitAuthServer()
 
 	go func() {
 		main()

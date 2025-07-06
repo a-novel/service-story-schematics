@@ -1,38 +1,20 @@
 package main
 
 import (
-	"crypto/rand"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/service-authentication/api/apiclient/testapiclient"
-	authmodels "github.com/a-novel/service-authentication/models"
+	authModels "github.com/a-novel/service-authentication/models"
 
-	"github.com/a-novel/service-story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 )
 
-func TestBeastSheetsPlayground(t *testing.T) {
+func TestBeatsSheetsPlayground(t *testing.T) {
 	client, securityClient, err := getServerClient()
 	require.NoError(t, err)
-
-	userLambda := rand.Text()
-	userLambdaID := uuid.New()
-	testapiclient.AddPool(userLambda, &authmodels.AccessTokenClaims{
-		UserID: &userLambdaID,
-		Roles:  []authmodels.Role{authmodels.RoleUser},
-	})
-
-	userSuperAdmin := rand.Text()
-	testapiclient.AddPool(userSuperAdmin, &authmodels.AccessTokenClaims{
-		UserID: lo.ToPtr(uuid.New()),
-		Roles:  []authmodels.Role{authmodels.RoleSuperAdmin},
-	})
-
-	userAnon := rand.Text()
-	testapiclient.AddPool(userAnon, &authmodels.AccessTokenClaims{})
 
 	loglineSlug := "beats-sheets-playground-integration-test"
 
@@ -43,9 +25,25 @@ func TestBeastSheetsPlayground(t *testing.T) {
 	logline := new(codegen.Logline)
 	storyPlan := new(codegen.StoryPlan)
 
+	userLambdaClaims := authModels.AccessTokenClaims{
+		UserID: lo.ToPtr(uuid.New()),
+		Roles:  []authModels.Role{authModels.RoleUser},
+	}
+	userSuperAdminClaims := authModels.AccessTokenClaims{
+		UserID: lo.ToPtr(uuid.New()),
+		Roles:  []authModels.Role{authModels.RoleSuperAdmin},
+	}
+	userAnonClaims := authModels.AccessTokenClaims{
+		Roles: []authModels.Role{authModels.RoleAnon},
+	}
+
+	userLambdaAccessToken := mustAccessToken(userLambdaClaims)
+	userSuperAdminAccessToken := mustAccessToken(userSuperAdminClaims)
+	userAnonAccessToken := mustAccessToken(userAnonClaims)
+
 	t.Log("CreateLogline")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawideas, err := client.GenerateLoglines(t.Context(), &codegen.GenerateLoglinesForm{
 			Count: 1,
@@ -55,7 +53,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		ideas, ok := rawideas.(*codegen.GenerateLoglinesOKApplicationJSON)
-		require.True(t, ok)
+		require.True(t, ok, rawideas)
 
 		rawLogline, err := client.CreateLogline(t.Context(), &codegen.CreateLoglineForm{
 			Slug:    codegen.Slug(loglineSlug),
@@ -66,20 +64,20 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newLogline, ok := rawLogline.(*codegen.Logline)
-		require.True(t, ok)
+		require.True(t, ok, rawLogline)
 
 		*logline = *newLogline
 	}
 
 	t.Log("CreateStoryPlan")
 	{
-		securityClient.SetToken(userSuperAdmin)
+		securityClient.SetToken(userSuperAdminAccessToken)
 
 		rawStoryPlan, err := client.CreateStoryPlan(t.Context(), &planForm)
 		require.NoError(t, err)
 
 		newStoryPlan, ok := rawStoryPlan.(*codegen.StoryPlan)
-		require.True(t, ok)
+		require.True(t, ok, rawStoryPlan)
 
 		*storyPlan = *newStoryPlan
 	}
@@ -88,7 +86,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 
 	t.Log("GenerateBeatsSheet")
 	{
-		securityClient.SetToken(userAnon)
+		securityClient.SetToken(userAnonAccessToken)
 
 		rawRes, err := client.GenerateBeatsSheet(t.Context(), &codegen.GenerateBeatsSheetForm{
 			LoglineID:   logline.ID,
@@ -98,10 +96,10 @@ func TestBeastSheetsPlayground(t *testing.T) {
 
 		require.NoError(t, err)
 
-		_, ok := rawRes.(*codegen.UnauthorizedError)
-		require.True(t, ok)
+		_, ok := rawRes.(*codegen.ForbiddenError)
+		require.True(t, ok, rawRes)
 
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawGeneratedBeatsSheet, err := client.GenerateBeatsSheet(t.Context(), &codegen.GenerateBeatsSheetForm{
 			LoglineID:   logline.ID,
@@ -111,14 +109,14 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		generatedBeatsSheet, ok := rawGeneratedBeatsSheet.(*codegen.BeatsSheetIdea)
-		require.True(t, ok)
+		require.True(t, ok, rawGeneratedBeatsSheet)
 
 		beatsSheet.Content = generatedBeatsSheet.Content
 	}
 
 	t.Log("CreateBeatsSheet")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawBeatsSheet, err := client.CreateBeatsSheet(t.Context(), &codegen.CreateBeatsSheetForm{
 			LoglineID:   logline.ID,
@@ -129,7 +127,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newBeatsSheet, ok := rawBeatsSheet.(*codegen.BeatsSheet)
-		require.True(t, ok)
+		require.True(t, ok, rawBeatsSheet)
 
 		require.NotEmpty(t, newBeatsSheet.GetID())
 		require.Equal(t, logline.ID, newBeatsSheet.GetLoglineID())
@@ -141,7 +139,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 
 	t.Log("RegenerateBeats")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawRegeneratedBeatsSheet, err := client.RegenerateBeats(t.Context(), &codegen.RegenerateBeatsForm{
 			BeatsSheetID:   beatsSheet.ID,
@@ -150,7 +148,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		regeneratedBeatsSheet, ok := rawRegeneratedBeatsSheet.(*codegen.Beats)
-		require.True(t, ok)
+		require.True(t, ok, rawRegeneratedBeatsSheet)
 
 		// Save the new beats sheet.
 		rawBeatsSheet, err := client.CreateBeatsSheet(t.Context(), &codegen.CreateBeatsSheetForm{
@@ -162,14 +160,14 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newBeatsSheet, ok := rawBeatsSheet.(*codegen.BeatsSheet)
-		require.True(t, ok)
+		require.True(t, ok, rawBeatsSheet)
 
 		*beatsSheet = *newBeatsSheet
 	}
 
 	t.Log("ExpandBeat")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawExpandedBeat, err := client.ExpandBeat(t.Context(), &codegen.ExpandBeatForm{
 			BeatsSheetID: beatsSheet.ID,
@@ -178,7 +176,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		expandedBeat, ok := rawExpandedBeat.(*codegen.Beat)
-		require.True(t, ok)
+		require.True(t, ok, rawExpandedBeat)
 
 		require.NotEmpty(t, expandedBeat.GetContent())
 
@@ -192,14 +190,14 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newBeatsSheet, ok := rawBeatsSheet.(*codegen.BeatsSheet)
-		require.True(t, ok)
+		require.True(t, ok, rawBeatsSheet)
 
 		*beatsSheet = *newBeatsSheet
 	}
 
 	t.Log("GetBeatsSheet")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawBeatsSheet, err := client.GetBeatsSheet(t.Context(), codegen.GetBeatsSheetParams{
 			BeatsSheetID: beatsSheet.ID,
@@ -208,14 +206,14 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newBeatsSheet, ok := rawBeatsSheet.(*codegen.BeatsSheet)
-		require.True(t, ok)
+		require.True(t, ok, rawBeatsSheet)
 
 		require.Equal(t, beatsSheet, newBeatsSheet)
 	}
 
 	t.Log("ListBeatsSheets")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawBeatsSheets, err := client.GetBeatsSheets(t.Context(), codegen.GetBeatsSheetsParams{
 			LoglineID: logline.ID,
@@ -224,7 +222,7 @@ func TestBeastSheetsPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		beatsSheets, ok := rawBeatsSheets.(*codegen.GetBeatsSheetsOKApplicationJSON)
-		require.True(t, ok)
+		require.True(t, ok, rawBeatsSheets)
 
 		require.Len(t, *beatsSheets, 3)
 		require.Equal(t, codegen.BeatsSheetPreview{

@@ -30,18 +30,18 @@ You can import this application as a docker image. Below is an example using
 
 ```yaml
 services:
-  authentication-postgres:
+  json-keys-postgres:
     image: docker.io/library/postgres:17
     networks:
       - api
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DB: authentication
+      POSTGRES_DB: json-keys
       POSTGRES_HOST_AUTH_METHOD: scram-sha-256
       POSTGRES_INITDB_ARGS: --auth=scram-sha-256
     volumes:
-      - authentication-postgres-data:/var/lib/postgresql/data/
+      - json-keys-postgres-data:/var/lib/postgresql/data/
 
   story-schematics-postgres:
     image: docker.io/library/postgres:17
@@ -50,70 +50,64 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-      POSTGRES_DB: story_schematics
+      POSTGRES_DB: story-schematics
       POSTGRES_HOST_AUTH_METHOD: scram-sha-256
       POSTGRES_INITDB_ARGS: --auth=scram-sha-256
     volumes:
       - story-schematics-postgres-data:/var/lib/postgresql/data/
 
-  # ======================================================================
-  # Authentication service is a required dependency for the API.
-  # You can see more options in the service documentation.
-  # https://github.com/a-novel/service-authentication
-  # ======================================================================
-  authentication-rotate-keys-job:
-    image: ghcr.io/a-novel/service-authentication/jobs/rotatekeys:v0
+  json-keys-service:
+    image: ghcr.io/a-novel/service-json-keys/standalone:v0
     depends_on:
-      - authentication-postgres
+      - json-keys-postgres
+    ports:
+      # Expose the service on port 4001 on the local machine.
+      - "4021:8080"
     environment:
+      PORT: 8080
       ENV: local
-      APP_NAME: authentication-service-rotate-keys-job
-      DSN: postgres://postgres:postgres@authentication-postgres:5432/authentication?sslmode=disable
+      APP_NAME: json-keys-service
+      DSN: postgres://postgres:postgres@json-keys-postgres:5432/json-keys?sslmode=disable
+      # Dummy key used only for local environment. Consider using a secure, private key in production.
       MASTER_KEY: fec0681a2f57242211c559ca347721766f8a3acd8ed2e63b36b3768051c702ca
-      DEBUG: true
+      # Used for tracing purposes, can be omitted.
+      # SENTRY_DSN: [your_sentry_dsn]
+      # SERVER_NAME: json-keys-service-prod
+      # RELEASE: v0.1.2
+      # Set the following if you want to debug the service locally.
+      # DEBUG: true
     networks:
       - api
 
-  authentication-service:
-    image: ghcr.io/a-novel/service-authentication/api:v0
+  story-schematics-service:
+    image: ghcr.io/a-novel/service-story-schematics/api:v0
     depends_on:
-      - authentication-postgres
+      - story-schematics-postgres
+      - json-keys-service
     ports:
+      # Expose the service on port 4001 on the local machine.
       - "4001:8080"
     environment:
       PORT: 8080
       ENV: local
-      APP_NAME: authentication-service
-      DSN: postgres://postgres:postgres@authentication-postgres:5432/authentication?sslmode=disable
-      MASTER_KEY: fec0681a2f57242211c559ca347721766f8a3acd8ed2e63b36b3768051c702ca
+      APP_NAME: story-schematics-service
+      DSN: postgres://postgres:postgres@story-schematics-postgres:5432/story-schematics?sslmode=disable
+      # In sandbox mode, mails are logged in the server logs rather than being sent. Alternatively, you need to provide
+      # a valid SMTP server configuration.
       SMTP_SANDBOX: true
+      # SMTP_PASSWORD: your_smtp_password
+      # SMTP_SENDER: noreply@agoradesecrivains.com
+      # SMTP_DOMAIN: smtp-relay.gmail.com
+      # SMTP_ADDRESS: smtp-relay.gmail.com:587
       AUTH_PLATFORM_URL_UPDATE_EMAIL: http://localhost:4001/update-email
       AUTH_PLATFORM_URL_UPDATE_PASSWORD: http://localhost:4001/update-password
       AUTH_PLATFORM_URL_REGISTER: http://localhost:4001/register
-      DEBUG: true
-    networks:
-      - api
-
-  # ======================================================================
-  # Our actual service.
-  # ======================================================================
-  story-schematics-service:
-    image: ghcr.io/a-novel/service-story-schematics/api:v0
-    depends_on:
-      - authentication-service
-    ports:
-      - "4011:8080"
-    environment:
-      PORT: 8080
-      ENV: local
-      APP_NAME: authentication-service
-      DSN: postgres://postgres:postgres@story-schematics-postgres:5432/story_schematics?sslmode=disable
-      # Used to handle authentication requests. Make sure it
-      # points to a valid authentication service instance.
-      AUTH_API_URL: http://localhost:4001
-      DEBUG: true
-      # Required to use the AI features.
-      GROQ_TOKEN: ${GROQ_TOKEN}
+      # Used for tracing purposes, can be omitted.
+      # SENTRY_DSN: [your_sentry_dsn]
+      # SERVER_NAME: story-schematics-service-prod
+      # RELEASE: v0.1.2
+      # Set the following if you want to debug the service locally.
+      # DEBUG: true
     networks:
       - api
 
@@ -121,8 +115,8 @@ networks:
   api: {}
 
 volumes:
-  authentication-postgres-data:
   story-schematics-postgres-data:
+  json-keys-postgres-data:
 ```
 
 Available tags includes:
