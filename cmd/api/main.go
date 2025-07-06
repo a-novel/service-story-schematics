@@ -18,11 +18,12 @@ import (
 	"go.opentelemetry.io/otel"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	authapiclient "github.com/a-novel/service-authentication/api/apiclient"
+	authModels "github.com/a-novel/service-authentication/models"
+	jkPkg "github.com/a-novel/service-json-keys/pkg"
 
-	"github.com/a-novel/service-story-schematics/api"
-	"github.com/a-novel/service-story-schematics/api/codegen"
 	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/service-story-schematics/internal/api"
+	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/lib"
@@ -54,10 +55,24 @@ func main() {
 
 	logger.Info(ctx, "starting application")
 
+	// =================================================================================================================
+	// LOAD DEPENDENCIES (INTERNAL)
+	// =================================================================================================================
+
 	// Initialize all contexts at once.
 	ctx, err = lib.NewAgoraContext(context.Background(), config.DSN)
 	if err != nil {
 		logger.Fatalf(ctx, "initialize agora context: %v", err)
+	}
+
+	jsonKeysClient, err := jkPkg.NewAPIClient(ctx, config.API.Dependencies.JSONKeys.URL)
+	if err != nil {
+		logger.Fatalf(ctx, "create JSON Keys API client: %v", err)
+	}
+
+	verifier, err := jkPkg.NewClaimsVerifier[authModels.AccessTokenClaims](jsonKeysClient)
+	if err != nil {
+		logger.Fatalf(ctx, "create claims verifier: %v", err)
 	}
 
 	// =================================================================================================================
@@ -217,9 +232,7 @@ func main() {
 		UpdateStoryPlanService: updateStoryPlanService,
 	}
 
-	authSecurityService := authapiclient.NewSecurityHandlerService(config.API.ExternalAPIs.Auth)
-
-	securityHandler, err := api.NewSecurity(config.Permissions, authSecurityService)
+	securityHandler, err := api.NewSecurity(verifier, config.Permissions)
 	if err != nil {
 		logger.Fatalf(ctx, "start security handler: %v", err)
 	}

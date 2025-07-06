@@ -1,32 +1,20 @@
 package main
 
 import (
-	"crypto/rand"
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/service-authentication/api/apiclient/testapiclient"
-	authmodels "github.com/a-novel/service-authentication/models"
+	authModels "github.com/a-novel/service-authentication/models"
 
-	"github.com/a-novel/service-story-schematics/api/codegen"
+	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 )
 
 func TestLoglinesPlayground(t *testing.T) {
 	client, securityClient, err := getServerClient()
 	require.NoError(t, err)
-
-	userLambda := rand.Text()
-	userLambdaID := uuid.New()
-
-	testapiclient.AddPool(userLambda, &authmodels.AccessTokenClaims{
-		UserID: &userLambdaID,
-		Roles:  []authmodels.Role{authmodels.RoleUser},
-	})
-
-	userAnon := rand.Text()
-	testapiclient.AddPool(userAnon, &authmodels.AccessTokenClaims{})
 
 	loglineSlug := "logline-playground-integration-test"
 
@@ -34,9 +22,25 @@ func TestLoglinesPlayground(t *testing.T) {
 
 	loglines := make([]*codegen.Logline, 0)
 
+	userLambdaClaims := authModels.AccessTokenClaims{
+		UserID: lo.ToPtr(uuid.New()),
+		Roles:  []authModels.Role{authModels.RoleUser},
+	}
+	userLambda2Claims := authModels.AccessTokenClaims{
+		UserID: lo.ToPtr(uuid.New()),
+		Roles:  []authModels.Role{authModels.RoleUser},
+	}
+	userAnonClaims := authModels.AccessTokenClaims{
+		Roles: []authModels.Role{authModels.RoleAnon},
+	}
+
+	userLambdaAccessToken := mustAccessToken(userLambdaClaims)
+	userLambda2AccessToken := mustAccessToken(userLambda2Claims)
+	userAnonAccessToken := mustAccessToken(userAnonClaims)
+
 	t.Log("LoglineIdeas")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawideas, err := client.GenerateLoglines(t.Context(), &codegen.GenerateLoglinesForm{
 			Count: 2,
@@ -46,7 +50,7 @@ func TestLoglinesPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		ideas, ok := rawideas.(*codegen.GenerateLoglinesOKApplicationJSON)
-		require.True(t, ok)
+		require.True(t, ok, rawideas)
 
 		require.Len(t, *ideas, 2)
 
@@ -55,20 +59,20 @@ func TestLoglinesPlayground(t *testing.T) {
 
 	t.Log("ExpandLogline")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawExpandedIdea, err := client.ExpandLogline(t.Context(), loglineIdea)
 		require.NoError(t, err)
 
 		expandedIdea, ok := rawExpandedIdea.(*codegen.LoglineIdea)
-		require.True(t, ok)
+		require.True(t, ok, rawExpandedIdea)
 
 		*loglineIdea = *expandedIdea
 	}
 
 	t.Log("CreateLoglineNotAllowed")
 	{
-		securityClient.SetToken(userAnon)
+		securityClient.SetToken(userAnonAccessToken)
 
 		rawRes, err := client.CreateLogline(t.Context(), &codegen.CreateLoglineForm{
 			Slug:    codegen.Slug(loglineSlug),
@@ -79,13 +83,13 @@ func TestLoglinesPlayground(t *testing.T) {
 
 		require.NoError(t, err)
 
-		_, ok := rawRes.(*codegen.UnauthorizedError)
-		require.True(t, ok)
+		_, ok := rawRes.(*codegen.ForbiddenError)
+		require.True(t, ok, rawRes)
 	}
 
 	t.Log("CreateLogline")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawLogline, err := client.CreateLogline(t.Context(), &codegen.CreateLoglineForm{
 			Slug:    codegen.Slug(loglineSlug),
@@ -96,19 +100,19 @@ func TestLoglinesPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newLogline, ok := rawLogline.(*codegen.Logline)
-		require.True(t, ok)
+		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglineIdea.Name, newLogline.Name)
 		require.Equal(t, loglineIdea.Content, newLogline.Content)
 		require.Equal(t, codegen.Slug(loglineSlug), newLogline.Slug)
-		require.Equal(t, codegen.UserID(userLambdaID), newLogline.UserID)
+		require.Equal(t, codegen.UserID(*userLambdaClaims.UserID), newLogline.UserID)
 
 		loglines = append(loglines, newLogline)
 	}
 
 	t.Log("GetLoglineByID")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawLogline, err := client.GetLogline(t.Context(), codegen.GetLoglineParams{
 			ID: codegen.OptLoglineID{Value: loglines[0].ID, Set: true},
@@ -116,14 +120,14 @@ func TestLoglinesPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newLogline, ok := rawLogline.(*codegen.Logline)
-		require.True(t, ok)
+		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglines[0], newLogline)
 	}
 
 	t.Log("GetLoglineBySlug")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawLogline, err := client.GetLogline(t.Context(), codegen.GetLoglineParams{
 			Slug: codegen.OptSlug{Value: loglines[0].Slug, Set: true},
@@ -131,14 +135,14 @@ func TestLoglinesPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newLogline, ok := rawLogline.(*codegen.Logline)
-		require.True(t, ok)
+		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglines[0], newLogline)
 	}
 
 	t.Log("CreateLogline/SlugResolution")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawLogline, err := client.CreateLogline(t.Context(), &codegen.CreateLoglineForm{
 			Slug:    codegen.Slug(loglineSlug),
@@ -149,25 +153,25 @@ func TestLoglinesPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newLogline, ok := rawLogline.(*codegen.Logline)
-		require.True(t, ok)
+		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglineIdea.Name+" Alt", newLogline.Name)
 		require.Equal(t, loglineIdea.Content+" Alt", newLogline.Content)
 		require.Equal(t, codegen.Slug(loglineSlug+"-1"), newLogline.Slug)
-		require.Equal(t, codegen.UserID(userLambdaID), newLogline.UserID)
+		require.Equal(t, codegen.UserID(*userLambdaClaims.UserID), newLogline.UserID)
 
 		loglines = append(loglines, newLogline)
 	}
 
 	t.Log("ListLoglines")
 	{
-		securityClient.SetToken(userLambda)
+		securityClient.SetToken(userLambdaAccessToken)
 
 		rawLoglines, err := client.GetLoglines(t.Context(), codegen.GetLoglinesParams{})
 		require.NoError(t, err)
 
 		userLoglines, ok := rawLoglines.(*codegen.GetLoglinesOKApplicationJSON)
-		require.True(t, ok)
+		require.True(t, ok, rawLoglines)
 
 		require.Equal(t, &codegen.GetLoglinesOKApplicationJSON{
 			{
@@ -187,17 +191,9 @@ func TestLoglinesPlayground(t *testing.T) {
 		}, userLoglines)
 	}
 
-	userLambda2 := rand.Text()
-	userLambda2ID := uuid.New()
-
-	testapiclient.AddPool(userLambda2, &authmodels.AccessTokenClaims{
-		UserID: &userLambda2ID,
-		Roles:  []authmodels.Role{authmodels.RoleUser},
-	})
-
 	t.Log("NewUserLogline")
 	{
-		securityClient.SetToken(userLambda2)
+		securityClient.SetToken(userLambda2AccessToken)
 
 		rawLogline, err := client.CreateLogline(t.Context(), &codegen.CreateLoglineForm{
 			Slug:    codegen.Slug(loglineSlug),
@@ -208,25 +204,25 @@ func TestLoglinesPlayground(t *testing.T) {
 		require.NoError(t, err)
 
 		newLogline, ok := rawLogline.(*codegen.Logline)
-		require.True(t, ok)
+		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglineIdea.Name, newLogline.Name)
 		require.Equal(t, loglineIdea.Content, newLogline.Content)
 		require.Equal(t, codegen.Slug(loglineSlug), newLogline.Slug)
-		require.Equal(t, codegen.UserID(userLambda2ID), newLogline.UserID)
+		require.Equal(t, codegen.UserID(*userLambda2Claims.UserID), newLogline.UserID)
 
 		loglines = append(loglines, newLogline)
 	}
 
 	t.Log("ListOnlyUserLoglines")
 	{
-		securityClient.SetToken(userLambda2)
+		securityClient.SetToken(userLambda2AccessToken)
 
 		rawLoglines, err := client.GetLoglines(t.Context(), codegen.GetLoglinesParams{})
 		require.NoError(t, err)
 
 		userLoglines, ok := rawLoglines.(*codegen.GetLoglinesOKApplicationJSON)
-		require.True(t, ok)
+		require.True(t, ok, rawLoglines)
 
 		require.Equal(t, &codegen.GetLoglinesOKApplicationJSON{
 			{

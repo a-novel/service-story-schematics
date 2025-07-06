@@ -25,21 +25,55 @@ jobs:
       id-token: write
     services:
       postgres:
-        image: postgres:17-alpine
         ports:
-          - "5433:5432"
+          - "5431:5432"
+        image: docker.io/library/postgres:17
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
+          --health-interval 500ms
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 50
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_DB: postgres
+          POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+          POSTGRES_INITDB_ARGS: --auth=scram-sha-256
+
+      postgres-json-keys:
+        image: docker.io/library/postgres:17
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 500ms
+          --health-timeout 5s
+          --health-retries 50
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: json-keys
+          POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+          POSTGRES_INITDB_ARGS: --auth=scram-sha-256
+
+      json-keys:
+        image: ghcr.io/a-novel/service-json-keys/standalone:v0
+        ports:
+          - "4001:8080"
+        credentials:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          PORT: 8080
+          DSN: postgres://postgres:postgres@postgres-json-keys:5432/json-keys?sslmode=disable
+          ENV: local
+          APP_NAME: json-keys-service
+          MASTER_KEY: fec0681a2f57242211c559ca347721766f8a3acd8ed2e63b36b3768051c702ca
+          DEBUG: true
     env:
-      DSN: postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+      DSN: postgres://postgres:postgres@localhost:5431/postgres?sslmode=disable
+      PORT: 8080
       GROQ_TOKEN: ${{ secrets.GROQ_TOKEN }}
+      JSON_KEYS_URL: "http://localhost:4001/v1"
+      DEBUG: true
     steps:
       - uses: a-novel-kit/workflows/build-actions/docker-rest-api@master
         with:
