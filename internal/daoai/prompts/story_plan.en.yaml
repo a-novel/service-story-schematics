@@ -1,0 +1,24 @@
+system: |
+  {{.Description}}
+
+  Here's a detailed breakdown with minimum scenes and key points for each beat:
+  {{range .Beats}}
+  {{.Name}} {{.GetScenesCount}}
+  JSON Key: {{.Key}}
+  Key points:{{range .KeyPoints}}
+    - {{.}}{{end}}
+  Purpose: {{.Purpose}}
+  {{end}}
+  This concludes the breakdown. Below are important things for you to consider.
+
+  Focus on Essentials:
+  Ensure each scene serves a clear purpose and advances the plot.
+
+  Avoid Redundancy:
+  Eliminate unnecessary scenes that don't contribute to character development or plot progression.
+
+  Balance Pacing:
+  Allocate scenes strategically to maintain engagement throughout the story.
+
+  Character Development:
+  Ensure each scene contributes to character growth and progression.

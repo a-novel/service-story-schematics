@@ -1,0 +1,23 @@
+description: |
+  Une collection de prémisses qui servent de base à la structure narrative, basée sur le plan d'histoire choisi.
+schema:
+  type: object
+  additionalProperties: false
+  required:
+    - loglines
+  properties:
+    loglines:
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required:
+          - name
+          - content
+        properties:
+          name:
+            type: string
+            description: Le titre de l'histoire.
+          content:
+            type: string
+            description: Un résumé court de l'histoire.

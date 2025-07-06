@@ -13,8 +13,8 @@ import (
 	"github.com/openai/openai-go/packages/param"
 
 	"github.com/a-novel/service-story-schematics/config"
-	"github.com/a-novel/service-story-schematics/config/prompts"
-	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
+	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -24,20 +24,20 @@ const generateBeatsSheetTemperature = 0.8
 var GenerateBeatsSheetPrompts = struct {
 	System *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.Config.En.GenerateBeatsSheet, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.GenerateBeatsSheet,
-		models.LangFR: prompts.Config.Fr.GenerateBeatsSheet,
+	System: RegisterTemplateLocales(prompts.GenerateBeatsSheet[models.LangEN].System, map[models.Lang]string{
+		models.LangEN: prompts.GenerateBeatsSheet[models.LangEN].System,
+		models.LangFR: prompts.GenerateBeatsSheet[models.LangFR].System,
 	}),
 }
 
 var GenerateBeatsSheetSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Config.En.Beats.Schema,
-	models.LangFR: schemas.Config.Fr.Beats.Schema,
+	models.LangEN: schemas.Beats[models.LangEN].Schema,
+	models.LangFR: schemas.Beats[models.LangFR].Schema,
 }
 
 var GenerateBeatsSheetDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Config.En.Beats.Description,
-	models.LangFR: schemas.Config.Fr.Beats.Description,
+	models.LangEN: schemas.Beats[models.LangEN].Description,
+	models.LangFR: schemas.Beats[models.LangFR].Description,
 }
 
 var ErrInvalidBeatSheet = errors.New("invalid beat sheet")

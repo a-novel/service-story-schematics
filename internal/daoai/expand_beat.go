@@ -14,8 +14,8 @@ import (
 	"github.com/samber/lo"
 
 	"github.com/a-novel/service-story-schematics/config"
-	"github.com/a-novel/service-story-schematics/config/prompts"
-	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
+	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -27,28 +27,28 @@ var ExpandBeatPrompts = struct {
 	Input1 *template.Template
 	Input2 *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.Config.En.ExpandBeat.System, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.ExpandBeat.System,
-		models.LangFR: prompts.Config.Fr.ExpandBeat.System,
+	System: RegisterTemplateLocales(prompts.ExpandBeat[models.LangEN].System, map[models.Lang]string{
+		models.LangEN: prompts.ExpandBeat[models.LangEN].System,
+		models.LangFR: prompts.ExpandBeat[models.LangFR].System,
 	}),
-	Input1: RegisterTemplateLocales(prompts.Config.En.ExpandBeat.Input1, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.ExpandBeat.Input1,
-		models.LangFR: prompts.Config.Fr.ExpandBeat.Input1,
+	Input1: RegisterTemplateLocales(prompts.ExpandBeat[models.LangEN].Input1, map[models.Lang]string{
+		models.LangEN: prompts.ExpandBeat[models.LangEN].Input1,
+		models.LangFR: prompts.ExpandBeat[models.LangFR].Input1,
 	}),
-	Input2: RegisterTemplateLocales(prompts.Config.En.ExpandBeat.Input2, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.ExpandBeat.Input2,
-		models.LangFR: prompts.Config.Fr.ExpandBeat.Input2,
+	Input2: RegisterTemplateLocales(prompts.ExpandBeat[models.LangEN].Input2, map[models.Lang]string{
+		models.LangEN: prompts.ExpandBeat[models.LangEN].Input2,
+		models.LangFR: prompts.ExpandBeat[models.LangFR].Input2,
 	}),
 }
 
 var ExpandBeatSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Config.En.Beat.Schema,
-	models.LangFR: schemas.Config.Fr.Beat.Schema,
+	models.LangEN: schemas.Beat[models.LangEN].Schema,
+	models.LangFR: schemas.Beat[models.LangFR].Schema,
 }
 
 var ExpandBeatDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Config.En.Beat.Description,
-	models.LangFR: schemas.Config.Fr.Beat.Description,
+	models.LangEN: schemas.Beat[models.LangEN].Description,
+	models.LangFR: schemas.Beat[models.LangFR].Description,
 }
 
 var ErrExpandBeatRepository = errors.New(".ExpandBeat")

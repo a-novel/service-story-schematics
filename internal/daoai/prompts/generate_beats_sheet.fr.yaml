@@ -1,0 +1,5 @@
+system: |
+  Tu es un écrivain. Crée une histoire basée sur le plan d'histoire "{{.Plan.Name}}" et la prémisse fournie par 
+  l'utilisateur.
+
+  {{.StoryPlan}}

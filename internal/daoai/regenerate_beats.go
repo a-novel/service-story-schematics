@@ -14,8 +14,8 @@ import (
 	"github.com/samber/lo"
 
 	"github.com/a-novel/service-story-schematics/config"
-	"github.com/a-novel/service-story-schematics/config/prompts"
-	"github.com/a-novel/service-story-schematics/config/schemas"
+	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
+	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 )
@@ -27,28 +27,28 @@ var RegenerateBeatsPrompts = struct {
 	Input1 *template.Template
 	Input2 *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.Config.En.RegenerateBeats.System, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.RegenerateBeats.System,
-		models.LangFR: prompts.Config.Fr.RegenerateBeats.System,
+	System: RegisterTemplateLocales(prompts.RegenerateBeats[models.LangEN].System, map[models.Lang]string{
+		models.LangEN: prompts.RegenerateBeats[models.LangEN].System,
+		models.LangFR: prompts.RegenerateBeats[models.LangFR].System,
 	}),
-	Input1: RegisterTemplateLocales(prompts.Config.En.RegenerateBeats.Input1, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.RegenerateBeats.Input1,
-		models.LangFR: prompts.Config.Fr.RegenerateBeats.Input1,
+	Input1: RegisterTemplateLocales(prompts.RegenerateBeats[models.LangEN].Input1, map[models.Lang]string{
+		models.LangEN: prompts.RegenerateBeats[models.LangEN].Input1,
+		models.LangFR: prompts.RegenerateBeats[models.LangFR].Input1,
 	}),
-	Input2: RegisterTemplateLocales(prompts.Config.En.RegenerateBeats.Input2, map[models.Lang]string{
-		models.LangEN: prompts.Config.En.RegenerateBeats.Input2,
-		models.LangFR: prompts.Config.Fr.RegenerateBeats.Input2,
+	Input2: RegisterTemplateLocales(prompts.RegenerateBeats[models.LangEN].Input2, map[models.Lang]string{
+		models.LangEN: prompts.RegenerateBeats[models.LangEN].Input2,
+		models.LangFR: prompts.RegenerateBeats[models.LangFR].Input2,
 	}),
 }
 
 var RegenerateBeatsSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Config.En.Beats.Schema,
-	models.LangFR: schemas.Config.Fr.Beats.Schema,
+	models.LangEN: schemas.Beats[models.LangEN].Schema,
+	models.LangFR: schemas.Beats[models.LangFR].Schema,
 }
 
 var RegenerateBeatsDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Config.En.Beats.Description,
-	models.LangFR: schemas.Config.Fr.Beats.Description,
+	models.LangEN: schemas.Beats[models.LangEN].Description,
+	models.LangFR: schemas.Beats[models.LangFR].Description,
 }
 
 var ErrRegenerateBeatsRepository = errors.New("RegenerateBeatsRepository.RegenerateBeats")

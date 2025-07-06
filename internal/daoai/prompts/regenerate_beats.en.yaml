@@ -1,0 +1,13 @@
+system: |
+  You are a writer. You write stories based on the "{{.Plan.Name}}" story plan.
+
+  {{.StoryPlan}}
+input1: |
+  Create a story based on the following logline:
+
+  {{.Logline}}
+input2: |
+  Generate the missing content for the following beats, in JSON format. Return ONLY the missing beats, in the
+  same order as the story plan.
+  {{range .Beats}}
+  - {{.}}{{end}}

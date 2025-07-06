@@ -1,0 +1,9 @@
+system:
+  themed: |
+    List engaging and original ideas for a new fictional story, based on the user input.
+
+    Return {{.Count}} loglines.
+  random: |
+    List engaging and original ideas for a new fictional story, based on random themes.
+
+    Return {{.Count}} loglines.

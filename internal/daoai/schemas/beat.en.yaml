@@ -1,0 +1,19 @@
+description: |
+  A beat is a unit of story structure that represents a specific moment or event in the narrative.
+schema:
+  type: object
+  additionalProperties: false
+  required:
+    - key
+    - title
+    - content
+  properties:
+    key:
+      type: string
+      description: The json key of the given beat
+    title:
+      type: string
+      description: A short title representing the beat
+    content:
+      type: string
+      description: A summary of the scenes in the beat

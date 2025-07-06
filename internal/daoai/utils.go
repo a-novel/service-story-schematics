@@ -5,13 +5,13 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/a-novel/service-story-schematics/config/prompts"
+	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
 	"github.com/a-novel/service-story-schematics/models"
 )
 
-var StoryPlanPrompt = RegisterTemplateLocales(prompts.Config.En.StoryPlan, map[models.Lang]string{
-	models.LangEN: prompts.Config.En.StoryPlan,
-	models.LangFR: prompts.Config.Fr.StoryPlan,
+var StoryPlanPrompt = RegisterTemplateLocales(prompts.StoryPlan[models.LangEN].System, map[models.Lang]string{
+	models.LangEN: prompts.StoryPlan[models.LangEN].System,
+	models.LangFR: prompts.StoryPlan[models.LangFR].System,
 })
 
 func StoryPlanToPrompt(lang models.Lang, data models.StoryPlan) (string, error) {
