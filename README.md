@@ -60,9 +60,6 @@ services:
     image: ghcr.io/a-novel/service-json-keys/standalone:v0
     depends_on:
       - json-keys-postgres
-    ports:
-      # Expose the service on port 4001 on the local machine.
-      - "4021:8080"
     environment:
       PORT: 8080
       ENV: local
@@ -86,22 +83,16 @@ services:
       - json-keys-service
     ports:
       # Expose the service on port 4001 on the local machine.
-      - "4001:8080"
+      - "4021:8080"
     environment:
       PORT: 8080
       ENV: local
       APP_NAME: story-schematics-service
       DSN: postgres://postgres:postgres@story-schematics-postgres:5432/story-schematics?sslmode=disable
-      # In sandbox mode, mails are logged in the server logs rather than being sent. Alternatively, you need to provide
-      # a valid SMTP server configuration.
-      SMTP_SANDBOX: true
-      # SMTP_PASSWORD: your_smtp_password
-      # SMTP_SENDER: noreply@agoradesecrivains.com
-      # SMTP_DOMAIN: smtp-relay.gmail.com
-      # SMTP_ADDRESS: smtp-relay.gmail.com:587
-      AUTH_PLATFORM_URL_UPDATE_EMAIL: http://localhost:4001/update-email
-      AUTH_PLATFORM_URL_UPDATE_PASSWORD: http://localhost:4001/update-password
-      AUTH_PLATFORM_URL_REGISTER: http://localhost:4001/register
+      JSON_KEYS_URL: http://json-keys-service:8080/v1
+      # You need a Groq API Key to access the Groq API.
+      # https://console.groq.com/keys
+      GROQ_TOKEN: "[your_groq_token]"
       # Used for tracing purposes, can be omitted.
       # SENTRY_DSN: [your_sentry_dsn]
       # SERVER_NAME: story-schematics-service-prod
