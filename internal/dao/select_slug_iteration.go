@@ -3,29 +3,36 @@ package dao
 import (
 	"context"
 	"database/sql"
+	_ "embed"
 	"errors"
 	"fmt"
 	"regexp"
 
-	"github.com/getsentry/sentry-go"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
-var ErrSelectSlugIteration = errors.New("SelectSlugIterationRepository.SelectSlugIteration")
+var (
+	//go:embed select_slug_iteration.loglines.sql
+	selectSlugIterationLoglinesQuery string
+	//go:embed select_slug_iteration.story_plans.sql
+	selectSlugIterationStoryPlansQuery string
+)
 
-func NewErrSelectSlugIteration(err error) error {
-	return errors.Join(err, ErrSelectSlugIteration)
+var TargetsQueries = map[SlugIterationTarget]string{
+	SlugIterationTargetLogline:   selectSlugIterationLoglinesQuery,
+	SlugIterationTargetStoryPlan: selectSlugIterationStoryPlansQuery,
 }
 
 type SelectSlugIterationData struct {
 	Slug models.Slug
 
-	Table string
-
-	Filter map[string][]any
-	Order  []string
+	Target SlugIterationTarget
+	Args   []any
 }
 
 type SelectSlugIterationRepository struct{}
@@ -37,66 +44,46 @@ func NewSelectSlugIterationRepository() *SelectSlugIterationRepository {
 func (repository *SelectSlugIterationRepository) SelectSlugIteration(
 	ctx context.Context, data SelectSlugIterationData,
 ) (models.Slug, int, error) {
-	span := sentry.StartSpan(ctx, "SelectSlugIterationRepository.SelectSlugIteration")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.SelectSlugIteration")
+	defer span.End()
 
-	span.SetData("slug", data.Slug)
-	span.SetData("table", data.Table)
-	span.SetData("filter", data.Filter)
-	span.SetData("order", data.Order)
-
-	tx, err := lib.PostgresContext(span.Context())
-	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("get postgres client: %w", err))
-	}
+	span.SetAttributes(
+		attribute.String("data.slug", data.Slug.String()),
+		attribute.String("data.target", data.Target.String()),
+	)
 
 	output := new(struct {
 		Slug models.Slug `bun:"slug"`
 	})
 
-	reg, err := regexp.CompilePOSIX(`^` + regexp.QuoteMeta(string(data.Slug)) + `-([0-9]+)$`)
+	reg, err := regexp.CompilePOSIX(`^` + regexp.QuoteMeta(data.Slug.String()) + `-([0-9]+)$`)
 	if err != nil {
-		span.SetData("regex.compile.error", err.Error())
-
-		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("compile regex: %w", err))
+		return "", 0, otel.ReportError(span, fmt.Errorf("compile regex: %w", err))
 	}
 
-	query := tx.NewSelect().
-		Model(output).
-		ModelTableExpr(data.Table).
-		Where("slug ~ ?", reg.String()).
-		Limit(1)
-
-	for key, values := range data.Filter {
-		query = query.Where(key, values...)
-	}
-
-	for _, order := range data.Order {
-		query = query.Order(order)
-	}
-
-	err = query.Scan(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("scan.error", err.Error())
+		return "", 0, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
+	}
 
+	args := append([]any{reg.String()}, data.Args...)
+
+	err = tx.NewRaw(TargetsQueries[data.Target], args...).Scan(ctx, output)
+	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return data.Slug + "-1", 1, nil
 		}
 
-		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("select slug iteration: %w", err))
+		return "", 0, otel.ReportError(span, fmt.Errorf("select slug iteration: %w", err))
 	}
 
 	// Capture the index of the last iteration.
 	index := 1
 
-	_, err = fmt.Sscanf(string(output.Slug), string(data.Slug)+"-%d", &index)
+	_, err = fmt.Sscanf(output.Slug.String(), data.Slug.String()+"-%d", &index)
 	if err != nil {
-		span.SetData("parse.slug.iteration.error", err.Error())
-
-		return "", 0, NewErrSelectSlugIteration(fmt.Errorf("parse slug iteration: %w", err))
+		return "", 0, otel.ReportError(span, fmt.Errorf("parse slug iteration: %w", err))
 	}
 
-	return models.Slug(fmt.Sprintf("%s-%d", data.Slug, index+1)), index + 1, nil
+	return otel.ReportSuccess(span, models.Slug(fmt.Sprintf("%s-%d", data.Slug, index+1))), index + 1, nil
 }

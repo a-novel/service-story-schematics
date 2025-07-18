@@ -5,39 +5,33 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/codes"
 
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	"github.com/a-novel/golib/otel"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type ExpandBeatService interface {
 	ExpandBeat(ctx context.Context, request services.ExpandBeatRequest) (*models.Beat, error)
 }
 
-func (api *API) ExpandBeat(ctx context.Context, req *codegen.ExpandBeatForm) (codegen.ExpandBeatRes, error) {
-	span := sentry.StartSpan(ctx, "API.ExpandBeat")
-	defer span.Finish()
+func (api *API) ExpandBeat(ctx context.Context, req *apimodels.ExpandBeatForm) (apimodels.ExpandBeatRes, error) {
+	ctx, span := otel.Tracer().Start(ctx, "api.ExpandBeat")
+	defer span.End()
 
-	span.SetData("request.beatsSheetID", req.GetBeatsSheetID())
-	span.SetData("request.targetKey", req.GetTargetKey())
-
-	userID, err := authPkg.RequireUserID(ctx)
+	userID, err := authpkg.RequireUserID(ctx)
 	if err != nil {
-		span.SetData("request.userID.err", err.Error())
-
-		return nil, fmt.Errorf("get user ID: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("get user ID: %w", err))
 	}
 
-	span.SetData("request.userID", userID)
-
-	beat, err := api.ExpandBeatService.ExpandBeat(span.Context(), services.ExpandBeatRequest{
+	beat, err := api.ExpandBeatService.ExpandBeat(ctx, services.ExpandBeatRequest{
 		BeatsSheetID: uuid.UUID(req.GetBeatsSheetID()),
 		TargetKey:    req.GetTargetKey(),
 		UserID:       userID,
@@ -45,22 +39,25 @@ func (api *API) ExpandBeat(ctx context.Context, req *codegen.ExpandBeatForm) (co
 
 	switch {
 	case errors.Is(err, dao.ErrBeatsSheetNotFound), errors.Is(err, dao.ErrStoryPlanNotFound):
-		span.SetData("service.err", err.Error())
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "")
 
-		return &codegen.NotFoundError{Error: err.Error()}, nil
+		return &apimodels.NotFoundError{Error: err.Error()}, nil
 	case errors.Is(err, daoai.ErrUnknownTargetKey):
-		span.SetData("service.err", err.Error())
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "")
 
-		return &codegen.UnprocessableEntityError{Error: err.Error()}, nil
+		return &apimodels.UnprocessableEntityError{Error: err.Error()}, nil
 	case err != nil:
-		span.SetData("service.err", err.Error())
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "")
 
 		return nil, fmt.Errorf("expand beat: %w", err)
 	}
 
-	return &codegen.Beat{
+	return otel.ReportSuccess(span, &apimodels.Beat{
 		Key:     beat.Key,
 		Title:   beat.Title,
 		Content: beat.Content,
-	}, nil
+	}), nil
 }

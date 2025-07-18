@@ -4,37 +4,30 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
+	"github.com/a-novel/golib/otel"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
-	authPkg "github.com/a-novel/service-authentication/pkg"
-
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type CreateLoglineService interface {
 	CreateLogline(ctx context.Context, request services.CreateLoglineRequest) (*models.Logline, error)
 }
 
-func (api *API) CreateLogline(ctx context.Context, req *codegen.CreateLoglineForm) (codegen.CreateLoglineRes, error) {
-	span := sentry.StartSpan(ctx, "API.CreateLogline")
-	defer span.Finish()
+func (api *API) CreateLogline(
+	ctx context.Context, req *apimodels.CreateLoglineForm,
+) (apimodels.CreateLoglineRes, error) {
+	ctx, span := otel.Tracer().Start(ctx, "api.CreateLogline")
+	defer span.End()
 
-	span.SetData("request.slug", req.GetSlug())
-	span.SetData("request.name", req.GetName())
-	span.SetData("request.lang", req.GetLang())
-
-	userID, err := authPkg.RequireUserID(ctx)
+	userID, err := authpkg.RequireUserID(ctx)
 	if err != nil {
-		span.SetData("request.userID.err", err.Error())
-
-		return nil, fmt.Errorf("get user ID: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("get user ID: %w", err))
 	}
 
-	span.SetData("request.userID", userID)
-
-	logline, err := api.CreateLoglineService.CreateLogline(span.Context(), services.CreateLoglineRequest{
+	logline, err := api.CreateLoglineService.CreateLogline(ctx, services.CreateLoglineRequest{
 		UserID:  userID,
 		Slug:    models.Slug(req.GetSlug()),
 		Name:    req.GetName(),
@@ -42,20 +35,16 @@ func (api *API) CreateLogline(ctx context.Context, req *codegen.CreateLoglineFor
 		Lang:    models.Lang(req.GetLang()),
 	})
 	if err != nil {
-		span.SetData("service.err", err.Error())
-
-		return nil, fmt.Errorf("create logline: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("create logline: %w", err))
 	}
 
-	span.SetData("logline.id", logline.ID.String())
-
-	return &codegen.Logline{
-		ID:        codegen.LoglineID(logline.ID),
-		UserID:    codegen.UserID(logline.UserID),
-		Slug:      codegen.Slug(logline.Slug),
+	return otel.ReportSuccess(span, &apimodels.Logline{
+		ID:        apimodels.LoglineID(logline.ID),
+		UserID:    apimodels.UserID(logline.UserID),
+		Slug:      apimodels.Slug(logline.Slug),
 		Name:      logline.Name,
 		Content:   logline.Content,
-		Lang:      codegen.Lang(logline.Lang),
+		Lang:      apimodels.Lang(logline.Lang),
 		CreatedAt: logline.CreatedAt,
-	}, nil
+	}), nil
 }

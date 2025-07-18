@@ -3,9 +3,10 @@ package schemas
 import (
 	_ "embed"
 
-	"github.com/a-novel-kit/configurator"
+	"github.com/goccy/go-yaml"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
@@ -15,13 +16,9 @@ var loglineEnFile []byte
 //go:embed logline.fr.yaml
 var loglineFrFile []byte
 
-var LoglineEN = configurator.NewLoader[Schema](config.Loader).MustLoad(
-	configurator.NewConfig("", loglineEnFile),
-)
+var LoglineEN = config.MustUnmarshal[Schema](yaml.Unmarshal, loglineEnFile)
 
-var LoglineFR = configurator.NewLoader[Schema](config.Loader).MustLoad(
-	configurator.NewConfig("", loglineFrFile),
-)
+var LoglineFR = config.MustUnmarshal[Schema](yaml.Unmarshal, loglineFrFile)
 
 var Logline = map[models.Lang]Schema{
 	models.LangEN: LoglineEN,

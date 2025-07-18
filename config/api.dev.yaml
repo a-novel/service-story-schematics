@@ -1,5 +1,0 @@
-externalApis:
-  auth: ${AUTH_API_URL}
-cors:
-  allowedOrigins:
-    - "*"

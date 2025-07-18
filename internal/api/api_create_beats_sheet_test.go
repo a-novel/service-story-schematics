@@ -11,16 +11,16 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestCreateBeatsSheet(t *testing.T) {
@@ -36,20 +36,20 @@ func TestCreateBeatsSheet(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		form *codegen.CreateBeatsSheetForm
+		form *apimodels.CreateBeatsSheetForm
 
 		createBeatsSheetData *createBeatsSheetData
 
-		expect    codegen.CreateBeatsSheetRes
+		expect    apimodels.CreateBeatsSheetRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			form: &codegen.CreateBeatsSheetForm{
-				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: codegen.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
-				Content: []codegen.Beat{
+			form: &apimodels.CreateBeatsSheetForm{
+				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
 						Title:   "Beat 1",
@@ -61,7 +61,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
@@ -86,11 +86,11 @@ func TestCreateBeatsSheet(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.BeatsSheet{
-				ID:          codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
-				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: codegen.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
-				Content: []codegen.Beat{
+			expect: &apimodels.BeatsSheet{
+				ID:          apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
 						Title:   "Beat 1",
@@ -102,17 +102,17 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
-				Lang:      codegen.LangEn,
+				Lang:      apimodels.LangEn,
 				CreatedAt: time.Date(2022, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
 		{
 			name: "Error/LoglineNotFound",
 
-			form: &codegen.CreateBeatsSheetForm{
-				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: codegen.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
-				Content: []codegen.Beat{
+			form: &apimodels.CreateBeatsSheetForm{
+				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
 						Title:   "Beat 1",
@@ -124,22 +124,22 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
 				err: dao.ErrLoglineNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrLoglineNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrLoglineNotFound.Error()},
 		},
 		{
 			name: "Error/StoryPlanNotFound",
 
-			form: &codegen.CreateBeatsSheetForm{
-				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: codegen.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
-				Content: []codegen.Beat{
+			form: &apimodels.CreateBeatsSheetForm{
+				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
 						Title:   "Beat 1",
@@ -151,22 +151,22 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
 				err: dao.ErrStoryPlanNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "Error/InvalidStoryPlan",
 
-			form: &codegen.CreateBeatsSheetForm{
-				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: codegen.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
-				Content: []codegen.Beat{
+			form: &apimodels.CreateBeatsSheetForm{
+				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
 						Title:   "Beat 1",
@@ -178,22 +178,22 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
 				err: lib.ErrInvalidStoryPlan,
 			},
 
-			expect: &codegen.UnprocessableEntityError{Error: lib.ErrInvalidStoryPlan.Error()},
+			expect: &apimodels.UnprocessableEntityError{Error: lib.ErrInvalidStoryPlan.Error()},
 		},
 		{
 			name: "Error/CreateBeatsSheet",
 
-			form: &codegen.CreateBeatsSheetForm{
-				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: codegen.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
-				Content: []codegen.Beat{
+			form: &apimodels.CreateBeatsSheetForm{
+				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
 						Title:   "Beat 1",
@@ -205,7 +205,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						Content: "Beat 2 content",
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
@@ -222,7 +222,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 
 			source := apimocks.NewMockCreateBeatsSheetService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 
@@ -233,7 +233,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 						UserID:      uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 						StoryPlanID: uuid.UUID(testCase.form.GetStoryPlanID()),
 						Lang:        models.Lang(testCase.form.GetLang()),
-						Content: lo.Map(testCase.form.GetContent(), func(item codegen.Beat, _ int) models.Beat {
+						Content: lo.Map(testCase.form.GetContent(), func(item apimodels.Beat, _ int) models.Beat {
 							return models.Beat{
 								Key:     item.GetKey(),
 								Title:   item.GetTitle(),

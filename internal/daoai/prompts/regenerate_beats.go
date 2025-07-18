@@ -3,9 +3,10 @@ package prompts
 import (
 	_ "embed"
 
-	"github.com/a-novel-kit/configurator"
+	"github.com/goccy/go-yaml"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
@@ -15,21 +16,17 @@ var regenerateBeatsEnFile []byte
 //go:embed regenerate_beats.fr.yaml
 var regenerateBeatsFrFile []byte
 
-type RegenerateBeatssType struct {
+type RegenerateBeatsType struct {
 	System string `yaml:"system"`
 	Input1 string `yaml:"input1"`
 	Input2 string `yaml:"input2"`
 }
 
-var RegenerateBeatsEN = configurator.NewLoader[RegenerateBeatssType](config.Loader).MustLoad(
-	configurator.NewConfig("", regenerateBeatsEnFile),
-)
+var RegenerateBeatsEN = config.MustUnmarshal[RegenerateBeatsType](yaml.Unmarshal, regenerateBeatsEnFile)
 
-var RegenerateBeatsFR = configurator.NewLoader[RegenerateBeatssType](config.Loader).MustLoad(
-	configurator.NewConfig("", regenerateBeatsFrFile),
-)
+var RegenerateBeatsFR = config.MustUnmarshal[RegenerateBeatsType](yaml.Unmarshal, regenerateBeatsFrFile)
 
-var RegenerateBeats = map[models.Lang]RegenerateBeatssType{
+var RegenerateBeats = map[models.Lang]RegenerateBeatsType{
 	models.LangEN: RegenerateBeatsEN,
 	models.LangFR: RegenerateBeatsFR,
 }

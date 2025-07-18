@@ -2,21 +2,17 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrExpandBeatService = errors.New("ExpandBeatService.ExpandBeat")
-
-func NewErrExpandBeatService(err error) error {
-	return errors.Join(err, ErrExpandBeatService)
-}
 
 type ExpandBeatSource interface {
 	ExpandBeat(ctx context.Context, request daoai.ExpandBeatRequest) (*models.Beat, error)
@@ -61,39 +57,35 @@ func NewExpandBeatService(source ExpandBeatSource) *ExpandBeatService {
 func (service *ExpandBeatService) ExpandBeat(
 	ctx context.Context, request ExpandBeatRequest,
 ) (*models.Beat, error) {
-	span := sentry.StartSpan(ctx, "ExpandBeatService.ExpandBeat")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.ExpandBeat")
+	defer span.End()
 
-	span.SetData("request.beatsSheetID", request.BeatsSheetID)
-	span.SetData("request.targetKey", request.TargetKey)
-	span.SetData("request.userID", request.UserID)
+	span.SetAttributes(
+		attribute.String("request.beatsSheetID", request.BeatsSheetID.String()),
+		attribute.String("request.targetKey", request.TargetKey),
+		attribute.String("request.userID", request.UserID.String()),
+	)
 
-	beatsSheet, err := service.source.SelectBeatsSheet(span.Context(), request.BeatsSheetID)
+	beatsSheet, err := service.source.SelectBeatsSheet(ctx, request.BeatsSheetID)
 	if err != nil {
-		span.SetData("dao.selectBeatsSheet.err", err.Error())
-
-		return nil, NewErrExpandBeatService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("select beats sheet: %w", err))
 	}
 
 	// Make sure the selected beats sheet is linked to a logline that belongs to the user.
-	logline, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
+	logline, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
 		ID:     beatsSheet.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
-		span.SetData("dao.selectLogline.err", err.Error())
-
-		return nil, NewErrExpandBeatService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("select logline: %w", err))
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(span.Context(), beatsSheet.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(ctx, beatsSheet.StoryPlanID)
 	if err != nil {
-		span.SetData("dao.selectStoryPlan.err", err.Error())
-
-		return nil, NewErrExpandBeatService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	expanded, err := service.source.ExpandBeat(span.Context(), daoai.ExpandBeatRequest{
+	expanded, err := service.source.ExpandBeat(ctx, daoai.ExpandBeatRequest{
 		Logline: logline.Name + "\n\n" + logline.Content,
 		Beats:   beatsSheet.Content,
 		Plan: models.StoryPlan{
@@ -110,10 +102,8 @@ func (service *ExpandBeatService) ExpandBeat(
 		UserID:    request.UserID.String(),
 	})
 	if err != nil {
-		span.SetData("daoai.expandBeat.err", err.Error())
-
-		return nil, NewErrExpandBeatService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	return expanded, nil
+	return otel.ReportSuccess(span, expanded), nil
 }

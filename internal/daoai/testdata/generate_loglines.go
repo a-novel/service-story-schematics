@@ -2,9 +2,9 @@ package testdata
 
 import (
 	_ "embed"
-	"github.com/a-novel-kit/configurator"
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/goccy/go-yaml"
 )
 
 //go:embed generate_loglines.en.yaml
@@ -26,13 +26,9 @@ type GenerateLoglinesPromptsType struct {
 	} `yaml:"checkAgent"`
 }
 
-var GenerateLoglinesPromptEN = configurator.NewLoader[GenerateLoglinesPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", generateLoglinesEnFile),
-)
+var GenerateLoglinesPromptEN = config.MustUnmarshal[GenerateLoglinesPromptsType](yaml.Unmarshal, generateLoglinesEnFile)
 
-var GenerateLoglinesPromptFR = configurator.NewLoader[GenerateLoglinesPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", generateLoglinesFrFile),
-)
+var GenerateLoglinesPromptFR = config.MustUnmarshal[GenerateLoglinesPromptsType](yaml.Unmarshal, generateLoglinesFrFile)
 
 var GenerateLoglinesPrompts = map[models.Lang]GenerateLoglinesPromptsType{
 	models.LangEN: GenerateLoglinesPromptEN,

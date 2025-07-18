@@ -5,16 +5,17 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/codes"
 
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	"github.com/a-novel/golib/otel"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type SelectBeatsSheetService interface {
@@ -22,50 +23,46 @@ type SelectBeatsSheetService interface {
 }
 
 func (api *API) GetBeatsSheet(
-	ctx context.Context, params codegen.GetBeatsSheetParams,
-) (codegen.GetBeatsSheetRes, error) {
-	span := sentry.StartSpan(ctx, "API.GetBeatsSheet")
-	defer span.Finish()
+	ctx context.Context, params apimodels.GetBeatsSheetParams,
+) (apimodels.GetBeatsSheetRes, error) {
+	ctx, span := otel.Tracer().Start(ctx, "api.GetBeatsSheet")
+	defer span.End()
 
-	span.SetData("request.beatsSheetID", params.BeatsSheetID)
-
-	userID, err := authPkg.RequireUserID(ctx)
+	userID, err := authpkg.RequireUserID(ctx)
 	if err != nil {
-		span.SetData("request.userID.err", err.Error())
-
-		return nil, fmt.Errorf("get user ID: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("get user ID: %w", err))
 	}
 
-	span.SetData("request.userID", userID)
-
-	beatsSheet, err := api.SelectBeatsSheetService.SelectBeatsSheet(span.Context(), services.SelectBeatsSheetRequest{
+	beatsSheet, err := api.SelectBeatsSheetService.SelectBeatsSheet(ctx, services.SelectBeatsSheetRequest{
 		BeatsSheetID: uuid.UUID(params.BeatsSheetID),
 		UserID:       userID,
 	})
 
 	switch {
 	case errors.Is(err, dao.ErrBeatsSheetNotFound), errors.Is(err, dao.ErrLoglineNotFound):
-		span.SetData("service.err", err.Error())
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "")
 
-		return &codegen.NotFoundError{Error: err.Error()}, nil
+		return &apimodels.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
-		span.SetData("service.err", err.Error())
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "")
 
 		return nil, fmt.Errorf("get beats sheet: %w", err)
 	}
 
-	return &codegen.BeatsSheet{
-		ID:          codegen.BeatsSheetID(beatsSheet.ID),
-		LoglineID:   codegen.LoglineID(beatsSheet.LoglineID),
-		StoryPlanID: codegen.StoryPlanID(beatsSheet.StoryPlanID),
-		Content: lo.Map(beatsSheet.Content, func(item models.Beat, _ int) codegen.Beat {
-			return codegen.Beat{
+	return otel.ReportSuccess(span, &apimodels.BeatsSheet{
+		ID:          apimodels.BeatsSheetID(beatsSheet.ID),
+		LoglineID:   apimodels.LoglineID(beatsSheet.LoglineID),
+		StoryPlanID: apimodels.StoryPlanID(beatsSheet.StoryPlanID),
+		Content: lo.Map(beatsSheet.Content, func(item models.Beat, _ int) apimodels.Beat {
+			return apimodels.Beat{
 				Key:     item.Key,
 				Title:   item.Title,
 				Content: item.Content,
 			}
 		}),
-		Lang:      codegen.Lang(beatsSheet.Lang),
+		Lang:      apimodels.Lang(beatsSheet.Lang),
 		CreatedAt: beatsSheet.CreatedAt,
-	}, nil
+	}), nil
 }

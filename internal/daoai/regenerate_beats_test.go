@@ -10,15 +10,15 @@ import (
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 func TestRegenerateBeats(t *testing.T) {
 	const errorMsg = "The below beats sheet does not form a coherent story about the below logline.\n\n" +
 		"beats sheet:\n\n%s\n\nlogline:\n\n%s"
 
-	repository := daoai.NewRegenerateBeatsRepository()
+	repository := daoai.NewRegenerateBeatsRepository(&config.OpenAIPresetDefault)
 
 	for _, lang := range []models.Lang{models.LangEN, models.LangFR} {
 		t.Run(lang.String(), func(t *testing.T) {
@@ -30,9 +30,7 @@ func TestRegenerateBeats(t *testing.T) {
 				t.Run(name, func(t *testing.T) {
 					t.Parallel()
 
-					ctx := lib.NewOpenaiContext(t.Context())
-
-					beatsSheet, err := repository.RegenerateBeats(ctx, daoai.RegenerateBeatsRequest{
+					beatsSheet, err := repository.RegenerateBeats(t.Context(), daoai.RegenerateBeatsRequest{
 						Logline:        testCase.Logline,
 						Beats:          testCase.Beats,
 						Plan:           testCase.Plan,

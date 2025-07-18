@@ -2,21 +2,17 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"time"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrUpdateStoryPlanService = errors.New("UpdateStoryPlanService.UpdateStoryPlan")
-
-func NewErrUpdateStoryPlanService(err error) error {
-	return errors.Join(err, ErrUpdateStoryPlanService)
-}
 
 type UpdateStoryPlanSource interface {
 	UpdateStoryPlan(ctx context.Context, data dao.UpdateStoryPlanData) (*dao.StoryPlanEntity, error)
@@ -41,14 +37,16 @@ func NewUpdateStoryPlanService(source UpdateStoryPlanSource) *UpdateStoryPlanSer
 func (service *UpdateStoryPlanService) UpdateStoryPlan(
 	ctx context.Context, request UpdateStoryPlanRequest,
 ) (*models.StoryPlan, error) {
-	span := sentry.StartSpan(ctx, "UpdateStoryPlanService.UpdateStoryPlan")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.UpdateStoryPlan")
+	defer span.End()
 
-	span.SetData("request.slug", request.Slug)
-	span.SetData("request.name", request.Name)
-	span.SetData("request.lang", request.Lang)
+	span.SetAttributes(
+		attribute.String("request.slug", request.Slug.String()),
+		attribute.String("request.name", request.Name),
+		attribute.String("request.lang", request.Lang.String()),
+	)
 
-	resp, err := service.source.UpdateStoryPlan(span.Context(), dao.UpdateStoryPlanData{
+	resp, err := service.source.UpdateStoryPlan(ctx, dao.UpdateStoryPlanData{
 		Plan: models.StoryPlan{
 			ID:          uuid.New(),
 			Slug:        request.Slug,
@@ -60,12 +58,10 @@ func (service *UpdateStoryPlanService) UpdateStoryPlan(
 		},
 	})
 	if err != nil {
-		span.SetData("dao.updateStoryPlan.err", err.Error())
-
-		return nil, NewErrUpdateStoryPlanService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("update story plan: %w", err))
 	}
 
-	return &models.StoryPlan{
+	return otel.ReportSuccess(span, &models.StoryPlan{
 		ID:          resp.ID,
 		Slug:        resp.Slug,
 		Name:        resp.Name,
@@ -73,5 +69,5 @@ func (service *UpdateStoryPlanService) UpdateStoryPlan(
 		Beats:       resp.Beats,
 		Lang:        resp.Lang,
 		CreatedAt:   resp.CreatedAt,
-	}, nil
+	}), nil
 }

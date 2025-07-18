@@ -8,14 +8,14 @@ import (
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 func TestExpandLogline(t *testing.T) {
 	const errorMsg = "The greater AI decreted that this logline:\n\n%s\n\nDoes not expand this one:\n\n%s"
 
-	repository := daoai.NewExpandLoglineRepository()
+	repository := daoai.NewExpandLoglineRepository(&config.OpenAIPresetDefault)
 
 	for _, lang := range []models.Lang{models.LangEN, models.LangFR} {
 		t.Run(lang.String(), func(t *testing.T) {
@@ -27,9 +27,7 @@ func TestExpandLogline(t *testing.T) {
 				t.Run(name, func(t *testing.T) {
 					t.Parallel()
 
-					ctx := lib.NewOpenaiContext(t.Context())
-
-					resp, err := repository.ExpandLogline(ctx, daoai.ExpandLoglineRequest{
+					resp, err := repository.ExpandLogline(t.Context(), daoai.ExpandLoglineRequest{
 						Logline: testCase.Logline,
 						Lang:    lang,
 						UserID:  TestUser,

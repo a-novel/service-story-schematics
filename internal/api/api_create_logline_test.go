@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestCreateLogline(t *testing.T) {
@@ -34,21 +34,21 @@ func TestCreateLogline(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		form *codegen.CreateLoglineForm
+		form *apimodels.CreateLoglineForm
 
 		createLoglineData *createLoglineData
 
-		expect    codegen.CreateLoglineRes
+		expect    apimodels.CreateLoglineRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			form: &codegen.CreateLoglineForm{
+			form: &apimodels.CreateLoglineForm{
 				Slug:    "slug",
 				Name:    "name",
 				Content: "content",
-				Lang:    codegen.LangEn,
+				Lang:    apimodels.LangEn,
 			},
 
 			createLoglineData: &createLoglineData{
@@ -63,24 +63,24 @@ func TestCreateLogline(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.Logline{
-				ID:        codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				UserID:    codegen.UserID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			expect: &apimodels.Logline{
+				ID:        apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				UserID:    apimodels.UserID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				Slug:      "slug",
 				Name:      "name",
 				Content:   "content",
-				Lang:      codegen.LangEn,
+				Lang:      apimodels.LangEn,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
 		{
 			name: "Error",
 
-			form: &codegen.CreateLoglineForm{
+			form: &apimodels.CreateLoglineForm{
 				Slug:    "slug",
 				Name:    "name",
 				Content: "content",
-				Lang:    codegen.LangEn,
+				Lang:    apimodels.LangEn,
 			},
 
 			createLoglineData: &createLoglineData{
@@ -97,7 +97,7 @@ func TestCreateLogline(t *testing.T) {
 
 			source := apimocks.NewMockCreateLoglineService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 

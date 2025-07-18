@@ -2,9 +2,9 @@ package testdata
 
 import (
 	_ "embed"
-	"github.com/a-novel-kit/configurator"
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/goccy/go-yaml"
 )
 
 //go:embed regenerate_beats.en.yaml
@@ -25,13 +25,9 @@ type RegenerateBeatsPromptsType struct {
 	CheckAgent string                             `yaml:"checkAgent"`
 }
 
-var RegenerateBeatsPromptEN = configurator.NewLoader[RegenerateBeatsPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", regenerateBeatsEnFile),
-)
+var RegenerateBeatsPromptEN = config.MustUnmarshal[RegenerateBeatsPromptsType](yaml.Unmarshal, regenerateBeatsEnFile)
 
-var RegenerateBeatsPromptFR = configurator.NewLoader[RegenerateBeatsPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", regenerateBeatsFrFile),
-)
+var RegenerateBeatsPromptFR = config.MustUnmarshal[RegenerateBeatsPromptsType](yaml.Unmarshal, regenerateBeatsFrFile)
 
 var RegenerateBeatsPrompts = map[models.Lang]RegenerateBeatsPromptsType{
 	models.LangEN: RegenerateBeatsPromptEN,

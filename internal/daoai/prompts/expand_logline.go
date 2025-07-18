@@ -3,9 +3,10 @@ package prompts
 import (
 	_ "embed"
 
-	"github.com/a-novel-kit/configurator"
+	"github.com/goccy/go-yaml"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
@@ -19,13 +20,9 @@ type ExpandLoglinesType struct {
 	System string `yaml:"system"`
 }
 
-var ExpandLoglineEN = configurator.NewLoader[ExpandLoglinesType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandLoglineEnFile),
-)
+var ExpandLoglineEN = config.MustUnmarshal[ExpandLoglinesType](yaml.Unmarshal, expandLoglineEnFile)
 
-var ExpandLoglineFR = configurator.NewLoader[ExpandLoglinesType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandLoglineFrFile),
-)
+var ExpandLoglineFR = config.MustUnmarshal[ExpandLoglinesType](yaml.Unmarshal, expandLoglineFrFile)
 
 var ExpandLogline = map[models.Lang]ExpandLoglinesType{
 	models.LangEN: ExpandLoglineEN,

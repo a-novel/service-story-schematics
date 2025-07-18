@@ -4,36 +4,28 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
+	"github.com/a-novel/golib/otel"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
-	authPkg "github.com/a-novel/service-authentication/pkg"
-
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type ExpandLoglineService interface {
 	ExpandLogline(ctx context.Context, request services.ExpandLoglineRequest) (*models.LoglineIdea, error)
 }
 
-func (api *API) ExpandLogline(ctx context.Context, req *codegen.LoglineIdea) (codegen.ExpandLoglineRes, error) {
-	span := sentry.StartSpan(ctx, "API.ExpandLogline")
-	defer span.Finish()
+func (api *API) ExpandLogline(ctx context.Context, req *apimodels.LoglineIdea) (apimodels.ExpandLoglineRes, error) {
+	ctx, span := otel.Tracer().Start(ctx, "api.ExpandLogline")
+	defer span.End()
 
-	span.SetData("request.name", req.GetName())
-	span.SetData("request.lang", req.GetLang())
-
-	userID, err := authPkg.RequireUserID(ctx)
+	userID, err := authpkg.RequireUserID(ctx)
 	if err != nil {
-		span.SetData("request.userID.err", err.Error())
-
-		return nil, fmt.Errorf("get user ID: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("get user ID: %w", err))
 	}
 
-	span.SetData("request.userID", userID)
-
-	logline, err := api.ExpandLoglineService.ExpandLogline(span.Context(), services.ExpandLoglineRequest{
+	logline, err := api.ExpandLoglineService.ExpandLogline(ctx, services.ExpandLoglineRequest{
 		Logline: models.LoglineIdea{
 			Name:    req.GetName(),
 			Content: req.GetContent(),
@@ -42,14 +34,12 @@ func (api *API) ExpandLogline(ctx context.Context, req *codegen.LoglineIdea) (co
 		UserID: userID,
 	})
 	if err != nil {
-		span.SetData("service.err", err.Error())
-
-		return nil, fmt.Errorf("expand logline: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("expand logline: %w", err))
 	}
 
-	return &codegen.LoglineIdea{
+	return otel.ReportSuccess(span, &apimodels.LoglineIdea{
 		Name:    logline.Name,
 		Content: logline.Content,
-		Lang:    codegen.Lang(logline.Lang),
-	}, nil
+		Lang:    apimodels.Lang(logline.Lang),
+	}), nil
 }

@@ -2,21 +2,16 @@ package services
 
 import (
 	"context"
-	"errors"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrListBeatsSheetsService = errors.New("ListBeatsSheetsService.ListBeatsSheets")
-
-func NewErrListBeatsSheetsService(err error) error {
-	return errors.Join(err, ErrListBeatsSheetsService)
-}
 
 type ListBeatsSheetsSource interface {
 	ListBeatsSheets(ctx context.Context, data dao.ListBeatsSheetsData) ([]*dao.BeatsSheetPreviewEntity, error)
@@ -54,22 +49,22 @@ func NewListBeatsSheetsService(source ListBeatsSheetsSource) *ListBeatsSheetsSer
 func (service *ListBeatsSheetsService) ListBeatsSheets(
 	ctx context.Context, request ListBeatsSheetsRequest,
 ) ([]*models.BeatsSheetPreview, error) {
-	span := sentry.StartSpan(ctx, "ListBeatsSheetsService.ListBeatsSheets")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.ListBeatsSheets")
+	defer span.End()
 
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.loglineID", request.LoglineID)
-	span.SetData("request.limit", request.Limit)
-	span.SetData("request.offset", request.Offset)
+	span.SetAttributes(
+		attribute.String("request.userID", request.UserID.String()),
+		attribute.String("request.loglineID", request.LoglineID.String()),
+		attribute.Int("request.limit", request.Limit),
+		attribute.Int("request.offset", request.Offset),
+	)
 
-	_, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
+	_, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
 		ID:     request.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
-		span.SetData("dao.selectLogline.err", err.Error())
-
-		return nil, NewErrListBeatsSheetsService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	data := dao.ListBeatsSheetsData{
@@ -78,20 +73,20 @@ func (service *ListBeatsSheetsService) ListBeatsSheets(
 		Offset:    request.Offset,
 	}
 
-	resp, err := service.source.ListBeatsSheets(span.Context(), data)
+	resp, err := service.source.ListBeatsSheets(ctx, data)
 	if err != nil {
-		span.SetData("dao.listBeatsSheets.err", err.Error())
-
-		return nil, NewErrListBeatsSheetsService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	span.SetData("dao.listBeatsSheets.count", len(resp))
+	span.SetAttributes(attribute.Int("dao.listBeatsSheets.count", len(resp)))
 
-	return lo.Map(resp, func(item *dao.BeatsSheetPreviewEntity, _ int) *models.BeatsSheetPreview {
+	output := lo.Map(resp, func(item *dao.BeatsSheetPreviewEntity, _ int) *models.BeatsSheetPreview {
 		return &models.BeatsSheetPreview{
 			ID:        item.ID,
 			Lang:      item.Lang,
 			CreatedAt: item.CreatedAt,
 		}
-	}), nil
+	})
+
+	return otel.ReportSuccess(span, output), nil
 }

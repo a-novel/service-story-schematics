@@ -799,8 +799,11 @@ components:
       type: object
       required:
         - postgres
+        - jsonKeys
       properties:
         postgres:
+          $ref: "#/components/schemas/Dependency"
+        jsonKeys:
           $ref: "#/components/schemas/Dependency"
 
     CreateBeatsSheetForm:
@@ -1199,8 +1202,7 @@ components:
         - purpose
         - minScenes
         - maxScenes
-      description:
-        A beat is a key event in a story that drives the plot forward. It is used to structure the story and
+      description: A beat is a key event in a story that drives the plot forward. It is used to structure the story and
         ensure its coherence. A beat describes the content of a beat.
       properties:
         name:

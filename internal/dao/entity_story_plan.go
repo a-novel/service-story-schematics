@@ -1,6 +1,7 @@
 package dao
 
 import (
+	_ "embed"
 	"errors"
 	"time"
 
@@ -16,7 +17,7 @@ var (
 )
 
 type StoryPlanEntity struct {
-	bun.BaseModel `bun:"table:story_plans,alias:sp,select:story_plans_active_view"`
+	bun.BaseModel `bun:"table:story_plans"`
 
 	ID   uuid.UUID   `bun:"id,pk,type:uuid"`
 	Slug models.Slug `bun:"slug"`

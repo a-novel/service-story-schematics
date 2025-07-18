@@ -3,9 +3,10 @@ package prompts
 import (
 	_ "embed"
 
-	"github.com/a-novel-kit/configurator"
+	"github.com/goccy/go-yaml"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
@@ -21,13 +22,9 @@ type ExpandBeatsType struct {
 	Input2 string `yaml:"input2"`
 }
 
-var ExpandBeatEN = configurator.NewLoader[ExpandBeatsType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandBeatEnFile),
-)
+var ExpandBeatEN = config.MustUnmarshal[ExpandBeatsType](yaml.Unmarshal, expandBeatEnFile)
 
-var ExpandBeatFR = configurator.NewLoader[ExpandBeatsType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandBeatFrFile),
-)
+var ExpandBeatFR = config.MustUnmarshal[ExpandBeatsType](yaml.Unmarshal, expandBeatFrFile)
 
 var ExpandBeat = map[models.Lang]ExpandBeatsType{
 	models.LangEN: ExpandBeatEN,

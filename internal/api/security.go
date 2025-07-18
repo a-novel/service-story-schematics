@@ -4,20 +4,20 @@ import (
 	"context"
 	"fmt"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authconfig "github.com/a-novel/service-authentication/models/config"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type SecurityHandler struct {
-	handler *authPkg.HandleBearerAuth[codegen.OperationName]
+	handler *authpkg.HandleBearerAuth[apimodels.OperationName]
 }
 
 func NewSecurity(
-	source authPkg.AuthenticateSource, permissions authModels.PermissionsConfig,
+	source authpkg.AuthenticateSource, permissions authconfig.Permissions,
 ) (*SecurityHandler, error) {
-	handler, err := authPkg.NewHandleBearerAuth[codegen.OperationName](source, permissions)
+	handler, err := authpkg.NewHandleBearerAuth[apimodels.OperationName](source, permissions)
 	if err != nil {
 		return nil, fmt.Errorf("NewSecurity: %w", err)
 	}
@@ -26,7 +26,7 @@ func NewSecurity(
 }
 
 func (security *SecurityHandler) HandleBearerAuth(
-	ctx context.Context, operationName codegen.OperationName, auth codegen.BearerAuth,
+	ctx context.Context, operationName apimodels.OperationName, auth apimodels.BearerAuth,
 ) (context.Context, error) {
 	handler, err := security.handler.HandleBearerAuth(ctx, operationName, &auth)
 	if err != nil {

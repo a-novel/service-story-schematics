@@ -3,20 +3,20 @@ package dao
 import (
 	"context"
 	"database/sql"
+	_ "embed"
 	"errors"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
-var ErrSelectStoryPlanBySlugRepository = errors.New("SelectStoryPlanBySlugRepository.SelectStoryPlanBySlug")
-
-func NewErrSelectStoryPlanBySlugRepository(err error) error {
-	return errors.Join(err, ErrSelectStoryPlanBySlugRepository)
-}
+//go:embed select_story_plan_by_slug.sql
+var selectStoryPlanBySlugQuery string
 
 type SelectStoryPlanBySlugRepository struct{}
 
@@ -27,30 +27,26 @@ func NewSelectStoryPlanBySlugRepository() *SelectStoryPlanBySlugRepository {
 func (repository *SelectStoryPlanBySlugRepository) SelectStoryPlanBySlug(
 	ctx context.Context, data models.Slug,
 ) (*StoryPlanEntity, error) {
-	span := sentry.StartSpan(ctx, "SelectStoryPlanBySlugRepository.SelectStoryPlanBySlug")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.SelectStoryPlanBySlug")
+	defer span.End()
 
-	span.SetData("story_plan.slug", data)
+	span.SetAttributes(attribute.String("storyPlan.slug", data.String()))
 
-	db, err := lib.PostgresContext(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return nil, NewErrSelectStoryPlanBySlugRepository(fmt.Errorf("get postgres client: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
 	}
 
 	entity := &StoryPlanEntity{}
 
-	err = db.NewSelect().Model(entity).Where("slug = ?", data).Scan(span.Context())
+	err = tx.NewRaw(selectStoryPlanBySlugQuery, data).Scan(ctx, entity)
 	if err != nil {
-		span.SetData("scan.error", err.Error())
-
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, NewErrSelectStoryPlanBySlugRepository(ErrStoryPlanNotFound)
+			return nil, otel.ReportError(span, ErrStoryPlanNotFound)
 		}
 
-		return nil, NewErrSelectStoryPlanBySlugRepository(fmt.Errorf("select story plan: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("select story plan: %w", err))
 	}
 
-	return entity, nil
+	return otel.ReportSuccess(span, entity), nil
 }

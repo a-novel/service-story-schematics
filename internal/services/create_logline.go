@@ -3,20 +3,17 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrCreateLoglineService = errors.New("CreateLoglineService.CreateLogline")
-
-func NewErrCreateLoglineService(err error) error {
-	return errors.Join(err, ErrCreateLoglineService)
-}
 
 type CreateLoglineSource interface {
 	InsertLogline(ctx context.Context, data dao.InsertLoglineData) (*dao.LoglineEntity, error)
@@ -55,13 +52,16 @@ func NewCreateLoglineService(source CreateLoglineSource) *CreateLoglineService {
 func (service *CreateLoglineService) CreateLogline(
 	ctx context.Context, request CreateLoglineRequest,
 ) (*models.Logline, error) {
-	span := sentry.StartSpan(ctx, "CreateLoglineService.CreateLogline")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.CreateLogline")
+	defer span.End()
 
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.slug", request.Slug)
-	span.SetData("request.name", request.Name)
-	span.SetData("request.lang", request.Lang)
+	span.SetAttributes(
+		attribute.String("request.userID", request.UserID.String()),
+		attribute.String("request.slug", request.Slug.String()),
+		attribute.String("request.name", request.Name),
+		attribute.String("request.lang", request.Lang.String()),
+		attribute.Bool("slug.taken", false),
+	)
 
 	data := dao.InsertLoglineData{
 		ID:      uuid.New(),
@@ -73,38 +73,31 @@ func (service *CreateLoglineService) CreateLogline(
 		Now:     time.Now(),
 	}
 
-	resp, err := service.source.InsertLogline(span.Context(), data)
+	resp, err := service.source.InsertLogline(ctx, data)
 
 	// If slug is taken, try to modify it by appending a version number.
 	if errors.Is(err, dao.ErrLoglineAlreadyExists) {
-		span.SetData("dao.insertLogline.slug.taken", err.Error())
+		span.SetAttributes(attribute.Bool("slug.taken", true))
 
-		data.Slug, _, err = service.source.SelectSlugIteration(span.Context(), dao.SelectSlugIterationData{
-			Slug:  data.Slug,
-			Table: "loglines",
-			Filter: map[string][]any{
-				"user_id = ?": {data.UserID},
-			},
-			Order: []string{"created_at DESC"},
+		data.Slug, _, err = service.source.SelectSlugIteration(ctx, dao.SelectSlugIterationData{
+			Slug:   data.Slug,
+			Target: dao.SlugIterationTargetLogline,
+			Args:   []any{data.UserID},
 		})
 		if err != nil {
-			span.SetData("dao.selectSlugIteration.err", err.Error())
-
-			return nil, NewErrCreateLoglineService(err)
+			return nil, otel.ReportError(span, fmt.Errorf("check slug uniqueness: %w", err))
 		}
 
-		resp, err = service.source.InsertLogline(span.Context(), data)
+		resp, err = service.source.InsertLogline(ctx, data)
 	}
 
 	if err != nil {
-		span.SetData("dao.insertLogline.err", err.Error())
-
-		return nil, NewErrCreateLoglineService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("insert logline: %w", err))
 	}
 
-	span.SetData("dao.insertLogline.id", resp.ID)
+	span.SetAttributes(attribute.String("dao.insertLogline.id", resp.ID.String()))
 
-	return &models.Logline{
+	return otel.ReportSuccess(span, &models.Logline{
 		ID:        resp.ID,
 		UserID:    resp.UserID,
 		Slug:      resp.Slug,
@@ -112,5 +105,5 @@ func (service *CreateLoglineService) CreateLogline(
 		Content:   resp.Content,
 		Lang:      resp.Lang,
 		CreatedAt: resp.CreatedAt,
-	}, nil
+	}), nil
 }

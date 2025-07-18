@@ -3,9 +3,10 @@ package prompts
 import (
 	_ "embed"
 
-	"github.com/a-novel-kit/configurator"
+	"github.com/goccy/go-yaml"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
@@ -19,13 +20,9 @@ type StoryPlansType struct {
 	System string `yaml:"system"`
 }
 
-var StoryPlanEN = configurator.NewLoader[StoryPlansType](config.Loader).MustLoad(
-	configurator.NewConfig("", storyPlanEnFile),
-)
+var StoryPlanEN = config.MustUnmarshal[StoryPlansType](yaml.Unmarshal, storyPlanEnFile)
 
-var StoryPlanFR = configurator.NewLoader[StoryPlansType](config.Loader).MustLoad(
-	configurator.NewConfig("", storyPlanFrFile),
-)
+var StoryPlanFR = config.MustUnmarshal[StoryPlansType](yaml.Unmarshal, storyPlanFrFile)
 
 var StoryPlan = map[models.Lang]StoryPlansType{
 	models.LangEN: StoryPlanEN,

@@ -2,20 +2,15 @@ package services
 
 import (
 	"context"
-	"errors"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrGenerateLoglinesService = errors.New("GenerateLoglinesService.GenerateLoglines")
-
-func NewErrGenerateLoglinesService(err error) error {
-	return errors.Join(err, ErrGenerateLoglinesService)
-}
 
 type GenerateLoglinesSource interface {
 	GenerateLoglines(ctx context.Context, request daoai.GenerateLoglinesRequest) ([]models.LoglineIdea, error)
@@ -39,25 +34,25 @@ func NewGenerateLoglinesService(source GenerateLoglinesSource) *GenerateLoglines
 func (service *GenerateLoglinesService) GenerateLoglines(
 	ctx context.Context, request GenerateLoglinesRequest,
 ) ([]models.LoglineIdea, error) {
-	span := sentry.StartSpan(ctx, "GenerateLoglinesService.GenerateLoglines")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.GenerateLoglines")
+	defer span.End()
 
-	span.SetData("request.count", request.Count)
-	span.SetData("request.theme", request.Theme)
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.lang", request.Lang)
+	span.SetAttributes(
+		attribute.String("request.theme", request.Theme),
+		attribute.Int("request.count", request.Count),
+		attribute.String("request.userID", request.UserID.String()),
+		attribute.String("request.lang", request.Lang.String()),
+	)
 
-	resp, err := service.source.GenerateLoglines(span.Context(), daoai.GenerateLoglinesRequest{
+	resp, err := service.source.GenerateLoglines(ctx, daoai.GenerateLoglinesRequest{
 		Count:  request.Count,
 		Theme:  request.Theme,
 		UserID: request.UserID.String(),
 		Lang:   request.Lang,
 	})
 	if err != nil {
-		span.SetData("daoai.generateLoglines.error", err.Error())
-
-		return nil, NewErrGenerateLoglinesService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	return resp, nil
+	return otel.ReportSuccess(span, resp), nil
 }

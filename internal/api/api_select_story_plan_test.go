@@ -11,11 +11,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestSelectStoryPlan(t *testing.T) {
@@ -31,22 +31,22 @@ func TestSelectStoryPlan(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		params codegen.GetStoryPlanParams
+		params apimodels.GetStoryPlanParams
 
 		selectStoryPlanData *selectStoryPlanData
 
-		expect    codegen.GetStoryPlanRes
+		expect    apimodels.GetStoryPlanRes
 		expectErr error
 	}{
 		{
 			name: "Success/ID",
 
-			params: codegen.GetStoryPlanParams{
-				ID: codegen.OptStoryPlanID{
-					Value: codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			params: apimodels.GetStoryPlanParams{
+				ID: apimodels.OptStoryPlanID{
+					Value: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 					Set:   true,
 				},
-				Slug: codegen.OptSlug{},
+				Slug: apimodels.OptSlug{},
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
@@ -77,14 +77,14 @@ func TestSelectStoryPlan(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.StoryPlan{
-				ID:   codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			expect: &apimodels.StoryPlan{
+				ID:   apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				Slug: "test-slug",
 
 				Name:        "Test Name",
 				Description: "Test Description, a lot going on here.",
 
-				Beats: []codegen.BeatDefinition{
+				Beats: []apimodels.BeatDefinition{
 					{
 						Name:      "Test Beat",
 						Key:       "test-beat",
@@ -98,7 +98,7 @@ func TestSelectStoryPlan(t *testing.T) {
 						Purpose:   "The purpose of the plot second point, in a single sentence.",
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
@@ -106,9 +106,9 @@ func TestSelectStoryPlan(t *testing.T) {
 		{
 			name: "Success/Slug",
 
-			params: codegen.GetStoryPlanParams{
-				ID: codegen.OptStoryPlanID{},
-				Slug: codegen.OptSlug{
+			params: apimodels.GetStoryPlanParams{
+				ID: apimodels.OptStoryPlanID{},
+				Slug: apimodels.OptSlug{
 					Value: "test-slug",
 					Set:   true,
 				},
@@ -142,14 +142,14 @@ func TestSelectStoryPlan(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.StoryPlan{
-				ID:   codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			expect: &apimodels.StoryPlan{
+				ID:   apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				Slug: "test-slug",
 
 				Name:        "Test Name",
 				Description: "Test Description, a lot going on here.",
 
-				Beats: []codegen.BeatDefinition{
+				Beats: []apimodels.BeatDefinition{
 					{
 						Name:      "Test Beat",
 						Key:       "test-beat",
@@ -163,7 +163,7 @@ func TestSelectStoryPlan(t *testing.T) {
 						Purpose:   "The purpose of the plot second point, in a single sentence.",
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
@@ -171,29 +171,29 @@ func TestSelectStoryPlan(t *testing.T) {
 		{
 			name: "LoglineNotFound",
 
-			params: codegen.GetStoryPlanParams{
-				ID: codegen.OptStoryPlanID{
-					Value: codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			params: apimodels.GetStoryPlanParams{
+				ID: apimodels.OptStoryPlanID{
+					Value: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 					Set:   true,
 				},
-				Slug: codegen.OptSlug{},
+				Slug: apimodels.OptSlug{},
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
 				err: dao.ErrStoryPlanNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "Error",
 
-			params: codegen.GetStoryPlanParams{
-				ID: codegen.OptStoryPlanID{
-					Value: codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			params: apimodels.GetStoryPlanParams{
+				ID: apimodels.OptStoryPlanID{
+					Value: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 					Set:   true,
 				},
-				Slug: codegen.OptSlug{},
+				Slug: apimodels.OptSlug{},
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{

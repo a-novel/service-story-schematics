@@ -2,21 +2,16 @@ package services
 
 import (
 	"context"
-	"errors"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrListLoglinesService = errors.New("ListLoglinesService.ListLoglines")
-
-func NewErrListLoglinesService(err error) error {
-	return errors.Join(err, ErrListLoglinesService)
-}
 
 type ListLoglinesSource interface {
 	ListLoglines(ctx context.Context, data dao.ListLoglinesData) ([]*dao.LoglinePreviewEntity, error)
@@ -39,27 +34,27 @@ func NewListLoglinesService(source ListLoglinesSource) *ListLoglinesService {
 func (service *ListLoglinesService) ListLoglines(
 	ctx context.Context, request ListLoglinesRequest,
 ) ([]*models.LoglinePreview, error) {
-	span := sentry.StartSpan(ctx, "ListLoglinesService.ListLoglines")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.ListLoglines")
+	defer span.End()
 
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.limit", request.Limit)
-	span.SetData("request.offset", request.Offset)
+	span.SetAttributes(
+		attribute.String("request.userID", request.UserID.String()),
+		attribute.Int("request.limit", request.Limit),
+		attribute.Int("request.offset", request.Offset),
+	)
 
-	resp, err := service.source.ListLoglines(span.Context(), dao.ListLoglinesData{
+	resp, err := service.source.ListLoglines(ctx, dao.ListLoglinesData{
 		UserID: request.UserID,
 		Limit:  request.Limit,
 		Offset: request.Offset,
 	})
 	if err != nil {
-		span.SetData("dao.listLoglines.err", err.Error())
-
-		return nil, NewErrListLoglinesService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	span.SetData("dao.listLoglines.count", len(resp))
+	span.SetAttributes(attribute.Int("dao.listLoglines.count", len(resp)))
 
-	return lo.Map(resp, func(item *dao.LoglinePreviewEntity, _ int) *models.LoglinePreview {
+	output := lo.Map(resp, func(item *dao.LoglinePreviewEntity, _ int) *models.LoglinePreview {
 		return &models.LoglinePreview{
 			Slug:      item.Slug,
 			Name:      item.Name,
@@ -67,5 +62,7 @@ func (service *ListLoglinesService) ListLoglines(
 			Lang:      item.Lang,
 			CreatedAt: item.CreatedAt,
 		}
-	}), nil
+	})
+
+	return otel.ReportSuccess(span, output), nil
 }

@@ -2,21 +2,16 @@ package services
 
 import (
 	"context"
-	"errors"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrRegenerateBeatsService = errors.New("RegenerateBeatsService.RegenerateBeatsSheet")
-
-func NewErrRegenerateBeatsService(err error) error {
-	return errors.Join(err, ErrRegenerateBeatsService)
-}
 
 type RegenerateBeatsSource interface {
 	RegenerateBeats(ctx context.Context, request daoai.RegenerateBeatsRequest) ([]models.Beat, error)
@@ -61,39 +56,35 @@ func NewRegenerateBeatsService(source RegenerateBeatsSource) *RegenerateBeatsSer
 func (service *RegenerateBeatsService) RegenerateBeats(
 	ctx context.Context, request RegenerateBeatsRequest,
 ) ([]models.Beat, error) {
-	span := sentry.StartSpan(ctx, "RegenerateBeatsService.RegenerateBeats")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.RegenerateBeats")
+	defer span.End()
 
-	span.SetData("request.beatsSheetID", request.BeatsSheetID)
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.regenerateKeys", request.RegenerateKeys)
+	span.SetAttributes(
+		attribute.String("request.beatsSheetID", request.BeatsSheetID.String()),
+		attribute.String("request.userID", request.UserID.String()),
+		attribute.StringSlice("request.regenerateKeys", request.RegenerateKeys),
+	)
 
-	beatsSheet, err := service.source.SelectBeatsSheet(span.Context(), request.BeatsSheetID)
+	beatsSheet, err := service.source.SelectBeatsSheet(ctx, request.BeatsSheetID)
 	if err != nil {
-		span.SetData("dao.selectBeatsSheet.err", err.Error())
-
-		return nil, NewErrRegenerateBeatsService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	// Make sure the selected beats sheet is linked to a logline that belongs to the user.
-	logline, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
+	logline, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
 		ID:     beatsSheet.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
-		span.SetData("dao.selectLogline.err", err.Error())
-
-		return nil, NewErrRegenerateBeatsService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(span.Context(), beatsSheet.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(ctx, beatsSheet.StoryPlanID)
 	if err != nil {
-		span.SetData("dao.selectStoryPlan.err", err.Error())
-
-		return nil, NewErrRegenerateBeatsService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	regenerated, err := service.source.RegenerateBeats(span.Context(), daoai.RegenerateBeatsRequest{
+	regenerated, err := service.source.RegenerateBeats(ctx, daoai.RegenerateBeatsRequest{
 		Logline: logline.Name + "\n\n" + logline.Content,
 		Plan: models.StoryPlan{
 			ID:          storyPlan.ID,
@@ -110,10 +101,8 @@ func (service *RegenerateBeatsService) RegenerateBeats(
 		RegenerateKeys: request.RegenerateKeys,
 	})
 	if err != nil {
-		span.SetData("daoai.regenerateBeats.err", err.Error())
-
-		return nil, NewErrRegenerateBeatsService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	return regenerated, nil
+	return otel.ReportSuccess(span, regenerated), nil
 }

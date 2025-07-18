@@ -10,15 +10,15 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestRegenerateBeats(t *testing.T) {
@@ -34,18 +34,18 @@ func TestRegenerateBeats(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		form *codegen.RegenerateBeatsForm
+		form *apimodels.RegenerateBeatsForm
 
 		regenerateBeatsData *regenerateBeatsData
 
-		expect    codegen.RegenerateBeatsRes
+		expect    apimodels.RegenerateBeatsRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			form: &codegen.RegenerateBeatsForm{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			form: &apimodels.RegenerateBeatsForm{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				RegenerateKeys: []string{
 					"beat-1",
 					"beat-2",
@@ -67,7 +67,7 @@ func TestRegenerateBeats(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.Beats{
+			expect: &apimodels.Beats{
 				{
 					Key:     "beat-1",
 					Title:   "Regenerated Beat 1",
@@ -83,8 +83,8 @@ func TestRegenerateBeats(t *testing.T) {
 		{
 			name: "BeatsSheetNotFound",
 
-			form: &codegen.RegenerateBeatsForm{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			form: &apimodels.RegenerateBeatsForm{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				RegenerateKeys: []string{
 					"beat-1",
 					"beat-2",
@@ -95,13 +95,13 @@ func TestRegenerateBeats(t *testing.T) {
 				err: dao.ErrBeatsSheetNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrBeatsSheetNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrBeatsSheetNotFound.Error()},
 		},
 		{
 			name: "LoglineNotFound",
 
-			form: &codegen.RegenerateBeatsForm{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			form: &apimodels.RegenerateBeatsForm{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				RegenerateKeys: []string{
 					"beat-1",
 					"beat-2",
@@ -112,13 +112,13 @@ func TestRegenerateBeats(t *testing.T) {
 				err: dao.ErrLoglineNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrLoglineNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrLoglineNotFound.Error()},
 		},
 		{
 			name: "StoryPlanNotFound",
 
-			form: &codegen.RegenerateBeatsForm{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			form: &apimodels.RegenerateBeatsForm{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				RegenerateKeys: []string{
 					"beat-1",
 					"beat-2",
@@ -129,13 +129,13 @@ func TestRegenerateBeats(t *testing.T) {
 				err: dao.ErrStoryPlanNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "Error",
 
-			form: &codegen.RegenerateBeatsForm{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			form: &apimodels.RegenerateBeatsForm{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				RegenerateKeys: []string{
 					"beat-1",
 					"beat-2",
@@ -156,7 +156,7 @@ func TestRegenerateBeats(t *testing.T) {
 
 			source := apimocks.NewMockRegenerateBeatsService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 

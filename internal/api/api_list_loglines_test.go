@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestListLoglines(t *testing.T) {
@@ -34,19 +34,19 @@ func TestListLoglines(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		params codegen.GetLoglinesParams
+		params apimodels.GetLoglinesParams
 
 		listLoglinesData *listLoglinesData
 
-		expect    codegen.GetLoglinesRes
+		expect    apimodels.GetLoglinesRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			params: codegen.GetLoglinesParams{
-				Limit:  codegen.OptInt{Value: 10, Set: true},
-				Offset: codegen.OptInt{Value: 2, Set: true},
+			params: apimodels.GetLoglinesParams{
+				Limit:  apimodels.OptInt{Value: 10, Set: true},
+				Offset: apimodels.OptInt{Value: 2, Set: true},
 			},
 
 			listLoglinesData: &listLoglinesData{
@@ -68,19 +68,19 @@ func TestListLoglines(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.GetLoglinesOKApplicationJSON{
+			expect: &apimodels.GetLoglinesOKApplicationJSON{
 				{
 					Slug:      "slug-1",
 					Name:      "Logline 1",
 					Content:   "Logline 1 content",
-					Lang:      codegen.LangEn,
+					Lang:      apimodels.LangEn,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
 					Slug:      "slug-2",
 					Name:      "Logline 2",
 					Content:   "Logline 2 content",
-					Lang:      codegen.LangEn,
+					Lang:      apimodels.LangEn,
 					CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -88,9 +88,9 @@ func TestListLoglines(t *testing.T) {
 		{
 			name: "Error",
 
-			params: codegen.GetLoglinesParams{
-				Limit:  codegen.OptInt{Value: 10, Set: true},
-				Offset: codegen.OptInt{Value: 2, Set: true},
+			params: apimodels.GetLoglinesParams{
+				Limit:  apimodels.OptInt{Value: 10, Set: true},
+				Offset: apimodels.OptInt{Value: 2, Set: true},
 			},
 
 			listLoglinesData: &listLoglinesData{
@@ -107,7 +107,7 @@ func TestListLoglines(t *testing.T) {
 
 			source := apimocks.NewMockListLoglinesService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 

@@ -10,14 +10,14 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestGenerateLoglines(t *testing.T) {
@@ -33,20 +33,20 @@ func TestGenerateLoglines(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		form *codegen.GenerateLoglinesForm
+		form *apimodels.GenerateLoglinesForm
 
 		generateLoglinesData *generateLoglinesData
 
-		expect    codegen.GenerateLoglinesRes
+		expect    apimodels.GenerateLoglinesRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			form: &codegen.GenerateLoglinesForm{
+			form: &apimodels.GenerateLoglinesForm{
 				Count: 10,
 				Theme: "theme",
-				Lang:  codegen.LangEn,
+				Lang:  apimodels.LangEn,
 			},
 
 			generateLoglinesData: &generateLoglinesData{
@@ -64,26 +64,26 @@ func TestGenerateLoglines(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.GenerateLoglinesOKApplicationJSON{
+			expect: &apimodels.GenerateLoglinesOKApplicationJSON{
 				{
 					Name:    "Logline 1",
 					Content: "Logline 1 content",
-					Lang:    codegen.LangEn,
+					Lang:    apimodels.LangEn,
 				},
 				{
 					Name:    "Logline 2",
 					Content: "Logline 2 content",
-					Lang:    codegen.LangEn,
+					Lang:    apimodels.LangEn,
 				},
 			},
 		},
 		{
 			name: "Error",
 
-			form: &codegen.GenerateLoglinesForm{
+			form: &apimodels.GenerateLoglinesForm{
 				Count: 10,
 				Theme: "theme",
-				Lang:  codegen.LangEn,
+				Lang:  apimodels.LangEn,
 			},
 
 			generateLoglinesData: &generateLoglinesData{
@@ -100,7 +100,7 @@ func TestGenerateLoglines(t *testing.T) {
 
 			source := apimocks.NewMockGenerateLoglinesService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 

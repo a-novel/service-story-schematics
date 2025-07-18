@@ -3,20 +3,20 @@ package daoai
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 	"text/template"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/otel"
+
 	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
 	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 const expandLoglineTemperature = 0.8
@@ -40,47 +40,43 @@ var ExpandLoglineDescriptions = map[models.Lang]string{
 	models.LangFR: schemas.Logline[models.LangFR].Description,
 }
 
-var ErrExpandLoglineRepository = errors.New("ExpandLoglineRepository.ExpandLogline")
-
-func NewErrExpandLoglineRepository(err error) error {
-	return errors.Join(err, ErrExpandLoglineRepository)
-}
-
 type ExpandLoglineRequest struct {
 	Logline string
 	UserID  string
 	Lang    models.Lang
 }
 
-type ExpandLoglineRepository struct{}
+type ExpandLoglineRepository struct {
+	config *config.OpenAI
+}
 
-func NewExpandLoglineRepository() *ExpandLoglineRepository {
-	return &ExpandLoglineRepository{}
+func NewExpandLoglineRepository(config *config.OpenAI) *ExpandLoglineRepository {
+	return &ExpandLoglineRepository{config: config}
 }
 
 func (repository *ExpandLoglineRepository) ExpandLogline(
 	ctx context.Context, request ExpandLoglineRequest,
 ) (*models.LoglineIdea, error) {
-	span := sentry.StartSpan(ctx, "ExpandLoglineRepository.ExpandLogline")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "daoai.ExpandLogline")
+	defer span.End()
 
-	span.SetData("request.logline", request.Logline)
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.lang", request.Lang.String())
+	span.SetAttributes(
+		attribute.String("request.userID", request.UserID),
+		attribute.String("request.lang", request.Lang.String()),
+		attribute.String("request.logline", request.Logline),
+	)
 
 	systemPrompt := new(strings.Builder)
 
 	err := ExpandLoglinePrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), nil)
 	if err != nil {
-		span.SetData("prompt.error", err.Error())
-
-		return nil, NewErrExpandLoglineRepository(fmt.Errorf("execute system prompt: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("execute system prompt: %w", err))
 	}
 
-	chatCompletion, err := lib.OpenAIClient(span.Context()).
+	chatCompletion, err := repository.config.Client().
 		Chat.Completions.
-		New(span.Context(), openai.ChatCompletionNewParams{
-			Model:       config.Groq.Model,
+		New(ctx, openai.ChatCompletionNewParams{
+			Model:       repository.config.Model,
 			Temperature: param.NewOpt(expandLoglineTemperature),
 			User:        param.NewOpt(request.UserID),
 			Messages: []openai.ChatCompletionMessageParamUnion{
@@ -99,21 +95,17 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 			},
 		})
 	if err != nil {
-		span.SetData("chatCompletion.error", err.Error())
-
-		return nil, NewErrExpandLoglineRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	var logline models.LoglineIdea
 
 	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &logline)
 	if err != nil {
-		span.SetData("unmarshal.error", err.Error())
-
-		return nil, NewErrExpandLoglineRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	logline.Lang = request.Lang
 
-	return &logline, nil
+	return otel.ReportSuccess(span, &logline), nil
 }
