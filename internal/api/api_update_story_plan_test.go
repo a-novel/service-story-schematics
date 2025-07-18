@@ -11,11 +11,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestUpdateStoryPlan(t *testing.T) {
@@ -31,21 +31,21 @@ func TestUpdateStoryPlan(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		form *codegen.UpdateStoryPlanForm
+		form *apimodels.UpdateStoryPlanForm
 
 		updateStoryPlanData *updateStoryPlanData
 
-		expect    codegen.UpdateStoryPlanRes
+		expect    apimodels.UpdateStoryPlanRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			form: &codegen.UpdateStoryPlanForm{
+			form: &apimodels.UpdateStoryPlanForm{
 				Slug:        "slug",
 				Name:        "name",
 				Description: "description",
-				Beats: []codegen.BeatDefinition{
+				Beats: []apimodels.BeatDefinition{
 					{
 						Name:      "Beat 1",
 						Key:       "beat-1",
@@ -63,7 +63,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 						MaxScenes: 1,
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			updateStoryPlanData: &updateStoryPlanData{
@@ -95,12 +95,12 @@ func TestUpdateStoryPlan(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.StoryPlan{
-				ID:          codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			expect: &apimodels.StoryPlan{
+				ID:          apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 				Slug:        "slug",
 				Name:        "name",
 				Description: "description",
-				Beats: []codegen.BeatDefinition{
+				Beats: []apimodels.BeatDefinition{
 					{
 						Name:      "Beat 1",
 						Key:       "beat-1",
@@ -118,18 +118,18 @@ func TestUpdateStoryPlan(t *testing.T) {
 						MaxScenes: 1,
 					},
 				},
-				Lang:      codegen.LangEn,
+				Lang:      apimodels.LangEn,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
 		{
 			name: "StoryPlanNotFound",
 
-			form: &codegen.UpdateStoryPlanForm{
+			form: &apimodels.UpdateStoryPlanForm{
 				Slug:        "slug",
 				Name:        "name",
 				Description: "description",
-				Beats: []codegen.BeatDefinition{
+				Beats: []apimodels.BeatDefinition{
 					{
 						Name:      "Beat 1",
 						Key:       "beat-1",
@@ -147,23 +147,23 @@ func TestUpdateStoryPlan(t *testing.T) {
 						MaxScenes: 1,
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			updateStoryPlanData: &updateStoryPlanData{
 				err: dao.ErrStoryPlanNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "Error",
 
-			form: &codegen.UpdateStoryPlanForm{
+			form: &apimodels.UpdateStoryPlanForm{
 				Slug:        "slug",
 				Name:        "name",
 				Description: "description",
-				Beats: []codegen.BeatDefinition{
+				Beats: []apimodels.BeatDefinition{
 					{
 						Name:      "Beat 1",
 						Key:       "beat-1",
@@ -181,7 +181,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 						MaxScenes: 1,
 					},
 				},
-				Lang: codegen.LangEn,
+				Lang: apimodels.LangEn,
 			},
 
 			updateStoryPlanData: &updateStoryPlanData{
@@ -206,7 +206,7 @@ func TestUpdateStoryPlan(t *testing.T) {
 						Description: testCase.form.GetDescription(),
 						Beats: lo.Map(
 							testCase.form.GetBeats(),
-							func(item codegen.BeatDefinition, _ int) models.BeatDefinition {
+							func(item apimodels.BeatDefinition, _ int) models.BeatDefinition {
 								return models.BeatDefinition{
 									Name:      item.GetName(),
 									Key:       item.GetKey(),

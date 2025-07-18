@@ -2,21 +2,17 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrSelectStoryPlanService = errors.New("SelectStoryPlanService.SelectStoryPlan")
-
-func NewErrSelectStoryPlanService(err error) error {
-	return errors.Join(err, ErrSelectStoryPlanService)
-}
 
 type SelectStoryPlanSource interface {
 	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
@@ -52,21 +48,21 @@ func NewSelectStoryPlanService(source SelectStoryPlanSource) *SelectStoryPlanSer
 func (service *SelectStoryPlanService) SelectStoryPlan(
 	ctx context.Context, request SelectStoryPlanRequest,
 ) (*models.StoryPlan, error) {
-	span := sentry.StartSpan(ctx, "SelectStoryPlanService.SelectStoryPlan")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.SelectStoryPlan")
+	defer span.End()
 
-	span.SetData("request.slug", request.Slug)
-	span.SetData("request.id", request.ID)
+	span.SetAttributes(
+		attribute.String("request.slug", lo.FromPtr(request.Slug).String()),
+		attribute.String("request.id", lo.FromPtr(request.ID).String()),
+	)
 
 	if request.Slug != nil {
-		data, err := service.source.SelectStoryPlanBySlug(span.Context(), lo.FromPtr(request.Slug))
+		data, err := service.source.SelectStoryPlanBySlug(ctx, lo.FromPtr(request.Slug))
 		if err != nil {
-			span.SetData("dao.selectStoryPlanBySlug.err", err.Error())
-
-			return nil, NewErrSelectStoryPlanService(err)
+			return nil, otel.ReportError(span, fmt.Errorf("select story plan by slug: %w", err))
 		}
 
-		return &models.StoryPlan{
+		return otel.ReportSuccess(span, &models.StoryPlan{
 			ID:          data.ID,
 			Slug:        data.Slug,
 			Name:        data.Name,
@@ -74,17 +70,15 @@ func (service *SelectStoryPlanService) SelectStoryPlan(
 			Beats:       data.Beats,
 			Lang:        data.Lang,
 			CreatedAt:   data.CreatedAt,
-		}, nil
+		}), nil
 	}
 
-	data, err := service.source.SelectStoryPlan(span.Context(), lo.FromPtr(request.ID))
+	data, err := service.source.SelectStoryPlan(ctx, lo.FromPtr(request.ID))
 	if err != nil {
-		span.SetData("dao.selectStoryPlan.err", err.Error())
-
-		return nil, NewErrSelectStoryPlanService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("select story plan: %w", err))
 	}
 
-	return &models.StoryPlan{
+	return otel.ReportSuccess(span, &models.StoryPlan{
 		ID:          data.ID,
 		Slug:        data.Slug,
 		Name:        data.Name,
@@ -92,5 +86,5 @@ func (service *SelectStoryPlanService) SelectStoryPlan(
 		Beats:       data.Beats,
 		Lang:        data.Lang,
 		CreatedAt:   data.CreatedAt,
-	}, nil
+	}), nil
 }

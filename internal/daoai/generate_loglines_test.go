@@ -8,8 +8,8 @@ import (
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 func TestGenerateLoglines(t *testing.T) {
@@ -17,7 +17,7 @@ func TestGenerateLoglines(t *testing.T) {
 
 	const errorMsgRandom = "The greater AI decreted that this is not a valid logline for a story:\n\n%s"
 
-	repository := daoai.NewGenerateLoglinesRepository()
+	repository := daoai.NewGenerateLoglinesRepository(&config.OpenAIPresetDefault)
 
 	for _, lang := range []models.Lang{models.LangEN, models.LangFR} {
 		t.Run(lang.String(), func(t *testing.T) {
@@ -29,9 +29,7 @@ func TestGenerateLoglines(t *testing.T) {
 				t.Run(name, func(t *testing.T) {
 					t.Parallel()
 
-					ctx := lib.NewOpenaiContext(t.Context())
-
-					loglines, err := repository.GenerateLoglines(ctx, daoai.GenerateLoglinesRequest{
+					loglines, err := repository.GenerateLoglines(t.Context(), daoai.GenerateLoglinesRequest{
 						Count:  testCase.Count,
 						Theme:  testCase.Theme,
 						UserID: TestUser,

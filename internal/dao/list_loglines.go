@@ -2,20 +2,19 @@ package dao
 
 import (
 	"context"
-	"errors"
+	_ "embed"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
 )
 
-var ErrListLoglinesRepository = errors.New("ListLoglinesRepository.ListLoglines")
-
-func NewErrListLoglinesRepository(err error) error {
-	return errors.Join(err, ErrListLoglinesRepository)
-}
+//go:embed list_loglines.sql
+var listLoglinesQuery string
 
 type ListLoglinesData struct {
 	UserID uuid.UUID
@@ -32,34 +31,26 @@ func NewListLoglinesRepository() *ListLoglinesRepository {
 func (repository *ListLoglinesRepository) ListLoglines(
 	ctx context.Context, data ListLoglinesData,
 ) ([]*LoglinePreviewEntity, error) {
-	span := sentry.StartSpan(ctx, "ListLoglinesRepository.ListLoglines")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.ListLoglines")
+	defer span.End()
 
-	span.SetData("user.id", data.UserID.String())
-	span.SetData("limit", data.Limit)
-	span.SetData("offset", data.Offset)
+	span.SetAttributes(
+		attribute.String("user.id", data.UserID.String()),
+		attribute.Int("limit", data.Limit),
+		attribute.Int("offset", data.Offset),
+	)
 
-	tx, err := lib.PostgresContext(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return nil, NewErrListLoglinesRepository(fmt.Errorf("get postgres client: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
 	}
 
 	entities := make([]*LoglinePreviewEntity, 0)
 
-	err = tx.NewSelect().
-		Model(&entities).
-		Where("user_id = ?", data.UserID).
-		Order("created_at DESC", "name DESC", "slug DESC").
-		Limit(data.Limit).
-		Offset(data.Offset).
-		Scan(span.Context())
+	err = tx.NewRaw(listLoglinesQuery, data.UserID, bun.NullZero(data.Limit), data.Offset).Scan(ctx, &entities)
 	if err != nil {
-		span.SetData("scan.error", err.Error())
-
-		return nil, NewErrListLoglinesRepository(fmt.Errorf("list loglines: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("list loglines: %w", err))
 	}
 
-	return entities, nil
+	return otel.ReportSuccess(span, entities), nil
 }

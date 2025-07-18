@@ -2,9 +2,9 @@ package testdata
 
 import (
 	_ "embed"
-	"github.com/a-novel-kit/configurator"
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/goccy/go-yaml"
 )
 
 //go:embed expand_logline.en.yaml
@@ -22,13 +22,9 @@ type ExpandLoglinePromptsType struct {
 	CheckAgent string                           `yaml:"checkAgent"`
 }
 
-var ExpandLoglinePromptEN = configurator.NewLoader[ExpandLoglinePromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandLoglineEnFile),
-)
+var ExpandLoglinePromptEN = config.MustUnmarshal[ExpandLoglinePromptsType](yaml.Unmarshal, expandLoglineEnFile)
 
-var ExpandLoglinePromptFR = configurator.NewLoader[ExpandLoglinePromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandLoglineFrFile),
-)
+var ExpandLoglinePromptFR = config.MustUnmarshal[ExpandLoglinePromptsType](yaml.Unmarshal, expandLoglineFrFile)
 
 var ExpandLoglinePrompts = map[models.Lang]ExpandLoglinePromptsType{
 	models.LangEN: ExpandLoglinePromptEN,

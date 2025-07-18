@@ -11,15 +11,15 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestSelectBeatsSheet(t *testing.T) {
@@ -35,18 +35,18 @@ func TestSelectBeatsSheet(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		params codegen.GetBeatsSheetParams
+		params apimodels.GetBeatsSheetParams
 
 		selectBeatsSheetData *selectBeatsSheetData
 
-		expect    codegen.GetBeatsSheetRes
+		expect    apimodels.GetBeatsSheetRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			params: codegen.GetBeatsSheetParams{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			params: apimodels.GetBeatsSheetParams{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 			},
 
 			selectBeatsSheetData: &selectBeatsSheetData{
@@ -71,11 +71,11 @@ func TestSelectBeatsSheet(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.BeatsSheet{
-				ID:          codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
-				LoglineID:   codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0100-000000000001")),
-				Content: []codegen.Beat{
+			expect: &apimodels.BeatsSheet{
+				ID:          apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0100-000000000001")),
+				Content: []apimodels.Beat{
 					{
 						Key:     "test-beat",
 						Title:   "Test Beat",
@@ -87,41 +87,41 @@ func TestSelectBeatsSheet(t *testing.T) {
 						Content: "Test Beat Content 2",
 					},
 				},
-				Lang:      codegen.LangEn,
+				Lang:      apimodels.LangEn,
 				CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 			},
 		},
 		{
 			name: "BeatsSheetNotFound",
 
-			params: codegen.GetBeatsSheetParams{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			params: apimodels.GetBeatsSheetParams{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 			},
 
 			selectBeatsSheetData: &selectBeatsSheetData{
 				err: dao.ErrBeatsSheetNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrBeatsSheetNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrBeatsSheetNotFound.Error()},
 		},
 		{
 			name: "LoglineNotFound",
 
-			params: codegen.GetBeatsSheetParams{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			params: apimodels.GetBeatsSheetParams{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 			},
 
 			selectBeatsSheetData: &selectBeatsSheetData{
 				err: dao.ErrLoglineNotFound,
 			},
 
-			expect: &codegen.NotFoundError{Error: dao.ErrLoglineNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: dao.ErrLoglineNotFound.Error()},
 		},
 		{
 			name: "Error",
 
-			params: codegen.GetBeatsSheetParams{
-				BeatsSheetID: codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+			params: apimodels.GetBeatsSheetParams{
+				BeatsSheetID: apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
 			},
 
 			selectBeatsSheetData: &selectBeatsSheetData{
@@ -138,7 +138,7 @@ func TestSelectBeatsSheet(t *testing.T) {
 
 			source := apimocks.NewMockSelectBeatsSheetService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 

@@ -9,6 +9,4 @@ CREATE TABLE beats_sheets
   created_at timestamp(6) with time zone NOT NULL
 );
 
-CREATE INDEX beats_sheets_created_at_logline_id_idx ON beats_sheets (
-  logline_id, created_at
-);
+CREATE INDEX beats_sheets_logline_id_idx ON beats_sheets (logline_id);

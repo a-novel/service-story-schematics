@@ -9,11 +9,10 @@ import (
 	"github.com/openai/openai-go/packages/param"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/service-story-schematics/config"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 const TestUser = "agora-story-schematics-test"
@@ -25,16 +24,17 @@ var checkAgentFormatter = regexp.MustCompile("[^a-zA-Z0-9 ]")
 func CheckAgent(t *testing.T, lang models.Lang, prompt, message string) {
 	t.Helper()
 
-	ctx := lib.NewOpenaiContext(t.Context())
-	chatCompletion, err := lib.OpenAIClient(ctx).Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Model:       config.Groq.Model,
-		Temperature: param.NewOpt(0.2),
-		User:        param.NewOpt(TestUser),
-		Messages: []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(testdata.UtilsPrompts[lang].CheckAgent.System),
-			openai.UserMessage(prompt),
-		},
-	})
+	chatCompletion, err := config.OpenAIPresetDefault.Client().
+		Chat.Completions.
+		New(t.Context(), openai.ChatCompletionNewParams{
+			Model:       config.OpenAIPresetDefault.Model,
+			Temperature: param.NewOpt(0.2),
+			User:        param.NewOpt(TestUser),
+			Messages: []openai.ChatCompletionMessageParamUnion{
+				openai.SystemMessage(testdata.UtilsPrompts[lang].CheckAgent.System),
+				openai.UserMessage(prompt),
+			},
+		})
 
 	require.NoError(t, err)
 

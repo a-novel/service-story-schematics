@@ -2,20 +2,16 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrSelectBeatsSheetService = errors.New("SelectBeatsSheetService.SelectBeatsSheet")
-
-func NewErrSelectBeatsSheetService(err error) error {
-	return errors.Join(err, ErrSelectBeatsSheetService)
-}
 
 type SelectBeatsSheetSource interface {
 	SelectBeatsSheet(ctx context.Context, data uuid.UUID) (*dao.BeatsSheetEntity, error)
@@ -51,36 +47,34 @@ func NewSelectBeatsSheetService(source SelectBeatsSheetSource) *SelectBeatsSheet
 func (service *SelectBeatsSheetService) SelectBeatsSheet(
 	ctx context.Context, request SelectBeatsSheetRequest,
 ) (*models.BeatsSheet, error) {
-	span := sentry.StartSpan(ctx, "SelectBeatsSheetService.SelectBeatsSheet")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.SelectBeatsSheet")
+	defer span.End()
 
-	span.SetData("request.beatsSheetID", request.BeatsSheetID)
-	span.SetData("request.userID", request.UserID)
+	span.SetAttributes(
+		attribute.String("request.beatsSheetID", request.BeatsSheetID.String()),
+		attribute.String("request.userID", request.UserID.String()),
+	)
 
-	data, err := service.source.SelectBeatsSheet(span.Context(), request.BeatsSheetID)
+	data, err := service.source.SelectBeatsSheet(ctx, request.BeatsSheetID)
 	if err != nil {
-		span.SetData("dao.selectBeatsSheet.err", err.Error())
-
-		return nil, NewErrSelectBeatsSheetService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("select beats sheet: %w", err))
 	}
 
 	// Make sure the selected beats sheet is linked to a logline that belongs to the user.
-	_, err = service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
+	_, err = service.source.SelectLogline(ctx, dao.SelectLoglineData{
 		ID:     data.LoglineID,
 		UserID: request.UserID,
 	})
 	if err != nil {
-		span.SetData("dao.selectLogline.err", err.Error())
-
-		return nil, NewErrSelectBeatsSheetService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("check logline: %w", err))
 	}
 
-	return &models.BeatsSheet{
+	return otel.ReportSuccess(span, &models.BeatsSheet{
 		ID:          data.ID,
 		LoglineID:   data.LoglineID,
 		StoryPlanID: data.StoryPlanID,
 		Content:     data.Content,
 		Lang:        data.Lang,
 		CreatedAt:   data.CreatedAt,
-	}, nil
+	}), nil
 }

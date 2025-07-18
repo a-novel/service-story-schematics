@@ -5,16 +5,17 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/codes"
 
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	"github.com/a-novel/golib/otel"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type RegenerateBeatsService interface {
@@ -22,24 +23,17 @@ type RegenerateBeatsService interface {
 }
 
 func (api *API) RegenerateBeats(
-	ctx context.Context, req *codegen.RegenerateBeatsForm,
-) (codegen.RegenerateBeatsRes, error) {
-	span := sentry.StartSpan(ctx, "API.RegenerateBeats")
-	defer span.Finish()
+	ctx context.Context, req *apimodels.RegenerateBeatsForm,
+) (apimodels.RegenerateBeatsRes, error) {
+	ctx, span := otel.Tracer().Start(ctx, "api.RegenerateBeats")
+	defer span.End()
 
-	span.SetData("request.beatsSheetID", req.GetBeatsSheetID())
-	span.SetData("request.regenerateKeys", req.GetRegenerateKeys())
-
-	userID, err := authPkg.RequireUserID(ctx)
+	userID, err := authpkg.RequireUserID(ctx)
 	if err != nil {
-		span.SetData("request.userID.err", err.Error())
-
-		return nil, fmt.Errorf("get user ID: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("get user ID: %w", err))
 	}
 
-	span.SetData("request.userID", userID)
-
-	beats, err := api.RegenerateBeatsService.RegenerateBeats(span.Context(), services.RegenerateBeatsRequest{
+	beats, err := api.RegenerateBeatsService.RegenerateBeats(ctx, services.RegenerateBeatsRequest{
 		BeatsSheetID:   uuid.UUID(req.GetBeatsSheetID()),
 		UserID:         userID,
 		RegenerateKeys: req.GetRegenerateKeys(),
@@ -49,22 +43,24 @@ func (api *API) RegenerateBeats(
 	case errors.Is(err, dao.ErrBeatsSheetNotFound),
 		errors.Is(err, dao.ErrLoglineNotFound),
 		errors.Is(err, dao.ErrStoryPlanNotFound):
-		span.SetData("service.err", err.Error())
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "")
 
-		return &codegen.NotFoundError{Error: err.Error()}, nil
+		return &apimodels.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
-		span.SetData("service.err", err.Error())
+		span.RecordError(err)
+		span.SetStatus(codes.Error, "")
 
 		return nil, fmt.Errorf("regenerate beats: %w", err)
 	}
 
-	var res codegen.Beats = lo.Map(beats, func(item models.Beat, _ int) codegen.Beat {
-		return codegen.Beat{
+	var res apimodels.Beats = lo.Map(beats, func(item models.Beat, _ int) apimodels.Beat {
+		return apimodels.Beat{
 			Key:     item.Key,
 			Title:   item.Title,
 			Content: item.Content,
 		}
 	})
 
-	return &res, nil
+	return otel.ReportSuccess(span, &res), nil
 }

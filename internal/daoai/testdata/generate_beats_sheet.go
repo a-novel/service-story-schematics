@@ -2,9 +2,9 @@ package testdata
 
 import (
 	_ "embed"
-	"github.com/a-novel-kit/configurator"
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/goccy/go-yaml"
 )
 
 //go:embed generate_beats_sheet.en.yaml
@@ -23,12 +23,12 @@ type GenerateBeatsSheetPromptsType struct {
 	CheckAgent string                                `yaml:"checkAgent"`
 }
 
-var GenerateBeatsSheetPromptEN = configurator.NewLoader[GenerateBeatsSheetPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", generateBeatsSheetEnFile),
+var GenerateBeatsSheetPromptEN = config.MustUnmarshal[GenerateBeatsSheetPromptsType](
+	yaml.Unmarshal, generateBeatsSheetEnFile,
 )
 
-var GenerateBeatsSheetPromptFR = configurator.NewLoader[GenerateBeatsSheetPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", generateBeatsSheetFrFile),
+var GenerateBeatsSheetPromptFR = config.MustUnmarshal[GenerateBeatsSheetPromptsType](
+	yaml.Unmarshal, generateBeatsSheetFrFile,
 )
 
 var GenerateBeatsSheetPrompts = map[models.Lang]GenerateBeatsSheetPromptsType{

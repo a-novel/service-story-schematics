@@ -3,9 +3,10 @@ package prompts
 import (
 	_ "embed"
 
-	"github.com/a-novel-kit/configurator"
+	"github.com/goccy/go-yaml"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
@@ -22,13 +23,9 @@ type GenerateLoglinessType struct {
 	} `yaml:"system"`
 }
 
-var GenerateLoglinesEN = configurator.NewLoader[GenerateLoglinessType](config.Loader).MustLoad(
-	configurator.NewConfig("", generateLoglinesEnFile),
-)
+var GenerateLoglinesEN = config.MustUnmarshal[GenerateLoglinessType](yaml.Unmarshal, generateLoglinesEnFile)
 
-var GenerateLoglinesFR = configurator.NewLoader[GenerateLoglinessType](config.Loader).MustLoad(
-	configurator.NewConfig("", generateLoglinesFrFile),
-)
+var GenerateLoglinesFR = config.MustUnmarshal[GenerateLoglinessType](yaml.Unmarshal, generateLoglinesFrFile)
 
 var GenerateLoglines = map[models.Lang]GenerateLoglinessType{
 	models.LangEN: GenerateLoglinesEN,

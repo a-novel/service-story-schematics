@@ -3,20 +3,20 @@ package daoai
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 	"text/template"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/otel"
+
 	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
 	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 const generateLoglineTemperature = 1.0
@@ -45,12 +45,6 @@ var GenerateLoglinesDescriptions = map[models.Lang]string{
 	models.LangFR: schemas.Loglines[models.LangFR].Description,
 }
 
-var ErrGenerateLoglinesRepository = errors.New("GenerateLoglinesRepository.GenerateLoglines")
-
-func NewErrGenerateLoglinesRepository(err error) error {
-	return errors.Join(err, ErrGenerateLoglinesRepository)
-}
-
 type GenerateLoglinesRequest struct {
 	Count  int
 	Theme  string
@@ -58,22 +52,26 @@ type GenerateLoglinesRequest struct {
 	Lang   models.Lang
 }
 
-type GenerateLoglinesRepository struct{}
+type GenerateLoglinesRepository struct {
+	config *config.OpenAI
+}
 
-func NewGenerateLoglinesRepository() *GenerateLoglinesRepository {
-	return &GenerateLoglinesRepository{}
+func NewGenerateLoglinesRepository(config *config.OpenAI) *GenerateLoglinesRepository {
+	return &GenerateLoglinesRepository{config: config}
 }
 
 func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	ctx context.Context, request GenerateLoglinesRequest,
 ) ([]models.LoglineIdea, error) {
-	span := sentry.StartSpan(ctx, "GenerateLoglinesRepository.GenerateLoglines")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "daoai.GenerateLoglines")
+	defer span.End()
 
-	span.SetData("request.count", request.Count)
-	span.SetData("request.theme", request.Theme)
-	span.SetData("request.user_id", request.UserID)
-	span.SetData("request.lang", request.Lang.String())
+	span.SetAttributes(
+		attribute.String("request.user_id", request.UserID),
+		attribute.String("request.lang", request.Lang.String()),
+		attribute.Int("request.count", request.Count),
+		attribute.String("request.theme", request.Theme),
+	)
 
 	var (
 		err      error
@@ -98,15 +96,13 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	}
 
 	if err != nil {
-		span.SetData("prompt.error", err.Error())
-
-		return nil, NewErrGenerateLoglinesRepository(fmt.Errorf("parse system message: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("parse system message: %w", err))
 	}
 
-	chatCompletion, err := lib.OpenAIClient(span.Context()).
+	chatCompletion, err := repository.config.Client().
 		Chat.Completions.
-		New(span.Context(), openai.ChatCompletionNewParams{
-			Model:       config.Groq.Model,
+		New(ctx, openai.ChatCompletionNewParams{
+			Model:       repository.config.Model,
 			Temperature: param.NewOpt(generateLoglineTemperature),
 			User:        param.NewOpt(request.UserID),
 			Messages:    messages,
@@ -122,9 +118,7 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 			},
 		})
 	if err != nil {
-		span.SetData("chatCompletion.error", err.Error())
-
-		return nil, NewErrGenerateLoglinesRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	var loglines struct {
@@ -133,14 +127,12 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 
 	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &loglines)
 	if err != nil {
-		span.SetData("unmarshal.error", err.Error())
-
-		return nil, NewErrGenerateLoglinesRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	for i := range loglines.Loglines {
 		loglines.Loglines[i].Lang = request.Lang
 	}
 
-	return loglines.Loglines, nil
+	return otel.ReportSuccess(span, loglines.Loglines), nil
 }

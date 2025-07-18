@@ -2,20 +2,19 @@ package dao
 
 import (
 	"context"
-	"errors"
+	_ "embed"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
 )
 
-var ErrListBeatsSheetsRepository = errors.New("ListBeatsSheetsRepository.ListBeatsSheets")
-
-func NewErrListBeatsSheetsRepository(err error) error {
-	return errors.Join(err, ErrListBeatsSheetsRepository)
-}
+//go:embed list_beats_sheets.sql
+var listBeatsSheetsQuery string
 
 type ListBeatsSheetsData struct {
 	LoglineID uuid.UUID
@@ -32,34 +31,26 @@ func NewListBeatsSheetsRepository() *ListBeatsSheetsRepository {
 func (repository *ListBeatsSheetsRepository) ListBeatsSheets(
 	ctx context.Context, data ListBeatsSheetsData,
 ) ([]*BeatsSheetPreviewEntity, error) {
-	span := sentry.StartSpan(ctx, "ListBeatsSheetsRepository.ListBeatsSheets")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.ListBeatsSheets")
+	defer span.End()
 
-	span.SetData("logline.id", data.LoglineID.String())
-	span.SetData("limit", data.Limit)
-	span.SetData("offset", data.Offset)
+	span.SetAttributes(
+		attribute.String("logline.id", data.LoglineID.String()),
+		attribute.Int("limit", data.Limit),
+		attribute.Int("offset", data.Offset),
+	)
 
-	tx, err := lib.PostgresContext(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return nil, NewErrListBeatsSheetsRepository(fmt.Errorf("get postgres client: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
 	}
 
 	entities := make([]*BeatsSheetPreviewEntity, 0)
 
-	err = tx.NewSelect().
-		Model(&entities).
-		Where("logline_id = ?", data.LoglineID).
-		Order("created_at DESC").
-		Limit(data.Limit).
-		Offset(data.Offset).
-		Scan(span.Context())
+	err = tx.NewRaw(listBeatsSheetsQuery, data.LoglineID, bun.NullZero(data.Limit), data.Offset).Scan(ctx, &entities)
 	if err != nil {
-		span.SetData("scan.error", err.Error())
-
-		return nil, NewErrListBeatsSheetsRepository(fmt.Errorf("list beats sheet: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("list beats sheet: %w", err))
 	}
 
-	return entities, nil
+	return otel.ReportSuccess(span, entities), nil
 }

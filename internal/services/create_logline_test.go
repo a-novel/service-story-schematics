@@ -227,9 +227,8 @@ func TestCreateLogline(t *testing.T) {
 				source.EXPECT().
 					SelectSlugIteration(mock.Anything, dao.SelectSlugIterationData{
 						Slug:   testCase.request.Slug,
-						Table:  "loglines",
-						Filter: map[string][]any{"user_id = ?": {testCase.request.UserID}},
-						Order:  []string{"created_at DESC"},
+						Target: dao.SlugIterationTargetLogline,
+						Args:   []any{testCase.request.UserID},
 					}).
 					Return(
 						testCase.selectSlugIterationData.slug,

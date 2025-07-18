@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/samber/lo"
 
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	"github.com/a-novel/golib/otel"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type GenerateLoglinesService interface {
@@ -19,45 +19,35 @@ type GenerateLoglinesService interface {
 }
 
 func (api *API) GenerateLoglines(
-	ctx context.Context, req *codegen.GenerateLoglinesForm,
-) (codegen.GenerateLoglinesRes, error) {
-	span := sentry.StartSpan(ctx, "API.GenerateLoglines")
-	defer span.Finish()
+	ctx context.Context, req *apimodels.GenerateLoglinesForm,
+) (apimodels.GenerateLoglinesRes, error) {
+	ctx, span := otel.Tracer().Start(ctx, "api.GenerateLoglines")
+	defer span.End()
 
-	span.SetData("request.count", req.GetCount())
-	span.SetData("request.theme", req.GetTheme())
-	span.SetData("request.lang", req.GetLang())
-
-	userID, err := authPkg.RequireUserID(ctx)
+	userID, err := authpkg.RequireUserID(ctx)
 	if err != nil {
-		span.SetData("request.userID.err", err.Error())
-
-		return nil, fmt.Errorf("get user ID: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("get user ID: %w", err))
 	}
 
-	span.SetData("request.userID", userID)
-
-	loglines, err := api.GenerateLoglinesService.GenerateLoglines(span.Context(), services.GenerateLoglinesRequest{
+	loglines, err := api.GenerateLoglinesService.GenerateLoglines(ctx, services.GenerateLoglinesRequest{
 		Count:  req.GetCount(),
 		Theme:  req.GetTheme(),
 		UserID: userID,
 		Lang:   models.Lang(req.GetLang()),
 	})
 	if err != nil {
-		span.SetData("service.err", err.Error())
-
-		return nil, fmt.Errorf("generate loglines: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("generate loglines: %w", err))
 	}
 
-	res := codegen.GenerateLoglinesOKApplicationJSON(
-		lo.Map(loglines, func(item models.LoglineIdea, _ int) codegen.LoglineIdea {
-			return codegen.LoglineIdea{
+	res := apimodels.GenerateLoglinesOKApplicationJSON(
+		lo.Map(loglines, func(item models.LoglineIdea, _ int) apimodels.LoglineIdea {
+			return apimodels.LoglineIdea{
 				Name:    item.Name,
 				Content: item.Content,
-				Lang:    codegen.Lang(item.Lang),
+				Lang:    apimodels.Lang(item.Lang),
 			}
 		}),
 	)
 
-	return &res, nil
+	return otel.ReportSuccess(span, &res), nil
 }

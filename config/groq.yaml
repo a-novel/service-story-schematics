@@ -1,3 +1,0 @@
-apiKey: ${GROQ_TOKEN}
-model: meta-llama/llama-4-maverick-17b-128e-instruct
-baseURL: https://api.groq.com/openai/v1

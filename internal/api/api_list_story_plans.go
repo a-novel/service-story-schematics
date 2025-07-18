@@ -4,12 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/samber/lo"
 
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
+	"github.com/a-novel/golib/otel"
+
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 type ListStoryPlansService interface {
@@ -17,38 +18,31 @@ type ListStoryPlansService interface {
 }
 
 func (api *API) GetStoryPlans(
-	ctx context.Context, params codegen.GetStoryPlansParams,
-) (codegen.GetStoryPlansRes, error) {
-	span := sentry.StartSpan(ctx, "API.GetStoryPlans")
-	defer span.Finish()
+	ctx context.Context, params apimodels.GetStoryPlansParams,
+) (apimodels.GetStoryPlansRes, error) {
+	ctx, span := otel.Tracer().Start(ctx, "api.GetStoryPlans")
+	defer span.End()
 
-	span.SetData("request.limit", params.Limit)
-	span.SetData("request.offset", params.Offset)
-
-	storyPlans, err := api.ListStoryPlansService.ListStoryPlans(span.Context(), services.ListStoryPlansRequest{
+	storyPlans, err := api.ListStoryPlansService.ListStoryPlans(ctx, services.ListStoryPlansRequest{
 		Limit:  params.Limit.Value,
 		Offset: params.Offset.Value,
 	})
 	if err != nil {
-		span.SetData("service.err", err.Error())
-
-		return nil, fmt.Errorf("list story plans: %w", err)
+		return nil, otel.ReportError(span, fmt.Errorf("list story plans: %w", err))
 	}
 
-	res := codegen.GetStoryPlansOKApplicationJSON(
-		lo.Map(storyPlans, func(item *models.StoryPlanPreview, _ int) codegen.StoryPlanPreview {
-			return codegen.StoryPlanPreview{
-				ID:          codegen.StoryPlanID(item.ID),
-				Slug:        codegen.Slug(item.Slug),
+	res := apimodels.GetStoryPlansOKApplicationJSON(
+		lo.Map(storyPlans, func(item *models.StoryPlanPreview, _ int) apimodels.StoryPlanPreview {
+			return apimodels.StoryPlanPreview{
+				ID:          apimodels.StoryPlanID(item.ID),
+				Slug:        apimodels.Slug(item.Slug),
 				Name:        item.Name,
 				Description: item.Description,
-				Lang:        codegen.Lang(item.Lang),
+				Lang:        apimodels.Lang(item.Lang),
 				CreatedAt:   item.CreatedAt,
 			}
 		}),
 	)
 
-	span.SetData("storyPlans.count", len(storyPlans))
-
-	return &res, nil
+	return otel.ReportSuccess(span, &res), nil
 }

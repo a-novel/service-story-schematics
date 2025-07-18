@@ -3,20 +3,19 @@ package dao
 import (
 	"context"
 	"database/sql"
+	_ "embed"
 	"errors"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
 )
 
-var ErrSelectBeatsSheetRepository = errors.New("SelectBeatsSheetRepository.SelectBeatsSheet")
-
-func NewErrSelectBeatsSheetRepository(err error) error {
-	return errors.Join(err, ErrSelectBeatsSheetRepository)
-}
+//go:embed select_beats_sheet.sql
+var selectBeatsSheetQuery string
 
 type SelectBeatsSheetRepository struct{}
 
@@ -27,30 +26,26 @@ func NewSelectBeatsSheetRepository() *SelectBeatsSheetRepository {
 func (repository *SelectBeatsSheetRepository) SelectBeatsSheet(
 	ctx context.Context, data uuid.UUID,
 ) (*BeatsSheetEntity, error) {
-	span := sentry.StartSpan(ctx, "SelectBeatsSheetRepository.SelectBeatsSheet")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.SelectBeatsSheet")
+	defer span.End()
 
-	span.SetData("sheet.id", data.String())
+	span.SetAttributes(attribute.String("sheet.id", data.String()))
 
-	tx, err := lib.PostgresContext(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return nil, NewErrSelectBeatsSheetRepository(fmt.Errorf("get postgres client: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
 	}
 
 	entity := &BeatsSheetEntity{}
 
-	err = tx.NewSelect().Model(entity).Where("id = ?", data).Scan(span.Context())
+	err = tx.NewRaw(selectBeatsSheetQuery, data).Scan(ctx, entity)
 	if err != nil {
-		span.SetData("scan.error", err.Error())
-
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, NewErrSelectBeatsSheetRepository(ErrBeatsSheetNotFound)
+			return nil, otel.ReportError(span, ErrBeatsSheetNotFound)
 		}
 
-		return nil, NewErrSelectBeatsSheetRepository(fmt.Errorf("select beats sheet: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("select beats sheet: %w", err))
 	}
 
-	return entity, nil
+	return otel.ReportSuccess(span, entity), nil
 }

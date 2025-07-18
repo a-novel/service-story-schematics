@@ -397,9 +397,8 @@ func TestCreateStoryPlan(t *testing.T) {
 			if testCase.selectSlugIterationData != nil {
 				source.EXPECT().
 					SelectSlugIteration(mock.Anything, dao.SelectSlugIterationData{
-						Slug:  testCase.request.Slug,
-						Table: "story_plans",
-						Order: []string{"created_at DESC"},
+						Slug:   testCase.request.Slug,
+						Target: dao.SlugIterationTargetStoryPlan,
 					}).
 					Return(
 						testCase.selectSlugIterationData.slug,

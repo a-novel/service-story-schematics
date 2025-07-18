@@ -2,21 +2,17 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrSelectLoglineService = errors.New("SelectLoglineService.SelectLogline")
-
-func NewErrSelectLoglineService(err error) error {
-	return errors.Join(err, ErrSelectLoglineService)
-}
 
 type SelectLoglineSource interface {
 	SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)
@@ -53,25 +49,25 @@ func NewSelectLoglineService(source SelectLoglineSource) *SelectLoglineService {
 func (service *SelectLoglineService) SelectLogline(
 	ctx context.Context, request SelectLoglineRequest,
 ) (*models.Logline, error) {
-	span := sentry.StartSpan(ctx, "SelectLoglineService.SelectLogline")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.SelectLogline")
+	defer span.End()
 
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.slug", request.Slug)
-	span.SetData("request.id", request.ID)
+	span.SetAttributes(
+		attribute.String("request.userID", request.UserID.String()),
+		attribute.String("request.slug", lo.FromPtr(request.Slug).String()),
+		attribute.String("request.id", lo.FromPtr(request.ID).String()),
+	)
 
 	if request.Slug != nil {
-		data, err := service.source.SelectLoglineBySlug(span.Context(), dao.SelectLoglineBySlugData{
+		data, err := service.source.SelectLoglineBySlug(ctx, dao.SelectLoglineBySlugData{
 			Slug:   lo.FromPtr(request.Slug),
 			UserID: request.UserID,
 		})
 		if err != nil {
-			span.SetData("dao.selectLoglineBySlug.err", err.Error())
-
-			return nil, NewErrSelectLoglineService(err)
+			return nil, otel.ReportError(span, fmt.Errorf("select logline by slug: %w", err))
 		}
 
-		return &models.Logline{
+		return otel.ReportSuccess(span, &models.Logline{
 			ID:        data.ID,
 			UserID:    data.UserID,
 			Slug:      data.Slug,
@@ -79,20 +75,18 @@ func (service *SelectLoglineService) SelectLogline(
 			Content:   data.Content,
 			Lang:      data.Lang,
 			CreatedAt: data.CreatedAt,
-		}, nil
+		}), nil
 	}
 
-	data, err := service.source.SelectLogline(span.Context(), dao.SelectLoglineData{
+	data, err := service.source.SelectLogline(ctx, dao.SelectLoglineData{
 		ID:     lo.FromPtr(request.ID),
 		UserID: request.UserID,
 	})
 	if err != nil {
-		span.SetData("dao.selectLogline.err", err.Error())
-
-		return nil, NewErrSelectLoglineService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("select logline: %w", err))
 	}
 
-	return &models.Logline{
+	return otel.ReportSuccess(span, &models.Logline{
 		ID:        data.ID,
 		UserID:    data.UserID,
 		Slug:      data.Slug,
@@ -100,5 +94,5 @@ func (service *SelectLoglineService) SelectLogline(
 		Content:   data.Content,
 		Lang:      data.Lang,
 		CreatedAt: data.CreatedAt,
-	}, nil
+	}), nil
 }

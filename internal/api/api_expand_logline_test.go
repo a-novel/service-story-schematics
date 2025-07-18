@@ -10,14 +10,14 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestExpandLogline(t *testing.T) {
@@ -33,20 +33,20 @@ func TestExpandLogline(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		form *codegen.LoglineIdea
+		form *apimodels.LoglineIdea
 
 		expandLoglineData *expandLoglineData
 
-		expect    codegen.ExpandLoglineRes
+		expect    apimodels.ExpandLoglineRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			form: &codegen.LoglineIdea{
+			form: &apimodels.LoglineIdea{
 				Name:    "Logline 1",
 				Content: "Logline 1 content",
-				Lang:    codegen.LangEn,
+				Lang:    apimodels.LangEn,
 			},
 
 			expandLoglineData: &expandLoglineData{
@@ -57,19 +57,19 @@ func TestExpandLogline(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.LoglineIdea{
+			expect: &apimodels.LoglineIdea{
 				Name:    "Logline 1 expanded",
 				Content: "Logline 1 content expanded",
-				Lang:    codegen.LangEn,
+				Lang:    apimodels.LangEn,
 			},
 		},
 		{
 			name: "Error",
 
-			form: &codegen.LoglineIdea{
+			form: &apimodels.LoglineIdea{
 				Name:    "Logline 1",
 				Content: "Logline 1 content",
-				Lang:    codegen.LangEn,
+				Lang:    apimodels.LangEn,
 			},
 
 			expandLoglineData: &expandLoglineData{
@@ -86,7 +86,7 @@ func TestExpandLogline(t *testing.T) {
 
 			source := apimocks.NewMockExpandLoglineService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 

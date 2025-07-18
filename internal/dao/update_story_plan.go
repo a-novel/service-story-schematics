@@ -2,79 +2,78 @@ package dao
 
 import (
 	"context"
-	"errors"
+	_ "embed"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
-var ErrUpdateStoryPlanRepository = errors.New("UpdateStoryPlanRepository.UpdateStoryPlan")
-
-func NewErrUpdateStoryPlanRepository(err error) error {
-	return errors.Join(err, ErrUpdateStoryPlanRepository)
-}
+//go:embed update_story_plan.sql
+var updateStoryPlanQuery string
 
 type UpdateStoryPlanData struct {
 	Plan models.StoryPlan
 }
 
-type UpdateStoryPlanRepository struct{}
+type UpdateStoryPlanRepository struct {
+	existsStoryPlan *ExistsStoryPlanSlugRepository
+}
 
-func NewUpdateStoryPlanRepository() *UpdateStoryPlanRepository {
-	return &UpdateStoryPlanRepository{}
+func NewUpdateStoryPlanRepository(existsStoryPlan *ExistsStoryPlanSlugRepository) *UpdateStoryPlanRepository {
+	return &UpdateStoryPlanRepository{
+		existsStoryPlan: existsStoryPlan,
+	}
 }
 
 func (repository *UpdateStoryPlanRepository) UpdateStoryPlan(
 	ctx context.Context, data UpdateStoryPlanData,
 ) (*StoryPlanEntity, error) {
-	span := sentry.StartSpan(ctx, "UpdateStoryPlanRepository.UpdateStoryPlan")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.UpdateStoryPlan")
+	defer span.End()
 
-	span.SetData("story_plan.id", data.Plan.ID.String())
-	span.SetData("story_plan.slug", data.Plan.Slug)
-	span.SetData("story_plan.name", data.Plan.Name)
-	span.SetData("story_plan.lang", data.Plan.Lang)
+	span.SetAttributes(
+		attribute.String("storyPlan.id", data.Plan.ID.String()),
+		attribute.String("storyPlan.slug", data.Plan.Slug.String()),
+		attribute.String("storyPlan.name", data.Plan.Name),
+		attribute.String("storyPlan.lang", data.Plan.Lang.String()),
+	)
 
-	db, err := lib.PostgresContext(span.Context())
+	exists, err := repository.existsStoryPlan.ExistsStoryPlanSlug(ctx, data.Plan.Slug)
 	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return nil, NewErrUpdateStoryPlanRepository(fmt.Errorf("get postgres client: %w", err))
-	}
-
-	// Make sure the slug is unique.
-	exists, err := db.NewSelect().Model(&StoryPlanEntity{}).Where("slug = ?", data.Plan.Slug).Exists(span.Context())
-	if err != nil {
-		span.SetData("check.slug.error", err.Error())
-
-		return nil, NewErrUpdateStoryPlanRepository(fmt.Errorf("check slug uniqueness: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("check if story plan exists: %w", err))
 	}
 
 	if !exists {
-		span.SetData("check.slug.error", "slug not found")
-
-		return nil, NewErrUpdateStoryPlanRepository(ErrStoryPlanNotFound)
+		return nil, otel.ReportError(span, ErrStoryPlanNotFound)
 	}
 
-	entity := &StoryPlanEntity{
-		ID:          data.Plan.ID,
-		Slug:        data.Plan.Slug,
-		Name:        data.Plan.Name,
-		Description: data.Plan.Description,
-		Beats:       data.Plan.Beats,
-		Lang:        data.Plan.Lang,
-		CreatedAt:   data.Plan.CreatedAt,
-	}
-
-	_, err = db.NewInsert().Model(entity).Returning("*").Exec(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("insert.error", err.Error())
-
-		return nil, NewErrUpdateStoryPlanRepository(fmt.Errorf("update story plan: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
 	}
 
-	return entity, nil
+	entity := &StoryPlanEntity{}
+
+	err = tx.
+		NewRaw(
+			updateStoryPlanQuery,
+			data.Plan.ID,
+			data.Plan.Slug,
+			data.Plan.Name,
+			data.Plan.Description,
+			data.Plan.Beats,
+			data.Plan.Lang,
+			data.Plan.CreatedAt,
+		).
+		Scan(ctx, entity)
+	if err != nil {
+		return nil, otel.ReportError(span, fmt.Errorf("insert story plan: %w", err))
+	}
+
+	return otel.ReportSuccess(span, entity), nil
 }

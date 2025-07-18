@@ -2,20 +2,16 @@ package services
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/google/uuid"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrExpandLoglineService = errors.New("ExpandLoglineService.ExpandLogline")
-
-func NewErrExpandLoglineService(err error) error {
-	return errors.Join(err, ErrExpandLoglineService)
-}
 
 type ExpandLoglineSource interface {
 	ExpandLogline(ctx context.Context, request daoai.ExpandLoglineRequest) (*models.LoglineIdea, error)
@@ -37,23 +33,23 @@ func NewExpandLoglineService(source ExpandLoglineSource) *ExpandLoglineService {
 func (service *ExpandLoglineService) ExpandLogline(
 	ctx context.Context, request ExpandLoglineRequest,
 ) (*models.LoglineIdea, error) {
-	span := sentry.StartSpan(ctx, "ExpandLoglineService.ExpandLogline")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.ExpandLogline")
+	defer span.End()
 
-	span.SetData("request.logline.name", request.Logline.Name)
-	span.SetData("request.logline.lang", request.Logline.Lang)
-	span.SetData("request.userID", request.UserID)
+	span.SetAttributes(
+		attribute.String("request.logline.name", request.Logline.Name),
+		attribute.String("request.logline.lang", request.Logline.Lang.String()),
+		attribute.String("request.userID", request.UserID.String()),
+	)
 
-	resp, err := service.source.ExpandLogline(span.Context(), daoai.ExpandLoglineRequest{
+	resp, err := service.source.ExpandLogline(ctx, daoai.ExpandLoglineRequest{
 		Logline: request.Logline.Name + "\n\n" + request.Logline.Content,
 		UserID:  request.UserID.String(),
 		Lang:    request.Logline.Lang,
 	})
 	if err != nil {
-		span.SetData("service.error", err.Error())
-
-		return nil, NewErrExpandLoglineService(err)
+		return nil, otel.ReportError(span, fmt.Errorf("expand logline: %w", err))
 	}
 
-	return resp, nil
+	return otel.ReportSuccess(span, resp), nil
 }

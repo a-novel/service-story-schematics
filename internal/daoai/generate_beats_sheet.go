@@ -8,15 +8,17 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/otel"
+
 	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
 	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 const generateBeatsSheetTemperature = 0.8
@@ -42,12 +44,6 @@ var GenerateBeatsSheetDescriptions = map[models.Lang]string{
 
 var ErrInvalidBeatSheet = errors.New("invalid beat sheet")
 
-var ErrGenerateBeatsSheetRepository = errors.New("GenerateBeatsSheetRepository.GenerateBeatsSheet")
-
-func NewErrGenerateBeatsSheetRepository(err error) error {
-	return errors.Join(err, ErrGenerateBeatsSheetRepository)
-}
-
 type GenerateBeatsSheetRequest struct {
 	Logline string
 	Plan    models.StoryPlan
@@ -55,28 +51,30 @@ type GenerateBeatsSheetRequest struct {
 	Lang    models.Lang
 }
 
-type GenerateBeatsSheetRepository struct{}
+type GenerateBeatsSheetRepository struct {
+	config *config.OpenAI
+}
 
-func NewGenerateBeatsSheetRepository() *GenerateBeatsSheetRepository {
-	return &GenerateBeatsSheetRepository{}
+func NewGenerateBeatsSheetRepository(config *config.OpenAI) *GenerateBeatsSheetRepository {
+	return &GenerateBeatsSheetRepository{config: config}
 }
 
 func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 	ctx context.Context, request GenerateBeatsSheetRequest,
 ) ([]models.Beat, error) {
-	span := sentry.StartSpan(ctx, "GenerateBeatsSheetRepository.GenerateBeatsSheet")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "daoai.GenerateBeatsSheet")
+	defer span.End()
 
-	span.SetData("request.logline", request.Logline)
-	span.SetData("request.storyPlan.id", request.Plan.ID)
-	span.SetData("request.lang", request.Lang.String())
-	span.SetData("request.userID", request.UserID)
+	span.SetAttributes(
+		attribute.String("request.logline", request.Logline),
+		attribute.String("request.plan.id", request.Plan.ID.String()),
+		attribute.String("request.lang", request.Lang.String()),
+		attribute.String("request.userID", request.UserID),
+	)
 
 	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
 	if err != nil {
-		span.SetData("storyPlan.toPrompt.error", err.Error())
-
-		return nil, NewErrGenerateBeatsSheetRepository(fmt.Errorf("parse story plan prompt: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
@@ -86,15 +84,13 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 		"Plan":      request.Plan,
 	})
 	if err != nil {
-		span.SetData("prompt.error", err.Error())
-
-		return nil, NewErrGenerateBeatsSheetRepository(fmt.Errorf("execute system prompt: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("execute system prompt: %w", err))
 	}
 
-	chatCompletion, err := lib.OpenAIClient(span.Context()).
+	chatCompletion, err := repository.config.Client().
 		Chat.Completions.
-		New(span.Context(), openai.ChatCompletionNewParams{
-			Model:       config.Groq.Model,
+		New(ctx, openai.ChatCompletionNewParams{
+			Model:       repository.config.Model,
 			Temperature: param.NewOpt(generateBeatsSheetTemperature),
 			User:        param.NewOpt(request.UserID),
 			Messages: []openai.ChatCompletionMessageParamUnion{
@@ -113,9 +109,7 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 			},
 		})
 	if err != nil {
-		span.SetData("chatCompletion.error", err.Error())
-
-		return nil, NewErrGenerateBeatsSheetRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	var beats struct {
@@ -124,17 +118,13 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 
 	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats)
 	if err != nil {
-		span.SetData("unmarshal.error", err.Error())
-
-		return nil, NewErrGenerateBeatsSheetRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	err = lib.CheckStoryPlan(beats.Beats, request.Plan.Beats)
 	if err != nil {
-		span.SetData("checkStoryPlan.error", err.Error())
-
-		return nil, NewErrGenerateBeatsSheetRepository(errors.Join(err, ErrInvalidBeatSheet))
+		return nil, otel.ReportError(span, errors.Join(err, ErrInvalidBeatSheet))
 	}
 
-	return beats.Beats, nil
+	return otel.ReportSuccess(span, beats.Beats), nil
 }

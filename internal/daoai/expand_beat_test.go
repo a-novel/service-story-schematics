@@ -9,15 +9,15 @@ import (
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 func TestExpandBeat(t *testing.T) {
 	const errorMsg = "The new beat does not expand on the original beat.\n\n" +
 		"new sheet:\n\n%s\n\noriginal beat:\n\n%s"
 
-	repository := daoai.NewExpandBeatRepository()
+	repository := daoai.NewExpandBeatRepository(&config.OpenAIPresetDefault)
 
 	for _, lang := range []models.Lang{models.LangEN, models.LangFR} {
 		t.Run(lang.String(), func(t *testing.T) {
@@ -29,9 +29,7 @@ func TestExpandBeat(t *testing.T) {
 				t.Run(name, func(t *testing.T) {
 					t.Parallel()
 
-					ctx := lib.NewOpenaiContext(t.Context())
-
-					resp, err := repository.ExpandBeat(ctx, daoai.ExpandBeatRequest{
+					resp, err := repository.ExpandBeat(t.Context(), daoai.ExpandBeatRequest{
 						Logline:   testCase.Logline,
 						Beats:     testCase.Beats,
 						Plan:      testCase.Plan,

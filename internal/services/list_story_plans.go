@@ -2,20 +2,15 @@ package services
 
 import (
 	"context"
-	"errors"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/attribute"
+
+	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
 )
-
-var ErrListStoryPlansService = errors.New("ListStoryPlansService.ListStoryPlans")
-
-func NewErrListStoryPlansService(err error) error {
-	return errors.Join(err, ErrListStoryPlansService)
-}
 
 type ListStoryPlansSource interface {
 	ListStoryPlans(ctx context.Context, data dao.ListStoryPlansData) ([]*dao.StoryPlanPreviewEntity, error)
@@ -37,25 +32,25 @@ func NewListStoryPlansService(source ListStoryPlansSource) *ListStoryPlansServic
 func (service *ListStoryPlansService) ListStoryPlans(
 	ctx context.Context, request ListStoryPlansRequest,
 ) ([]*models.StoryPlanPreview, error) {
-	span := sentry.StartSpan(ctx, "ListStoryPlansService.ListStoryPlans")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "service.ListStoryPlans")
+	defer span.End()
 
-	span.SetData("request.limit", request.Limit)
-	span.SetData("request.offset", request.Offset)
+	span.SetAttributes(
+		attribute.Int("request.limit", request.Limit),
+		attribute.Int("request.offset", request.Offset),
+	)
 
-	resp, err := service.source.ListStoryPlans(span.Context(), dao.ListStoryPlansData{
+	resp, err := service.source.ListStoryPlans(ctx, dao.ListStoryPlansData{
 		Limit:  request.Limit,
 		Offset: request.Offset,
 	})
 	if err != nil {
-		span.SetData("dao.listStoryPlans.err", err.Error())
-
-		return nil, NewErrListStoryPlansService(err)
+		return nil, otel.ReportError(span, err)
 	}
 
-	span.SetData("dao.listStoryPlans.count", len(resp))
+	span.SetAttributes(attribute.Int("dao.listStoryPlans.count", len(resp)))
 
-	return lo.Map(resp, func(item *dao.StoryPlanPreviewEntity, _ int) *models.StoryPlanPreview {
+	output := lo.Map(resp, func(item *dao.StoryPlanPreviewEntity, _ int) *models.StoryPlanPreview {
 		return &models.StoryPlanPreview{
 			ID:          item.ID,
 			Slug:        item.Slug,
@@ -64,5 +59,7 @@ func (service *ListStoryPlansService) ListStoryPlans(
 			Lang:        item.Lang,
 			CreatedAt:   item.CreatedAt,
 		}
-	}), nil
+	})
+
+	return otel.ReportSuccess(span, output), nil
 }

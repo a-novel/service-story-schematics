@@ -3,21 +3,22 @@ package daoai
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 	"text/template"
 
-	"github.com/getsentry/sentry-go"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/packages/param"
 	"github.com/samber/lo"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/otel"
+
 	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
 	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 const regenerateBeatsTemperature = 0.6
@@ -51,12 +52,6 @@ var RegenerateBeatsDescriptions = map[models.Lang]string{
 	models.LangFR: schemas.Beats[models.LangFR].Description,
 }
 
-var ErrRegenerateBeatsRepository = errors.New("RegenerateBeatsRepository.RegenerateBeats")
-
-func NewErrRegenerateBeatsRepository(err error) error {
-	return errors.Join(err, ErrRegenerateBeatsRepository)
-}
-
 type RegenerateBeatsRequest struct {
 	Logline        string
 	Beats          []models.Beat
@@ -66,29 +61,31 @@ type RegenerateBeatsRequest struct {
 	Lang           models.Lang
 }
 
-type RegenerateBeatsRepository struct{}
+type RegenerateBeatsRepository struct {
+	config *config.OpenAI
+}
 
-func NewRegenerateBeatsRepository() *RegenerateBeatsRepository {
-	return &RegenerateBeatsRepository{}
+func NewRegenerateBeatsRepository(config *config.OpenAI) *RegenerateBeatsRepository {
+	return &RegenerateBeatsRepository{config: config}
 }
 
 func (repository *RegenerateBeatsRepository) RegenerateBeats(
 	ctx context.Context, request RegenerateBeatsRequest,
 ) ([]models.Beat, error) {
-	span := sentry.StartSpan(ctx, "RegenerateBeatsRepository.RegenerateBeats")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "daoai.RegenerateBeats")
+	defer span.End()
 
-	span.SetData("request.logline", request.Logline)
-	span.SetData("request.userID", request.UserID)
-	span.SetData("request.storyPlan.id", request.Plan.ID.String())
-	span.SetData("request.regenerateKeys", request.RegenerateKeys)
-	span.SetData("request.lang", request.Lang.String())
+	span.SetAttributes(
+		attribute.String("request.logline", request.Logline),
+		attribute.String("request.userID", request.UserID),
+		attribute.String("request.plan.id", request.Plan.ID.String()),
+		attribute.StringSlice("request.regenerateKeys", request.RegenerateKeys),
+		attribute.String("request.lang", request.Lang.String()),
+	)
 
 	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
 	if err != nil {
-		span.SetData("storyPlan.toPrompt.error", err.Error())
-
-		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse story plan prompt: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
@@ -98,9 +95,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		"Plan":      request.Plan,
 	})
 	if err != nil {
-		span.SetData("systemPrompt.error", err.Error())
-
-		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse system message: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("parse system message: %w", err))
 	}
 
 	userPrompt1 := new(strings.Builder)
@@ -109,9 +104,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		"Logline": request.Logline,
 	})
 	if err != nil {
-		span.SetData("userPrompt1.error", err.Error())
-
-		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse user message: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("parse user message: %w", err))
 	}
 
 	userPrompt2 := new(strings.Builder)
@@ -120,15 +113,13 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		"Beats": request.RegenerateKeys,
 	})
 	if err != nil {
-		span.SetData("userPrompt2.error", err.Error())
-
-		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("parse user message: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("parse user message: %w", err))
 	}
 
-	chatCompletion, err := lib.OpenAIClient(span.Context()).
+	chatCompletion, err := repository.config.Client().
 		Chat.Completions.
-		New(span.Context(), openai.ChatCompletionNewParams{
-			Model:       config.Groq.Model,
+		New(ctx, openai.ChatCompletionNewParams{
+			Model:       repository.config.Model,
 			Temperature: param.NewOpt(regenerateBeatsTemperature),
 			User:        param.NewOpt(request.UserID),
 			Messages: []openai.ChatCompletionMessageParamUnion{
@@ -149,9 +140,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 			},
 		})
 	if err != nil {
-		span.SetData("chatCompletion.error", err.Error())
-
-		return nil, NewErrRegenerateBeatsRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	var beats struct {
@@ -160,19 +149,15 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 
 	err = json.Unmarshal([]byte(chatCompletion.Choices[0].Message.Content), &beats)
 	if err != nil {
-		span.SetData("unmarshal.error", err.Error())
-
-		return nil, NewErrRegenerateBeatsRepository(err)
+		return nil, otel.ReportError(span, err)
 	}
 
 	err = lib.CheckStoryPlan(beats.Beats, repository.buildExpectedStoryPlan(request))
 	if err != nil {
-		span.SetData("checkStoryPlan.error", err.Error())
-
-		return nil, NewErrRegenerateBeatsRepository(fmt.Errorf("check story plan: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("check story plan: %w", err))
 	}
 
-	return repository.mergeSourceAndNewBeats(request, beats.Beats), nil
+	return otel.ReportSuccess(span, repository.mergeSourceAndNewBeats(request, beats.Beats)), nil
 }
 
 func (repository *RegenerateBeatsRepository) extrudedBeatsSheet(request RegenerateBeatsRequest) string {

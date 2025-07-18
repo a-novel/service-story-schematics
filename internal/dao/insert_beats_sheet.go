@@ -2,20 +2,19 @@ package dao
 
 import (
 	"context"
-	"errors"
+	_ "embed"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
+
 	"github.com/a-novel/service-story-schematics/models"
 )
 
-var ErrInsertBeatsSheetRepository = errors.New("InsertBeatsSheetRepository.InsertBeatsSheet")
-
-func NewErrInsertBeatsSheetRepository(err error) error {
-	return errors.Join(err, ErrInsertBeatsSheetRepository)
-}
+//go:embed insert_beats_sheet.sql
+var insertBeatsSheetQuery string
 
 type InsertBeatsSheetData struct {
 	Sheet models.BeatsSheet
@@ -30,44 +29,37 @@ func NewInsertBeatsSheetRepository() *InsertBeatsSheetRepository {
 func (repository *InsertBeatsSheetRepository) InsertBeatsSheet(
 	ctx context.Context, data InsertBeatsSheetData,
 ) (*BeatsSheetEntity, error) {
-	span := sentry.StartSpan(ctx, "InsertBeatsSheetRepository.InsertBeatsSheet")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.InsertBeatsSheet")
+	defer span.End()
 
-	span.SetData("sheet.id", data.Sheet.ID.String())
-	span.SetData("sheet.logline_id", data.Sheet.LoglineID.String())
-	span.SetData("sheet.story_plan_id", data.Sheet.StoryPlanID.String())
-	span.SetData("sheet.lang", data.Sheet.Lang)
+	span.SetAttributes(
+		attribute.String("sheet.id", data.Sheet.ID.String()),
+		attribute.String("sheet.loglineID", data.Sheet.LoglineID.String()),
+		attribute.String("sheet.storyPlanID", data.Sheet.StoryPlanID.String()),
+		attribute.String("sheet.lang", data.Sheet.Lang.String()),
+	)
 
-	tx, err := lib.PostgresContext(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return nil, NewErrInsertBeatsSheetRepository(fmt.Errorf("get postgres client: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
 	}
 
-	entity := &BeatsSheetEntity{
-		ID:          data.Sheet.ID,
-		LoglineID:   data.Sheet.LoglineID,
-		StoryPlanID: data.Sheet.StoryPlanID,
-		Content:     make([]models.Beat, len(data.Sheet.Content)),
-		Lang:        data.Sheet.Lang,
-		CreatedAt:   data.Sheet.CreatedAt,
-	}
+	entity := &BeatsSheetEntity{}
 
-	for i, beat := range data.Sheet.Content {
-		entity.Content[i] = models.Beat{
-			Key:     beat.Key,
-			Title:   beat.Title,
-			Content: beat.Content,
-		}
-	}
-
-	_, err = tx.NewInsert().Model(entity).Returning("*").Exec(span.Context())
+	err = tx.
+		NewRaw(
+			insertBeatsSheetQuery,
+			data.Sheet.ID,
+			data.Sheet.LoglineID,
+			data.Sheet.StoryPlanID,
+			data.Sheet.Content,
+			data.Sheet.Lang,
+			data.Sheet.CreatedAt,
+		).
+		Scan(ctx, entity)
 	if err != nil {
-		span.SetData("insert.error", err.Error())
-
-		return nil, NewErrInsertBeatsSheetRepository(fmt.Errorf("insert sheet: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("insert sheet: %w", err))
 	}
 
-	return entity, nil
+	return otel.ReportSuccess(span, entity), nil
 }

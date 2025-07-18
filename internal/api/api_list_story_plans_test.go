@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestListStoryPlans(t *testing.T) {
@@ -29,19 +29,19 @@ func TestListStoryPlans(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		params codegen.GetStoryPlansParams
+		params apimodels.GetStoryPlansParams
 
 		listStoryPlansData *listStoryPlansData
 
-		expect    codegen.GetStoryPlansRes
+		expect    apimodels.GetStoryPlansRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			params: codegen.GetStoryPlansParams{
-				Limit:  codegen.OptInt{Value: 10, Set: true},
-				Offset: codegen.OptInt{Value: 2, Set: true},
+			params: apimodels.GetStoryPlansParams{
+				Limit:  apimodels.OptInt{Value: 10, Set: true},
+				Offset: apimodels.OptInt{Value: 2, Set: true},
 			},
 
 			listStoryPlansData: &listStoryPlansData{
@@ -69,24 +69,24 @@ func TestListStoryPlans(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.GetStoryPlansOKApplicationJSON{
+			expect: &apimodels.GetStoryPlansOKApplicationJSON{
 				{
-					ID:   codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000002")),
+					ID:   apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000002")),
 					Slug: "test-slug-2",
 
 					Name:        "Test Name 2",
 					Description: "Test Description 2, a lot going on here.",
-					Lang:        codegen.LangEn,
+					Lang:        apimodels.LangEn,
 
 					CreatedAt: time.Date(2021, 1, 3, 0, 0, 0, 0, time.UTC),
 				},
 				{
-					ID:   codegen.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000003")),
+					ID:   apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0000-000000000003")),
 					Slug: "test-slug-3",
 
 					Name:        "Test Name 3",
 					Description: "Test Description 3, a lot going on here.",
-					Lang:        codegen.LangEn,
+					Lang:        apimodels.LangEn,
 
 					CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
@@ -95,9 +95,9 @@ func TestListStoryPlans(t *testing.T) {
 		{
 			name: "Error",
 
-			params: codegen.GetStoryPlansParams{
-				Limit:  codegen.OptInt{Value: 10, Set: true},
-				Offset: codegen.OptInt{Value: 2, Set: true},
+			params: apimodels.GetStoryPlansParams{
+				Limit:  apimodels.OptInt{Value: 10, Set: true},
+				Offset: apimodels.OptInt{Value: 2, Set: true},
 			},
 
 			listStoryPlansData: &listStoryPlansData{

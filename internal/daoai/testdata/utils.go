@@ -2,9 +2,9 @@ package testdata
 
 import (
 	_ "embed"
-	"github.com/a-novel-kit/configurator"
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/goccy/go-yaml"
 )
 
 //go:embed utils.en.yaml
@@ -20,13 +20,9 @@ type UtilsPromptsType struct {
 	} `yaml:"checkAgent"`
 }
 
-var UtilsPromptEN = configurator.NewLoader[UtilsPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", utilsEnFile),
-)
+var UtilsPromptEN = config.MustUnmarshal[UtilsPromptsType](yaml.Unmarshal, utilsEnFile)
 
-var UtilsPromptFR = configurator.NewLoader[UtilsPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", utilsFrFile),
-)
+var UtilsPromptFR = config.MustUnmarshal[UtilsPromptsType](yaml.Unmarshal, utilsFrFile)
 
 var UtilsPrompts = map[models.Lang]UtilsPromptsType{
 	models.LangEN: UtilsPromptEN,

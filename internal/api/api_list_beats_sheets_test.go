@@ -11,14 +11,14 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	authModels "github.com/a-novel/service-authentication/models"
-	authPkg "github.com/a-novel/service-authentication/pkg"
+	authmodels "github.com/a-novel/service-authentication/models"
+	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
-	"github.com/a-novel/service-story-schematics/internal/api/codegen"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/api"
 )
 
 func TestListBeatsSheets(t *testing.T) {
@@ -34,20 +34,20 @@ func TestListBeatsSheets(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		params codegen.GetBeatsSheetsParams
+		params apimodels.GetBeatsSheetsParams
 
 		listBeatsSheetsData *listBeatsSheetsData
 
-		expect    codegen.GetBeatsSheetsRes
+		expect    apimodels.GetBeatsSheetsRes
 		expectErr error
 	}{
 		{
 			name: "Success",
 
-			params: codegen.GetBeatsSheetsParams{
-				LoglineID: codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				Limit:     codegen.OptInt{Value: 10, Set: true},
-				Offset:    codegen.OptInt{Value: 2, Set: true},
+			params: apimodels.GetBeatsSheetsParams{
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				Limit:     apimodels.OptInt{Value: 10, Set: true},
+				Offset:    apimodels.OptInt{Value: 2, Set: true},
 			},
 
 			listBeatsSheetsData: &listBeatsSheetsData{
@@ -65,15 +65,15 @@ func TestListBeatsSheets(t *testing.T) {
 				},
 			},
 
-			expect: &codegen.GetBeatsSheetsOKApplicationJSON{
+			expect: &apimodels.GetBeatsSheetsOKApplicationJSON{
 				{
-					ID:        codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
-					Lang:      codegen.LangEn,
+					ID:        apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+					Lang:      apimodels.LangEn,
 					CreatedAt: time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 				{
-					ID:        codegen.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000002")),
-					Lang:      codegen.LangEn,
+					ID:        apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000002")),
+					Lang:      apimodels.LangEn,
 					CreatedAt: time.Date(2021, 1, 2, 0, 0, 0, 0, time.UTC),
 				},
 			},
@@ -81,10 +81,10 @@ func TestListBeatsSheets(t *testing.T) {
 		{
 			name: "Error",
 
-			params: codegen.GetBeatsSheetsParams{
-				LoglineID: codegen.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				Limit:     codegen.OptInt{Value: 10, Set: true},
-				Offset:    codegen.OptInt{Value: 2, Set: true},
+			params: apimodels.GetBeatsSheetsParams{
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				Limit:     apimodels.OptInt{Value: 10, Set: true},
+				Offset:    apimodels.OptInt{Value: 2, Set: true},
 			},
 
 			listBeatsSheetsData: &listBeatsSheetsData{
@@ -101,7 +101,7 @@ func TestListBeatsSheets(t *testing.T) {
 
 			source := apimocks.NewMockListBeatsSheetsService(t)
 
-			ctx := context.WithValue(t.Context(), authPkg.ClaimsContextKey{}, &authModels.AccessTokenClaims{
+			ctx := context.WithValue(t.Context(), authpkg.ClaimsContextKey{}, &authmodels.AccessTokenClaims{
 				UserID: lo.ToPtr(uuid.MustParse("00000000-1000-0000-0000-000000000001")),
 			})
 

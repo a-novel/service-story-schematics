@@ -2,9 +2,9 @@ package testdata
 
 import (
 	_ "embed"
-	"github.com/a-novel-kit/configurator"
-	"github.com/a-novel/service-story-schematics/config"
+	"github.com/a-novel/golib/config"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/goccy/go-yaml"
 )
 
 //go:embed expand_beat.en.yaml
@@ -25,13 +25,9 @@ type ExpandBeatPromptsType struct {
 	CheckAgent string                        `yaml:"checkAgent"`
 }
 
-var ExpandBeatPromptEN = configurator.NewLoader[ExpandBeatPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandBeatEnFile),
-)
+var ExpandBeatPromptEN = config.MustUnmarshal[ExpandBeatPromptsType](yaml.Unmarshal, expandBeatEnFile)
 
-var ExpandBeatPromptFR = configurator.NewLoader[ExpandBeatPromptsType](config.Loader).MustLoad(
-	configurator.NewConfig("", expandBeatFrFile),
-)
+var ExpandBeatPromptFR = config.MustUnmarshal[ExpandBeatPromptsType](yaml.Unmarshal, expandBeatFrFile)
 
 var ExpandBeatPrompts = map[models.Lang]ExpandBeatPromptsType{
 	models.LangEN: ExpandBeatPromptEN,

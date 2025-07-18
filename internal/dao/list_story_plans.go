@@ -2,19 +2,18 @@ package dao
 
 import (
 	"context"
-	"errors"
+	_ "embed"
 	"fmt"
 
-	"github.com/getsentry/sentry-go"
+	"github.com/uptrace/bun"
+	"go.opentelemetry.io/otel/attribute"
 
-	"github.com/a-novel/service-story-schematics/internal/lib"
+	"github.com/a-novel/golib/otel"
+	"github.com/a-novel/golib/postgres"
 )
 
-var ErrListStoryPlansRepository = errors.New("ListStoryPlansRepository.ListStoryPlans")
-
-func NewErrListStoryPlansRepository(err error) error {
-	return errors.Join(err, ErrListStoryPlansRepository)
-}
+//go:embed list_story_plans.sql
+var listStoryPlansQuery string
 
 type ListStoryPlansData struct {
 	Limit  int
@@ -30,32 +29,25 @@ func NewListStoryPlansRepository() *ListStoryPlansRepository {
 func (repository *ListStoryPlansRepository) ListStoryPlans(
 	ctx context.Context, data ListStoryPlansData,
 ) ([]*StoryPlanPreviewEntity, error) {
-	span := sentry.StartSpan(ctx, "ListStoryPlansRepository.ListStoryPlans")
-	defer span.Finish()
+	ctx, span := otel.Tracer().Start(ctx, "dao.ListStoryPlans")
+	defer span.End()
 
-	span.SetData("limit", data.Limit)
-	span.SetData("offset", data.Offset)
+	span.SetAttributes(
+		attribute.Int("limit", data.Limit),
+		attribute.Int("offset", data.Offset),
+	)
 
-	tx, err := lib.PostgresContext(span.Context())
+	tx, err := postgres.GetContext(ctx)
 	if err != nil {
-		span.SetData("postgres.context.error", err.Error())
-
-		return nil, NewErrListStoryPlansRepository(fmt.Errorf("get postgres client: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get postgres client: %w", err))
 	}
 
 	entities := make([]*StoryPlanPreviewEntity, 0)
 
-	err = tx.NewSelect().
-		Model(&entities).
-		Order("created_at DESC").
-		Limit(data.Limit).
-		Offset(data.Offset).
-		Scan(span.Context())
+	err = tx.NewRaw(listStoryPlansQuery, bun.NullZero(data.Limit), data.Offset).Scan(ctx, &entities)
 	if err != nil {
-		span.SetData("scan.error", err.Error())
-
-		return nil, NewErrListStoryPlansRepository(fmt.Errorf("list story plans: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("list story plans: %w", err))
 	}
 
-	return entities, nil
+	return otel.ReportSuccess(span, entities), nil
 }
