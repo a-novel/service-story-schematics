@@ -10,6 +10,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
+	"github.com/a-novel/golib/ogen"
 	authmodels "github.com/a-novel/service-authentication/models"
 
 	apimodels "github.com/a-novel/service-story-schematics/models/api"
@@ -99,23 +100,21 @@ func testAppStoryPlansCRUD(ctx context.Context, t *testing.T, appConfig TestConf
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawRes, err := client.CreateStoryPlan(t.Context(), &planForm)
-
+		_, err = ogen.MustGetResponse[apimodels.CreateStoryPlanRes, *apimodels.ForbiddenError](
+			client.CreateStoryPlan(t.Context(), &planForm),
+		)
 		require.NoError(t, err)
-
-		_, ok := rawRes.(*apimodels.ForbiddenError)
-		require.True(t, ok, rawRes)
 	}
 
 	t.Log("CreateStoryPlan")
 	{
 		security.SetToken(userSuperAdminAccessToken)
 
-		planRaw, err := client.CreateStoryPlan(t.Context(), &planForm)
+		plan, err := ogen.MustGetResponse[apimodels.CreateStoryPlanRes, *apimodels.StoryPlan](
+			client.CreateStoryPlan(t.Context(), &planForm),
+		)
 		require.NoError(t, err)
 
-		plan, ok := planRaw.(*apimodels.StoryPlan)
-		require.True(t, ok, planRaw)
 		require.NotEmpty(t, plan.GetID())
 		require.Equal(t, planForm.Slug, plan.GetSlug())
 		require.Equal(t, planForm.Name, plan.GetName())
@@ -127,11 +126,11 @@ func testAppStoryPlansCRUD(ctx context.Context, t *testing.T, appConfig TestConf
 	{
 		security.SetToken(userSuperAdminAccessToken)
 
-		planRaw, err := client.CreateStoryPlan(t.Context(), &planForm)
+		plan, err := ogen.MustGetResponse[apimodels.CreateStoryPlanRes, *apimodels.StoryPlan](
+			client.CreateStoryPlan(t.Context(), &planForm),
+		)
 		require.NoError(t, err)
 
-		plan, ok := planRaw.(*apimodels.StoryPlan)
-		require.True(t, ok, planRaw)
 		require.NotEmpty(t, plan.GetID())
 		require.Equal(t, planForm.Slug+"-1", plan.GetSlug())
 		require.Equal(t, planForm.Name, plan.GetName())
@@ -143,11 +142,10 @@ func testAppStoryPlansCRUD(ctx context.Context, t *testing.T, appConfig TestConf
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawRes, err := client.GetStoryPlans(t.Context(), apimodels.GetStoryPlansParams{})
+		res, err := ogen.MustGetResponse[apimodels.GetStoryPlansRes, *apimodels.GetStoryPlansOKApplicationJSON](
+			client.GetStoryPlans(t.Context(), apimodels.GetStoryPlansParams{}),
+		)
 		require.NoError(t, err)
-
-		res, ok := rawRes.(*apimodels.GetStoryPlansOKApplicationJSON)
-		require.True(t, ok, rawRes)
 
 		versions := lo.Filter(*res, func(item apimodels.StoryPlanPreview, _ int) bool {
 			return strings.HasPrefix(string(item.GetSlug()), storyPlanSlug)
@@ -162,13 +160,12 @@ func testAppStoryPlansCRUD(ctx context.Context, t *testing.T, appConfig TestConf
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawRes, err := client.GetStoryPlan(t.Context(), apimodels.GetStoryPlanParams{
-			Slug: apimodels.OptSlug{Value: apimodels.Slug(storyPlanSlug), Set: true},
-		})
+		res, err := ogen.MustGetResponse[apimodels.GetStoryPlanRes, *apimodels.StoryPlan](
+			client.GetStoryPlan(t.Context(), apimodels.GetStoryPlanParams{
+				Slug: apimodels.OptSlug{Value: apimodels.Slug(storyPlanSlug), Set: true},
+			}),
+		)
 		require.NoError(t, err)
-
-		res, ok := rawRes.(*apimodels.StoryPlan)
-		require.True(t, ok, rawRes)
 
 		require.Equal(t, apimodels.Slug(storyPlanSlug), res.GetSlug())
 		require.Equal(t, planForm.Slug, res.GetSlug())
@@ -181,35 +178,33 @@ func testAppStoryPlansCRUD(ctx context.Context, t *testing.T, appConfig TestConf
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawRes, err := client.UpdateStoryPlan(t.Context(), &apimodels.UpdateStoryPlanForm{
-			Slug:        apimodels.Slug(storyPlanSlug),
-			Name:        planForm.Name + " Updated",
-			Description: planForm.Description + " Updated",
-			Lang:        apimodels.LangEn,
-			Beats:       planForm.Beats,
-		})
-
+		_, err = ogen.MustGetResponse[apimodels.UpdateStoryPlanRes, *apimodels.ForbiddenError](
+			client.UpdateStoryPlan(t.Context(), &apimodels.UpdateStoryPlanForm{
+				Slug:        apimodels.Slug(storyPlanSlug),
+				Name:        planForm.Name + " Updated",
+				Description: planForm.Description + " Updated",
+				Lang:        apimodels.LangEn,
+				Beats:       planForm.Beats,
+			}),
+		)
 		require.NoError(t, err)
-
-		_, ok := rawRes.(*apimodels.ForbiddenError)
-		require.True(t, ok, rawRes)
 	}
 
 	t.Log("UpdateStoryPlan")
 	{
 		security.SetToken(userSuperAdminAccessToken)
 
-		planRaw, err := client.UpdateStoryPlan(t.Context(), &apimodels.UpdateStoryPlanForm{
-			Slug:        apimodels.Slug(storyPlanSlug),
-			Name:        planForm.Name + " Updated",
-			Description: planForm.Description + " Updated",
-			Lang:        apimodels.LangEn,
-			Beats:       planForm.Beats,
-		})
+		plan, err := ogen.MustGetResponse[apimodels.UpdateStoryPlanRes, *apimodels.StoryPlan](
+			client.UpdateStoryPlan(t.Context(), &apimodels.UpdateStoryPlanForm{
+				Slug:        apimodels.Slug(storyPlanSlug),
+				Name:        planForm.Name + " Updated",
+				Description: planForm.Description + " Updated",
+				Lang:        apimodels.LangEn,
+				Beats:       planForm.Beats,
+			}),
+		)
 		require.NoError(t, err)
 
-		plan, ok := planRaw.(*apimodels.StoryPlan)
-		require.True(t, ok, planRaw)
 		require.NotEmpty(t, plan.GetID())
 		require.Equal(t, planForm.Slug, plan.GetSlug())
 		require.Equal(t, planForm.Name+" Updated", plan.GetName())

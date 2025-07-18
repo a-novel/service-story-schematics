@@ -9,6 +9,7 @@ import (
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/require"
 
+	"github.com/a-novel/golib/ogen"
 	authmodels "github.com/a-novel/service-authentication/models"
 
 	apimodels "github.com/a-novel/service-story-schematics/models/api"
@@ -49,15 +50,14 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawideas, err := client.GenerateLoglines(t.Context(), &apimodels.GenerateLoglinesForm{
-			Count: 2,
-			Theme: "scifi, like Asimov Foundation",
-			Lang:  apimodels.LangEn,
-		})
+		ideas, err := ogen.MustGetResponse[apimodels.GenerateLoglinesRes, *apimodels.GenerateLoglinesOKApplicationJSON](
+			client.GenerateLoglines(t.Context(), &apimodels.GenerateLoglinesForm{
+				Count: 2,
+				Theme: "scifi, like Asimov Foundation",
+				Lang:  apimodels.LangEn,
+			}),
+		)
 		require.NoError(t, err)
-
-		ideas, ok := rawideas.(*apimodels.GenerateLoglinesOKApplicationJSON)
-		require.True(t, ok, rawideas)
 
 		require.Len(t, *ideas, 2)
 
@@ -68,11 +68,10 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawExpandedIdea, err := client.ExpandLogline(t.Context(), loglineIdea)
+		expandedIdea, err := ogen.MustGetResponse[apimodels.ExpandLoglineRes, *apimodels.LoglineIdea](
+			client.ExpandLogline(t.Context(), loglineIdea),
+		)
 		require.NoError(t, err)
-
-		expandedIdea, ok := rawExpandedIdea.(*apimodels.LoglineIdea)
-		require.True(t, ok, rawExpandedIdea)
 
 		*loglineIdea = *expandedIdea
 	}
@@ -81,33 +80,30 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userAnonAccessToken)
 
-		rawRes, err := client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
-			Slug:    apimodels.Slug(loglineSlug),
-			Name:    loglineIdea.Name,
-			Content: loglineIdea.Content,
-			Lang:    apimodels.LangEn,
-		})
-
+		_, err = ogen.MustGetResponse[apimodels.CreateLoglineRes, *apimodels.ForbiddenError](
+			client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
+				Slug:    apimodels.Slug(loglineSlug),
+				Name:    loglineIdea.Name,
+				Content: loglineIdea.Content,
+				Lang:    apimodels.LangEn,
+			}),
+		)
 		require.NoError(t, err)
-
-		_, ok := rawRes.(*apimodels.ForbiddenError)
-		require.True(t, ok, rawRes)
 	}
 
 	t.Log("CreateLogline")
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawLogline, err := client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
-			Slug:    apimodels.Slug(loglineSlug),
-			Name:    loglineIdea.Name,
-			Content: loglineIdea.Content,
-			Lang:    apimodels.LangEn,
-		})
+		newLogline, err := ogen.MustGetResponse[apimodels.CreateLoglineRes, *apimodels.Logline](
+			client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
+				Slug:    apimodels.Slug(loglineSlug),
+				Name:    loglineIdea.Name,
+				Content: loglineIdea.Content,
+				Lang:    apimodels.LangEn,
+			}),
+		)
 		require.NoError(t, err)
-
-		newLogline, ok := rawLogline.(*apimodels.Logline)
-		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglineIdea.Name, newLogline.Name)
 		require.Equal(t, loglineIdea.Content, newLogline.Content)
@@ -121,13 +117,12 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawLogline, err := client.GetLogline(t.Context(), apimodels.GetLoglineParams{
-			ID: apimodels.OptLoglineID{Value: loglines[0].ID, Set: true},
-		})
+		newLogline, err := ogen.MustGetResponse[apimodels.GetLoglineRes, *apimodels.Logline](
+			client.GetLogline(t.Context(), apimodels.GetLoglineParams{
+				ID: apimodels.OptLoglineID{Value: loglines[0].ID, Set: true},
+			}),
+		)
 		require.NoError(t, err)
-
-		newLogline, ok := rawLogline.(*apimodels.Logline)
-		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglines[0], newLogline)
 	}
@@ -136,13 +131,12 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawLogline, err := client.GetLogline(t.Context(), apimodels.GetLoglineParams{
-			Slug: apimodels.OptSlug{Value: loglines[0].Slug, Set: true},
-		})
+		newLogline, err := ogen.MustGetResponse[apimodels.GetLoglineRes, *apimodels.Logline](
+			client.GetLogline(t.Context(), apimodels.GetLoglineParams{
+				Slug: apimodels.OptSlug{Value: loglines[0].Slug, Set: true},
+			}),
+		)
 		require.NoError(t, err)
-
-		newLogline, ok := rawLogline.(*apimodels.Logline)
-		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglines[0], newLogline)
 	}
@@ -151,16 +145,15 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawLogline, err := client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
-			Slug:    apimodels.Slug(loglineSlug),
-			Name:    loglineIdea.Name + " Alt",
-			Content: loglineIdea.Content + " Alt",
-			Lang:    apimodels.LangEn,
-		})
+		newLogline, err := ogen.MustGetResponse[apimodels.CreateLoglineRes, *apimodels.Logline](
+			client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
+				Slug:    apimodels.Slug(loglineSlug),
+				Name:    loglineIdea.Name + " Alt",
+				Content: loglineIdea.Content + " Alt",
+				Lang:    apimodels.LangEn,
+			}),
+		)
 		require.NoError(t, err)
-
-		newLogline, ok := rawLogline.(*apimodels.Logline)
-		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglineIdea.Name+" Alt", newLogline.Name)
 		require.Equal(t, loglineIdea.Content+" Alt", newLogline.Content)
@@ -174,11 +167,10 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambdaAccessToken)
 
-		rawLoglines, err := client.GetLoglines(t.Context(), apimodels.GetLoglinesParams{})
+		userLoglines, err := ogen.MustGetResponse[apimodels.GetLoglinesRes, *apimodels.GetLoglinesOKApplicationJSON](
+			client.GetLoglines(t.Context(), apimodels.GetLoglinesParams{}),
+		)
 		require.NoError(t, err)
-
-		userLoglines, ok := rawLoglines.(*apimodels.GetLoglinesOKApplicationJSON)
-		require.True(t, ok, rawLoglines)
 
 		require.Equal(t, &apimodels.GetLoglinesOKApplicationJSON{
 			{
@@ -202,16 +194,15 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambda2AccessToken)
 
-		rawLogline, err := client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
-			Slug:    apimodels.Slug(loglineSlug),
-			Name:    loglineIdea.Name,
-			Content: loglineIdea.Content,
-			Lang:    apimodels.LangEn,
-		})
+		newLogline, err := ogen.MustGetResponse[apimodels.CreateLoglineRes, *apimodels.Logline](
+			client.CreateLogline(t.Context(), &apimodels.CreateLoglineForm{
+				Slug:    apimodels.Slug(loglineSlug),
+				Name:    loglineIdea.Name,
+				Content: loglineIdea.Content,
+				Lang:    apimodels.LangEn,
+			}),
+		)
 		require.NoError(t, err)
-
-		newLogline, ok := rawLogline.(*apimodels.Logline)
-		require.True(t, ok, rawLogline)
 
 		require.Equal(t, loglineIdea.Name, newLogline.Name)
 		require.Equal(t, loglineIdea.Content, newLogline.Content)
@@ -225,11 +216,10 @@ func testAppLoglinesPlayground(ctx context.Context, t *testing.T, appConfig Test
 	{
 		security.SetToken(userLambda2AccessToken)
 
-		rawLoglines, err := client.GetLoglines(t.Context(), apimodels.GetLoglinesParams{})
+		userLoglines, err := ogen.MustGetResponse[apimodels.GetLoglinesRes, *apimodels.GetLoglinesOKApplicationJSON](
+			client.GetLoglines(t.Context(), apimodels.GetLoglinesParams{}),
+		)
 		require.NoError(t, err)
-
-		userLoglines, ok := rawLoglines.(*apimodels.GetLoglinesOKApplicationJSON)
-		require.True(t, ok, rawLoglines)
 
 		require.Equal(t, &apimodels.GetLoglinesOKApplicationJSON{
 			{
