@@ -1,8 +1,6 @@
 package config
 
 import (
-	"os"
-
 	"github.com/openai/openai-go"
 
 	"github.com/a-novel/golib/config"
@@ -14,7 +12,7 @@ const (
 )
 
 var OpenAIPresetDefault = OpenAI{
-	APIKey:  os.Getenv("OPENAI_TOKEN"),
-	Model:   config.LoadEnv(os.Getenv("OPENAI_MODEL"), OpenAIModel, config.StringParser),
-	BaseURL: config.LoadEnv(os.Getenv("OPENAI_BASE_URL"), OpenAIBaseURL, config.StringParser),
+	APIKey:  getEnv("OPENAI_TOKEN"),
+	Model:   config.LoadEnv(getEnv("OPENAI_MODEL"), OpenAIModel, config.StringParser),
+	BaseURL: config.LoadEnv(getEnv("OPENAI_BASE_URL"), OpenAIBaseURL, config.StringParser),
 }

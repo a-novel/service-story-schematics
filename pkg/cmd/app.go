@@ -15,7 +15,7 @@ import (
 	"github.com/a-novel/golib/otel"
 	"github.com/a-novel/golib/postgres"
 	authmodels "github.com/a-novel/service-authentication/models"
-	jkmodels "github.com/a-novel/service-json-keys/models"
+	jkconfig "github.com/a-novel/service-json-keys/models/config"
 	jkpkg "github.com/a-novel/service-json-keys/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/api"
@@ -56,7 +56,7 @@ func App[Otel otel.Config, Pg postgres.Config](
 
 	accessTokenVerifier, err := jkpkg.NewClaimsVerifier[authmodels.AccessTokenClaims](
 		jkClient,
-		jkmodels.DefaultJWKSConfig,
+		jkconfig.JWKSPresetDefault,
 	)
 	if err != nil {
 		return fmt.Errorf("create access token verifier: %w", err)
