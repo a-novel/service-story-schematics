@@ -24,20 +24,7 @@ const expandLoglineTemperature = 0.8
 var ExpandLoglinePrompts = struct {
 	System *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.ExpandLogline[models.LangEN].System, map[models.Lang]string{
-		models.LangEN: prompts.ExpandLogline[models.LangEN].System,
-		models.LangFR: prompts.ExpandLogline[models.LangFR].System,
-	}),
-}
-
-var ExpandLoglineSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Logline[models.LangEN].Schema,
-	models.LangFR: schemas.Logline[models.LangFR].Schema,
-}
-
-var ExpandLoglineDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Logline[models.LangEN].Description,
-	models.LangFR: schemas.Logline[models.LangFR].Description,
+	System: template.Must(template.New("").Parse(prompts.ExpandLogline.System)),
 }
 
 type ExpandLoglineRequest struct {
@@ -68,7 +55,7 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 
 	systemPrompt := new(strings.Builder)
 
-	err := ExpandLoglinePrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), nil)
+	err := ExpandLoglinePrompts.System.Execute(systemPrompt, nil)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("execute system prompt: %w", err))
 	}
@@ -80,15 +67,15 @@ func (repository *ExpandLoglineRepository) ExpandLogline(
 			Temperature: param.NewOpt(expandLoglineTemperature),
 			User:        param.NewOpt(request.UserID),
 			Messages: []openai.ChatCompletionMessageParamUnion{
-				openai.SystemMessage(systemPrompt.String()),
+				openai.SystemMessage(ForceNextAnswerLocale(request.Lang, systemPrompt.String())),
 				openai.UserMessage(request.Logline),
 			},
 			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 						Name:        "logline",
-						Description: openai.String(ExpandLoglineDescriptions[request.Lang]),
-						Schema:      ExpandLoglineSchemas[request.Lang],
+						Description: openai.String(schemas.Logline.Description),
+						Schema:      schemas.Logline.Schema,
 						Strict:      openai.Bool(true),
 					},
 				},

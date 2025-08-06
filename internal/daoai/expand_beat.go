@@ -28,28 +28,9 @@ var ExpandBeatPrompts = struct {
 	Input1 *template.Template
 	Input2 *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.ExpandBeat[models.LangEN].System, map[models.Lang]string{
-		models.LangEN: prompts.ExpandBeat[models.LangEN].System,
-		models.LangFR: prompts.ExpandBeat[models.LangFR].System,
-	}),
-	Input1: RegisterTemplateLocales(prompts.ExpandBeat[models.LangEN].Input1, map[models.Lang]string{
-		models.LangEN: prompts.ExpandBeat[models.LangEN].Input1,
-		models.LangFR: prompts.ExpandBeat[models.LangFR].Input1,
-	}),
-	Input2: RegisterTemplateLocales(prompts.ExpandBeat[models.LangEN].Input2, map[models.Lang]string{
-		models.LangEN: prompts.ExpandBeat[models.LangEN].Input2,
-		models.LangFR: prompts.ExpandBeat[models.LangFR].Input2,
-	}),
-}
-
-var ExpandBeatSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Beat[models.LangEN].Schema,
-	models.LangFR: schemas.Beat[models.LangFR].Schema,
-}
-
-var ExpandBeatDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Beat[models.LangEN].Description,
-	models.LangFR: schemas.Beat[models.LangFR].Description,
+	System: template.Must(template.New("").Parse(prompts.ExpandBeat.System)),
+	Input1: template.Must(template.New("").Parse(prompts.ExpandBeat.Input1)),
+	Input2: template.Must(template.New("").Parse(prompts.ExpandBeat.Input2)),
 }
 
 var ErrUnknownTargetKey = errors.New("unknown target key")
@@ -93,14 +74,14 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 		return nil, otel.ReportError(span, ErrUnknownTargetKey)
 	}
 
-	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
+	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Plan)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
 
-	err = ExpandBeatPrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), map[string]any{
+	err = ExpandBeatPrompts.System.Execute(systemPrompt, map[string]any{
 		"StoryPlan": storyPlanPartialPrompt,
 		"Plan":      request.Plan,
 	})
@@ -110,14 +91,14 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 
 	userPrompt1 := new(strings.Builder)
 
-	err = ExpandBeatPrompts.Input1.ExecuteTemplate(userPrompt1, request.Lang.String(), request)
+	err = ExpandBeatPrompts.Input1.Execute(userPrompt1, request)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("parse user message 1: %w", err))
 	}
 
 	userPrompt2 := new(strings.Builder)
 
-	err = ExpandBeatPrompts.Input2.ExecuteTemplate(userPrompt2, request.Lang.String(), request)
+	err = ExpandBeatPrompts.Input2.Execute(userPrompt2, request)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("parse user message 2: %w", err))
 	}
@@ -132,14 +113,14 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 				openai.SystemMessage(systemPrompt.String()),
 				openai.UserMessage(userPrompt1.String()),
 				repository.buildBeatsSheetResponse(request),
-				openai.UserMessage(userPrompt2.String()),
+				openai.UserMessage(ForceNextAnswerLocale(request.Lang, userPrompt2.String())),
 			},
 			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 						Name:        "storyBeat",
-						Description: openai.String(ExpandBeatDescriptions[request.Lang]),
-						Schema:      ExpandBeatSchemas[request.Lang],
+						Description: openai.String(schemas.Beat.Description),
+						Schema:      schemas.Beat.Schema,
 						Strict:      openai.Bool(true),
 					},
 				},

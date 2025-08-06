@@ -24,7 +24,6 @@ require (
 )
 
 require (
-	github.com/a-novel-kit/configurator v1.4.3 // indirect
 	github.com/a-novel-kit/jwt v1.1.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.11.5 // indirect

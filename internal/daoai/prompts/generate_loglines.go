@@ -6,15 +6,10 @@ import (
 	"github.com/goccy/go-yaml"
 
 	"github.com/a-novel/golib/config"
-
-	"github.com/a-novel/service-story-schematics/models"
 )
 
 //go:embed generate_loglines.en.yaml
 var generateLoglinesEnFile []byte
-
-//go:embed generate_loglines.fr.yaml
-var generateLoglinesFrFile []byte
 
 type GenerateLoglinessType struct {
 	System struct {
@@ -23,11 +18,4 @@ type GenerateLoglinessType struct {
 	} `yaml:"system"`
 }
 
-var GenerateLoglinesEN = config.MustUnmarshal[GenerateLoglinessType](yaml.Unmarshal, generateLoglinesEnFile)
-
-var GenerateLoglinesFR = config.MustUnmarshal[GenerateLoglinessType](yaml.Unmarshal, generateLoglinesFrFile)
-
-var GenerateLoglines = map[models.Lang]GenerateLoglinessType{
-	models.LangEN: GenerateLoglinesEN,
-	models.LangFR: GenerateLoglinesFR,
-}
+var GenerateLoglines = config.MustUnmarshal[GenerateLoglinessType](yaml.Unmarshal, generateLoglinesEnFile)

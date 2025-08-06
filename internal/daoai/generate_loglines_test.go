@@ -23,7 +23,7 @@ func TestGenerateLoglines(t *testing.T) {
 		t.Run(lang.String(), func(t *testing.T) {
 			t.Parallel()
 
-			data := testdata.GenerateLoglinesPrompts[lang]
+			data := testdata.GenerateLoglinesPrompt
 
 			for name, testCase := range data.Cases {
 				t.Run(name, func(t *testing.T) {
@@ -46,17 +46,19 @@ func TestGenerateLoglines(t *testing.T) {
 
 						if testCase.Theme != "" {
 							CheckAgent(
-								t, lang,
+								t,
 								fmt.Sprintf(data.CheckAgent.Themed, logline.Content, testCase.Theme),
 								fmt.Sprintf(errorMsgThemed, logline.Content, testCase.Theme),
 							)
 						} else {
 							CheckAgent(
-								t, lang,
+								t,
 								fmt.Sprintf(data.CheckAgent.Random, logline.Content),
 								fmt.Sprintf(errorMsgRandom, logline.Content),
 							)
 						}
+
+						CheckLang(t, lang, logline.Content)
 					}
 				})
 			}

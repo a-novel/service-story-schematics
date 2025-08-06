@@ -21,7 +21,7 @@ func TestExpandLogline(t *testing.T) {
 		t.Run(lang.String(), func(t *testing.T) {
 			t.Parallel()
 
-			data := testdata.ExpandLoglinePrompts[lang]
+			data := testdata.ExpandLoglinePrompt
 
 			for name, testCase := range data.Cases {
 				t.Run(name, func(t *testing.T) {
@@ -40,10 +40,11 @@ func TestExpandLogline(t *testing.T) {
 					require.NotEmpty(t, resp.Content)
 
 					CheckAgent(
-						t, lang,
+						t,
 						fmt.Sprintf(data.CheckAgent, resp.Content, testCase.Logline),
 						fmt.Sprintf(errorMsg, resp.Content, testCase.Logline),
 					)
+					CheckLang(t, lang, resp.Content)
 				})
 			}
 		})

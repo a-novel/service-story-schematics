@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	OpenAIModel   openai.ChatModel = "meta-llama/llama-4-maverick-17b-128e-instruct"
+	OpenAIModel   openai.ChatModel = "openai/gpt-oss-120b"
 	OpenAIBaseURL openai.ChatModel = "https://api.groq.com/openai/v1"
 )
 

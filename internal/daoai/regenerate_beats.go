@@ -28,28 +28,9 @@ var RegenerateBeatsPrompts = struct {
 	Input1 *template.Template
 	Input2 *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.RegenerateBeats[models.LangEN].System, map[models.Lang]string{
-		models.LangEN: prompts.RegenerateBeats[models.LangEN].System,
-		models.LangFR: prompts.RegenerateBeats[models.LangFR].System,
-	}),
-	Input1: RegisterTemplateLocales(prompts.RegenerateBeats[models.LangEN].Input1, map[models.Lang]string{
-		models.LangEN: prompts.RegenerateBeats[models.LangEN].Input1,
-		models.LangFR: prompts.RegenerateBeats[models.LangFR].Input1,
-	}),
-	Input2: RegisterTemplateLocales(prompts.RegenerateBeats[models.LangEN].Input2, map[models.Lang]string{
-		models.LangEN: prompts.RegenerateBeats[models.LangEN].Input2,
-		models.LangFR: prompts.RegenerateBeats[models.LangFR].Input2,
-	}),
-}
-
-var RegenerateBeatsSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Beats[models.LangEN].Schema,
-	models.LangFR: schemas.Beats[models.LangFR].Schema,
-}
-
-var RegenerateBeatsDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Beats[models.LangEN].Description,
-	models.LangFR: schemas.Beats[models.LangFR].Description,
+	System: template.Must(template.New("").Parse(prompts.RegenerateBeats.System)),
+	Input1: template.Must(template.New("").Parse(prompts.RegenerateBeats.Input1)),
+	Input2: template.Must(template.New("").Parse(prompts.RegenerateBeats.Input2)),
 }
 
 type RegenerateBeatsRequest struct {
@@ -83,14 +64,14 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		attribute.String("request.lang", request.Lang.String()),
 	)
 
-	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
+	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Plan)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
 
-	err = RegenerateBeatsPrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), map[string]any{
+	err = RegenerateBeatsPrompts.System.Execute(systemPrompt, map[string]any{
 		"StoryPlan": storyPlanPartialPrompt,
 		"Plan":      request.Plan,
 	})
@@ -100,7 +81,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 
 	userPrompt1 := new(strings.Builder)
 
-	err = RegenerateBeatsPrompts.Input1.ExecuteTemplate(userPrompt1, request.Lang.String(), map[string]any{
+	err = RegenerateBeatsPrompts.Input1.Execute(userPrompt1, map[string]any{
 		"Logline": request.Logline,
 	})
 	if err != nil {
@@ -109,7 +90,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 
 	userPrompt2 := new(strings.Builder)
 
-	err = RegenerateBeatsPrompts.Input2.ExecuteTemplate(userPrompt2, request.Lang.String(), map[string]any{
+	err = RegenerateBeatsPrompts.Input2.Execute(userPrompt2, map[string]any{
 		"Beats": request.RegenerateKeys,
 	})
 	if err != nil {
@@ -126,14 +107,14 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 				openai.SystemMessage(systemPrompt.String()),
 				openai.UserMessage(userPrompt1.String()),
 				openai.AssistantMessage(repository.extrudedBeatsSheet(request)),
-				openai.UserMessage(userPrompt2.String()),
+				openai.UserMessage(ForceNextAnswerLocale(request.Lang, userPrompt2.String())),
 			},
 			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 						Name:        "beats",
-						Description: openai.String(RegenerateBeatsDescriptions[request.Lang]),
-						Schema:      RegenerateBeatsSchemas[request.Lang],
+						Description: openai.String(schemas.Beats.Description),
+						Schema:      schemas.Beats.Schema,
 						Strict:      openai.Bool(true),
 					},
 				},

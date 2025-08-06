@@ -8,6 +8,7 @@ input1: |
   {{.Logline}}
 input2: |
   Generate the missing content for the following beats, in JSON format. Return ONLY the missing beats, in the
-  same order as the story plan.
+  same order as the story plan. If asked, return the missing beats in the target language rather than the original
+  language.
   {{range .Beats}}
   - {{.}}{{end}}
