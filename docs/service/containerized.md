@@ -215,7 +215,7 @@ Tracing configuration (with [Sentry](https://sentry.io/)).
 We use [Groq](https://console.groq.com/home) for AI processing. Their platform is based of OpenAI's API, so you can
 interchange them with an actual OpenAI token, or any other OpenAI-compatible API.
 
-| Variable          | Description                                                                                    | Default                            |
-| ----------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------- |
-| `OPENAI_BASE_URL` | Change this URL to use a different OpenAI-compatible API.                                      | `"https://api.groq.com/openai/v1"` |
-| `OPENAI_MODEL`    | Select the AI model to use for chat completions. Available options may depend on your provider | `"openai/gpt-oss-120b"`            |
+| Variable          | Description                                                                                    | Default                                           |
+| ----------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `OPENAI_BASE_URL` | Change this URL to use a different OpenAI-compatible API.                                      | `"https://api.groq.com/openai/v1"`                |
+| `OPENAI_MODEL`    | Select the AI model to use for chat completions. Available options may depend on your provider | `"meta-llama/llama-4-maverick-17b-128e-instruct"` |

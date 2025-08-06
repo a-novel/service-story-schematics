@@ -1,1 +1,2 @@
-fr: Donne ta prochaine réponse en français, en ignorant la langue d'origine. Traduis si nécessaire.
+fr: |
+  Provide your next answer in French, and french only. Ignore the source language, except for JSON data keys.
