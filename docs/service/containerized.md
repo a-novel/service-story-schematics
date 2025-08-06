@@ -19,7 +19,7 @@ to run.
 # https://github.com/containers/podman-compose
 services:
   json-keys-postgres:
-    image: ghcr.io/a-novel/service-json-keys/database:v1
+    image: ghcr.io/a-novel/service-json-keys/database:v1.2.5
     networks:
       - api
     environment:
@@ -32,7 +32,7 @@ services:
       - json-keys-postgres-data:/var/lib/postgresql/data/
 
   story-schematics-postgres:
-    image: ghcr.io/a-novel/service-story-schematics/database:v1
+    image: ghcr.io/a-novel/service-story-schematics/database:v1.0.3
     networks:
       - api
     environment:
@@ -45,7 +45,7 @@ services:
       - json-keys-postgres-data:/var/lib/postgresql/data/
 
   json-keys-service:
-    image: ghcr.io/a-novel/service-json-keys/standalone:v1
+    image: ghcr.io/a-novel/service-json-keys/standalone:v1.2.5
     depends_on:
       json-keys-postgres:
         condition: service_healthy
@@ -56,7 +56,7 @@ services:
       - api
 
   story-schematics-postgres-migrations:
-    image: ghcr.io/a-novel/service-story-schematics/jobs/migrations:v1
+    image: ghcr.io/a-novel/service-story-schematics/jobs/migrations:v1.0.3
     depends_on:
       story-schematics-postgres:
         condition: service_healthy
@@ -66,7 +66,7 @@ services:
       POSTGRES_DSN: postgres://postgres:postgres@story-schematics-postgres:5432/json-keys?sslmode=disable
 
   story-schematics-service:
-    image: ghcr.io/a-novel/service-story-schematics/api:v1
+    image: ghcr.io/a-novel/service-story-schematics/api:v1.0.3
     depends_on:
       story-schematics-postgres:
         condition: service_healthy
@@ -75,7 +75,7 @@ services:
     environment:
       POSTGRES_DSN: postgres://postgres:postgres@story-schematics-postgres:5432/story-schematics?sslmode=disable
       JSON_KEYS_SERVICE_URL: http://json-keys-service:8080
-      OPENAI_TOKEN: [your_OPENAI_TOKEN]
+      OPENAI_TOKEN: [your_groq_token]
     networks:
       - api
 
@@ -104,7 +104,7 @@ The standalone image takes longer to boot, and it is not suited for production u
 # https://github.com/containers/podman-compose
 services:
   json-keys-postgres:
-    image: ghcr.io/a-novel/service-json-keys/database:v1
+    image: ghcr.io/a-novel/service-json-keys/database:v1.2.5
     networks:
       - api
     environment:
@@ -117,7 +117,7 @@ services:
       - json-keys-postgres-data:/var/lib/postgresql/data/
 
   story-schematics-postgres:
-    image: ghcr.io/a-novel/service-story-schematics/database:v1
+    image: ghcr.io/a-novel/service-story-schematics/database:v1.0.3
     networks:
       - api
     environment:
@@ -130,7 +130,7 @@ services:
       - json-keys-postgres-data:/var/lib/postgresql/data/
 
   json-keys-service:
-    image: ghcr.io/a-novel/service-json-keys/standalone:v1
+    image: ghcr.io/a-novel/service-json-keys/standalone:v1.2.5
     depends_on:
       json-keys-postgres:
         condition: service_healthy
@@ -141,14 +141,14 @@ services:
       - api
 
   story-schematics-service:
-    image: ghcr.io/a-novel/service-story-schematics/standalone:v1
+    image: ghcr.io/a-novel/service-story-schematics/standalone:v1.0.3
     depends_on:
       story-schematics-postgres:
         condition: service_healthy
     environment:
       POSTGRES_DSN: postgres://postgres:postgres@story-schematics-postgres:5432/story-schematics?sslmode=disable
       JSON_KEYS_SERVICE_URL: http://json-keys-service:8080
-      OPENAI_TOKEN: [your_OPENAI_TOKEN]
+      OPENAI_TOKEN: [your_groq_token]
     networks:
       - api
 
