@@ -24,7 +24,7 @@ func TestRegenerateBeats(t *testing.T) {
 		t.Run(lang.String(), func(t *testing.T) {
 			t.Parallel()
 
-			data := testdata.RegenerateBeatsPrompts[lang]
+			data := testdata.RegenerateBeatsPrompt
 
 			for name, testCase := range data.Cases {
 				t.Run(name, func(t *testing.T) {
@@ -43,23 +43,27 @@ func TestRegenerateBeats(t *testing.T) {
 					require.NotNil(t, beatsSheet)
 					require.Len(t, beatsSheet, len(testCase.Plan.Beats))
 
+					var aggregatedBeats, aggregatedNewBeats []string
+
 					for i, beat := range beatsSheet {
+						inlinedBeat := beat.Title + "\n" + beat.Content
+						aggregatedBeats = append(aggregatedBeats, inlinedBeat)
+
 						if lo.Contains(testCase.RegenerateKeys, beat.Key) {
 							require.NotEqual(t, beat.Content, testCase.Beats[i].Content)
+
+							aggregatedNewBeats = append(aggregatedNewBeats, inlinedBeat)
 						} else {
 							require.Equal(t, beat.Content, testCase.Beats[i].Content)
 						}
 					}
 
-					aggregated := strings.Join(lo.Map(beatsSheet, func(item models.Beat, _ int) string {
-						return item.Title + "\n" + item.Content
-					}), "\n\n")
-
 					CheckAgent(
-						t, lang,
-						fmt.Sprintf(data.CheckAgent, aggregated, testCase.Logline),
-						fmt.Sprintf(errorMsg, aggregated, testCase.Logline),
+						t,
+						fmt.Sprintf(data.CheckAgent, strings.Join(aggregatedBeats, "\n"), testCase.Logline),
+						fmt.Sprintf(errorMsg, strings.Join(aggregatedBeats, "\n"), testCase.Logline),
 					)
+					CheckLang(t, lang, strings.Join(aggregatedNewBeats, "\n"))
 				})
 			}
 		})

@@ -23,7 +23,7 @@ func TestExpandBeat(t *testing.T) {
 		t.Run(lang.String(), func(t *testing.T) {
 			t.Parallel()
 
-			data := testdata.ExpandBeatPrompts[lang]
+			data := testdata.ExpandBeatPrompt
 
 			for name, testCase := range data.Cases {
 				t.Run(name, func(t *testing.T) {
@@ -49,10 +49,11 @@ func TestExpandBeat(t *testing.T) {
 					require.NotEqual(t, original.Content, resp.Content)
 
 					CheckAgent(
-						t, lang,
+						t,
 						fmt.Sprintf(data.CheckAgent, resp.Content, original),
 						fmt.Sprintf(errorMsg, resp.Content, original),
 					)
+					CheckLang(t, lang, resp.Content)
 				})
 			}
 		})

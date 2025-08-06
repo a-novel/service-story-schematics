@@ -24,7 +24,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 		t.Run(lang.String(), func(t *testing.T) {
 			t.Parallel()
 
-			data := testdata.GenerateBeatsSheetPrompts[lang]
+			data := testdata.GenerateBeatsSheetPrompt
 
 			for name, testCase := range data.Cases {
 				t.Run(name, func(t *testing.T) {
@@ -46,10 +46,11 @@ func TestGenerateBeatsSheet(t *testing.T) {
 					}), "\n\n")
 
 					CheckAgent(
-						t, lang,
+						t,
 						fmt.Sprintf(data.CheckAgent, aggregated, testCase.Logline),
 						fmt.Sprintf(errorMsg, aggregated, testCase.Logline),
 					)
+					CheckLang(t, lang, aggregated)
 				})
 			}
 		})

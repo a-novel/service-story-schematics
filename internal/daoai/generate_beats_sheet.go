@@ -26,20 +26,7 @@ const generateBeatsSheetTemperature = 0.8
 var GenerateBeatsSheetPrompts = struct {
 	System *template.Template
 }{
-	System: RegisterTemplateLocales(prompts.GenerateBeatsSheet[models.LangEN].System, map[models.Lang]string{
-		models.LangEN: prompts.GenerateBeatsSheet[models.LangEN].System,
-		models.LangFR: prompts.GenerateBeatsSheet[models.LangFR].System,
-	}),
-}
-
-var GenerateBeatsSheetSchemas = map[models.Lang]any{
-	models.LangEN: schemas.Beats[models.LangEN].Schema,
-	models.LangFR: schemas.Beats[models.LangFR].Schema,
-}
-
-var GenerateBeatsSheetDescriptions = map[models.Lang]string{
-	models.LangEN: schemas.Beats[models.LangEN].Description,
-	models.LangFR: schemas.Beats[models.LangFR].Description,
+	System: template.Must(template.New("").Parse(prompts.GenerateBeatsSheet.System)),
 }
 
 var ErrInvalidBeatSheet = errors.New("invalid beat sheet")
@@ -72,14 +59,14 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 		attribute.String("request.userID", request.UserID),
 	)
 
-	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Lang, request.Plan)
+	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Plan)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
 
-	err = GenerateBeatsSheetPrompts.System.ExecuteTemplate(systemPrompt, request.Lang.String(), map[string]any{
+	err = GenerateBeatsSheetPrompts.System.Execute(systemPrompt, map[string]any{
 		"StoryPlan": storyPlanPartialPrompt,
 		"Plan":      request.Plan,
 	})
@@ -94,15 +81,15 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 			Temperature: param.NewOpt(generateBeatsSheetTemperature),
 			User:        param.NewOpt(request.UserID),
 			Messages: []openai.ChatCompletionMessageParamUnion{
-				openai.SystemMessage(systemPrompt.String()),
+				openai.SystemMessage(ForceNextAnswerLocale(request.Lang, systemPrompt.String())),
 				openai.UserMessage(request.Logline),
 			},
 			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 						Name:        "story_beats",
-						Description: openai.String(GenerateBeatsSheetDescriptions[request.Lang]),
-						Schema:      GenerateBeatsSheetSchemas[request.Lang],
+						Description: openai.String(schemas.Beats.Description),
+						Schema:      schemas.Beats.Schema,
 						Strict:      openai.Bool(true),
 					},
 				},

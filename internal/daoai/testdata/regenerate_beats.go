@@ -2,6 +2,7 @@ package testdata
 
 import (
 	_ "embed"
+
 	"github.com/a-novel/golib/config"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/goccy/go-yaml"
@@ -9,9 +10,6 @@ import (
 
 //go:embed regenerate_beats.en.yaml
 var regenerateBeatsEnFile []byte
-
-//go:embed regenerate_beats.fr.yaml
-var regenerateBeatsFrFile []byte
 
 type RegenerateBeatsTestCase struct {
 	Logline        string           `yaml:"logline"`
@@ -25,11 +23,4 @@ type RegenerateBeatsPromptsType struct {
 	CheckAgent string                             `yaml:"checkAgent"`
 }
 
-var RegenerateBeatsPromptEN = config.MustUnmarshal[RegenerateBeatsPromptsType](yaml.Unmarshal, regenerateBeatsEnFile)
-
-var RegenerateBeatsPromptFR = config.MustUnmarshal[RegenerateBeatsPromptsType](yaml.Unmarshal, regenerateBeatsFrFile)
-
-var RegenerateBeatsPrompts = map[models.Lang]RegenerateBeatsPromptsType{
-	models.LangEN: RegenerateBeatsPromptEN,
-	models.LangFR: RegenerateBeatsPromptFR,
-}
+var RegenerateBeatsPrompt = config.MustUnmarshal[RegenerateBeatsPromptsType](yaml.Unmarshal, regenerateBeatsEnFile)

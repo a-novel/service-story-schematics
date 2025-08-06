@@ -1,6 +1,7 @@
 package daoai_test
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 	"testing"
@@ -21,7 +22,7 @@ const TestUser = "agora-story-schematics-test"
 var checkAgentFormatter = regexp.MustCompile("[^a-zA-Z0-9 ]")
 
 // CheckAgent validates the response of an OpenAI agent to a given prompt.
-func CheckAgent(t *testing.T, lang models.Lang, prompt, message string) {
+func CheckAgent(t *testing.T, prompt, message string) {
 	t.Helper()
 
 	chatCompletion, err := config.OpenAIPresetDefault.Client().
@@ -31,7 +32,7 @@ func CheckAgent(t *testing.T, lang models.Lang, prompt, message string) {
 			Temperature: param.NewOpt(0.2),
 			User:        param.NewOpt(TestUser),
 			Messages: []openai.ChatCompletionMessageParamUnion{
-				openai.SystemMessage(testdata.UtilsPrompts[lang].CheckAgent.System),
+				openai.SystemMessage(testdata.UtilsPrompt.CheckAgent.System),
 				openai.UserMessage(prompt),
 			},
 		})
@@ -43,7 +44,17 @@ func CheckAgent(t *testing.T, lang models.Lang, prompt, message string) {
 	formattedResponse = strings.TrimSpace(formattedResponse)
 	formattedResponse = strings.ToUpper(formattedResponse)
 	formattedResponse = checkAgentFormatter.ReplaceAllString(formattedResponse, "")
-	require.Equal(t, testdata.UtilsPrompts[lang].CheckAgent.Expect, formattedResponse, message)
+	require.Equal(t, testdata.UtilsPrompt.CheckAgent.Expect, formattedResponse, message)
+}
+
+func CheckLang(t *testing.T, lang models.Lang, rawAnswer string) {
+	t.Helper()
+
+	CheckAgent(
+		t,
+		fmt.Sprintf(testdata.Langs[lang], rawAnswer),
+		fmt.Sprintf("answer is not in expected language %s\n%s", lang, rawAnswer),
+	)
 }
 
 func TestStoryPlanToPrompt(t *testing.T) {
@@ -52,15 +63,12 @@ func TestStoryPlanToPrompt(t *testing.T) {
 	testCases := []struct {
 		name string
 
-		template models.Lang
-		plan     models.StoryPlan
+		plan models.StoryPlan
 
 		expect string
 	}{
 		{
 			name: "En",
-
-			template: "en",
 
 			plan: models.StoryPlan{
 				Description: "Test Description.",
@@ -125,7 +133,7 @@ Ensure each scene contributes to character growth and progression.`,
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
 
-			prompt, err := daoai.StoryPlanToPrompt(testCase.template, testCase.plan)
+			prompt, err := daoai.StoryPlanToPrompt(testCase.plan)
 			require.NoError(t, err)
 			require.Equal(t, strings.TrimSpace(testCase.expect), strings.TrimSpace(prompt))
 		})
