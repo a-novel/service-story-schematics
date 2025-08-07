@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/packages/param"
+	"github.com/openai/openai-go/v2"
+	"github.com/openai/openai-go/v2/packages/param"
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai"
@@ -28,9 +28,8 @@ func CheckAgent(t *testing.T, prompt, message string) {
 	chatCompletion, err := config.OpenAIPresetDefault.Client().
 		Chat.Completions.
 		New(t.Context(), openai.ChatCompletionNewParams{
-			Model:       config.OpenAIPresetDefault.Model,
-			Temperature: param.NewOpt(0.2),
-			User:        param.NewOpt(TestUser),
+			Model: config.OpenAIPresetDefault.Model,
+			User:  param.NewOpt(TestUser),
 			Messages: []openai.ChatCompletionMessageParamUnion{
 				openai.SystemMessage(testdata.UtilsPrompt.CheckAgent.System),
 				openai.UserMessage(prompt),

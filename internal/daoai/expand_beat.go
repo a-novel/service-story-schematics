@@ -8,8 +8,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/packages/param"
+	"github.com/openai/openai-go/v2"
+	"github.com/openai/openai-go/v2/packages/param"
 	"github.com/samber/lo"
 	"go.opentelemetry.io/otel/attribute"
 
@@ -20,8 +20,6 @@ import (
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
 )
-
-const expandBeatTemperature = 0.8
 
 var ExpandBeatPrompts = struct {
 	System *template.Template
@@ -106,9 +104,8 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 	chatCompletion, err := repository.config.Client().
 		Chat.Completions.
 		New(ctx, openai.ChatCompletionNewParams{
-			Model:       repository.config.Model,
-			Temperature: param.NewOpt(expandBeatTemperature),
-			User:        param.NewOpt(request.UserID),
+			Model: repository.config.Model,
+			User:  param.NewOpt(request.UserID),
 			Messages: []openai.ChatCompletionMessageParamUnion{
 				openai.SystemMessage(systemPrompt.String()),
 				openai.UserMessage(userPrompt1.String()),

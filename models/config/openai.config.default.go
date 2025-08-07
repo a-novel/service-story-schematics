@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/v2"
 
 	"github.com/a-novel/golib/config"
 )

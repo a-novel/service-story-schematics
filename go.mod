@@ -13,7 +13,6 @@ require (
 	github.com/goccy/go-yaml v1.18.0
 	github.com/google/uuid v1.6.0
 	github.com/ogen-go/ogen v1.14.0
-	github.com/openai/openai-go v1.12.0
 	github.com/samber/lo v1.51.0
 	github.com/stretchr/testify v1.10.0
 	github.com/uptrace/bun v1.2.15
@@ -22,6 +21,8 @@ require (
 	go.opentelemetry.io/otel/metric v1.37.0
 	go.opentelemetry.io/otel/trace v1.37.0
 )
+
+require github.com/openai/openai-go/v2 v2.0.0
 
 require (
 	github.com/a-novel-kit/jwt v1.1.6 // indirect

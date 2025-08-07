@@ -7,6 +7,7 @@ schema:
     - beats
   properties:
     beats:
+      type: array
       items:
         type: object
         additionalProperties: false

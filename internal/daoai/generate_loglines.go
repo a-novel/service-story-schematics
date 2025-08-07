@@ -7,8 +7,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/packages/param"
+	"github.com/openai/openai-go/v2"
+	"github.com/openai/openai-go/v2/packages/param"
 	"go.opentelemetry.io/otel/attribute"
 
 	"github.com/a-novel/golib/otel"
@@ -18,8 +18,6 @@ import (
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
 )
-
-const generateLoglineTemperature = 1.0
 
 var GenerateLoglinesPrompts = struct {
 	Themed *template.Template
@@ -87,10 +85,9 @@ func (repository *GenerateLoglinesRepository) GenerateLoglines(
 	chatCompletion, err := repository.config.Client().
 		Chat.Completions.
 		New(ctx, openai.ChatCompletionNewParams{
-			Model:       repository.config.Model,
-			Temperature: param.NewOpt(generateLoglineTemperature),
-			User:        param.NewOpt(request.UserID),
-			Messages:    messages,
+			Model:    repository.config.Model,
+			User:     param.NewOpt(request.UserID),
+			Messages: messages,
 			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
