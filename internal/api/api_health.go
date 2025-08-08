@@ -3,8 +3,10 @@ package api
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
+	"github.com/go-faster/jx"
 	"github.com/uptrace/bun"
 	"go.opentelemetry.io/otel/codes"
 
@@ -102,9 +104,39 @@ func (api *API) reportJSONKeys(ctx context.Context) apimodels.Dependency {
 	}
 }
 
+func (api *API) reportOpenAI(ctx context.Context) apimodels.Dependency {
+	ctx, span := otel.Tracer().Start(ctx, "api.reportOpenAI")
+	defer span.End()
+
+	logger := otel.Logger()
+
+	_, err := api.OpenAIClient.Client().Models.Get(ctx, api.OpenAIClient.Model)
+	if err != nil {
+		logger.ErrorContext(ctx, fmt.Sprintf("ping OpenAI: %v", err))
+		span.SetStatus(codes.Error, "")
+
+		return apimodels.Dependency{
+			Name:   "openai",
+			Status: apimodels.DependencyStatusDown,
+		}
+	}
+
+	otel.ReportSuccessNoContent(span)
+
+	return apimodels.Dependency{
+		Name:   "openai",
+		Status: apimodels.DependencyStatusUp,
+		AdditionalProps: map[string]jx.Raw{
+			"base_url": []byte(strconv.Quote(api.OpenAIClient.BaseURL)),
+			"model":    []byte(strconv.Quote(api.OpenAIClient.Model)),
+		},
+	}
+}
+
 func (api *API) Healthcheck(ctx context.Context) (apimodels.HealthcheckRes, error) {
 	return &apimodels.Health{
 		Postgres: api.reportPostgres(ctx),
 		JsonKeys: api.reportJSONKeys(ctx),
+		Openai:   api.reportOpenAI(ctx),
 	}, nil
 }

@@ -551,6 +551,7 @@ func (*GetLoglinesOKApplicationJSON) getLoglinesRes() {}
 type Health struct {
 	Postgres Dependency `json:"postgres"`
 	JsonKeys Dependency `json:"jsonKeys"`
+	Openai   Dependency `json:"openai"`
 }
 
 // GetPostgres returns the value of Postgres.
@@ -563,6 +564,11 @@ func (s *Health) GetJsonKeys() Dependency {
 	return s.JsonKeys
 }
 
+// GetOpenai returns the value of Openai.
+func (s *Health) GetOpenai() Dependency {
+	return s.Openai
+}
+
 // SetPostgres sets the value of Postgres.
 func (s *Health) SetPostgres(val Dependency) {
 	s.Postgres = val
@@ -571,6 +577,11 @@ func (s *Health) SetPostgres(val Dependency) {
 // SetJsonKeys sets the value of JsonKeys.
 func (s *Health) SetJsonKeys(val Dependency) {
 	s.JsonKeys = val
+}
+
+// SetOpenai sets the value of Openai.
+func (s *Health) SetOpenai(val Dependency) {
+	s.Openai = val
 }
 
 func (*Health) healthcheckRes() {}
