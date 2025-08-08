@@ -126,10 +126,10 @@ func TestRegenerateBeats(t *testing.T) {
 			},
 
 			regenerateBeatsData: &regenerateBeatsData{
-				err: dao.ErrStoryPlanNotFound,
+				err: services.ErrStoryPlanNotFound,
 			},
 
-			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: services.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "Error",

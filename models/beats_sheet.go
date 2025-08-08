@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,9 +10,8 @@ import (
 // BeatsSheet represents a story idea as a list of beats, i.e. single phrases that summarize each beat of the
 // story.
 type BeatsSheet struct {
-	ID          uuid.UUID `json:"id"`
-	LoglineID   uuid.UUID `json:"loglineID"`
-	StoryPlanID uuid.UUID `json:"storyPlanID"`
+	ID        uuid.UUID `json:"id"`
+	LoglineID uuid.UUID `json:"loglineID"`
 
 	// The beats (in order) that make up the story.
 	Content []Beat `bun:"content,type:jsonb" json:"content"`
@@ -37,4 +37,8 @@ type Beat struct {
 
 	// A summary of the beat.
 	Content string `json:"content" jsonschema_description:"A summary of the scenes in the beat" yaml:"content"`
+}
+
+func (beat Beat) String() string {
+	return fmt.Sprintf("%s (%s)\n%s", beat.Title, beat.Key, beat.Content)
 }

@@ -15,9 +15,8 @@ var ErrBeatsSheetNotFound = errors.New("beats schematic not found")
 type BeatsSheetEntity struct {
 	bun.BaseModel `bun:"table:beats_sheets"`
 
-	ID          uuid.UUID `bun:"id,pk,type:uuid"`
-	LoglineID   uuid.UUID `bun:"logline_id,type:uuid"`
-	StoryPlanID uuid.UUID `bun:"story_plan_id,type:uuid"`
+	ID        uuid.UUID `bun:"id,pk,type:uuid"`
+	LoglineID uuid.UUID `bun:"logline_id,type:uuid"`
 
 	Content []models.Beat `bun:"content,type:jsonb"`
 	Lang    models.Lang   `bun:"lang"`

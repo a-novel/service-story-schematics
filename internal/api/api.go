@@ -35,7 +35,6 @@ type API struct {
 
 	CreateBeatsSheetService CreateBeatsSheetService
 	CreateLoglineService    CreateLoglineService
-	CreateStoryPlanService  CreateStoryPlanService
 
 	ExpandBeatService    ExpandBeatService
 	ExpandLoglineService ExpandLoglineService
@@ -45,15 +44,11 @@ type API struct {
 
 	ListBeatsSheetsService ListBeatsSheetsService
 	ListLoglinesService    ListLoglinesService
-	ListStoryPlansService  ListStoryPlansService
 
 	RegenerateBeatsService RegenerateBeatsService
 
 	SelectBeatsSheetService SelectBeatsSheetService
 	SelectLoglineService    SelectLoglineService
-	SelectStoryPlanService  SelectStoryPlanService
-
-	UpdateStoryPlanService UpdateStoryPlanService
 
 	JKClient *jkApiModels.Client
 }

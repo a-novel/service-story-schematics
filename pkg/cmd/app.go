@@ -68,20 +68,13 @@ func App[Otel otel.Config, Pg postgres.Config](
 
 	selectSlugIterationDAO := dao.NewSelectSlugIterationRepository()
 
-	existsStoryPlanSlugDAO := dao.NewExistsStoryPlanSlugRepository()
-
 	insertBeatsSheetDAO := dao.NewInsertBeatsSheetRepository()
 	insertLoglineDAO := dao.NewInsertLoglineRepository()
-	insertStoryPlanDAO := dao.NewInsertStoryPlanRepository(existsStoryPlanSlugDAO)
 	listBeatsSheetsDAO := dao.NewListBeatsSheetsRepository()
 	listLoglinesDAO := dao.NewListLoglinesRepository()
-	listStoryPlansDAO := dao.NewListStoryPlansRepository()
 	selectBeatsSheetDAO := dao.NewSelectBeatsSheetRepository()
 	selectLoglineDAO := dao.NewSelectLoglineRepository()
 	selectLoglineBySlugDAO := dao.NewSelectLoglineBySlugRepository()
-	selectStoryPlanDAO := dao.NewSelectStoryPlanRepository()
-	selectStoryPlanBySlugDAO := dao.NewSelectStoryPlanBySlugRepository()
-	updateStoryPlanDAO := dao.NewUpdateStoryPlanRepository(existsStoryPlanSlugDAO)
 
 	expandBeatDAO := daoai.NewExpandBeatRepository(&config.OpenAI)
 	expandLoglineDAO := daoai.NewExpandLoglineRepository(&config.OpenAI)
@@ -93,10 +86,12 @@ func App[Otel otel.Config, Pg postgres.Config](
 	// SERVICES
 	// =================================================================================================================
 
+	selectStoryPlanService := services.NewSelectStoryPlanService()
+
 	createBeatsSheetService := services.NewCreateBeatsSheetService(
 		services.NewCreateBeatsSheetServiceSource(
 			insertBeatsSheetDAO,
-			selectStoryPlanDAO,
+			selectStoryPlanService,
 			selectLoglineDAO,
 		),
 	)
@@ -106,18 +101,12 @@ func App[Otel otel.Config, Pg postgres.Config](
 			selectSlugIterationDAO,
 		),
 	)
-	createStoryPlanService := services.NewCreateStoryPlanService(
-		services.NewCreateStoryPlanServiceSource(
-			insertStoryPlanDAO,
-			selectSlugIterationDAO,
-		),
-	)
 	expandBeatService := services.NewExpandBeatService(
 		services.NewExpandBeatServiceSource(
 			expandBeatDAO,
 			selectBeatsSheetDAO,
 			selectLoglineDAO,
-			selectStoryPlanDAO,
+			selectStoryPlanService,
 		),
 	)
 	expandLoglineService := services.NewExpandLoglineService(expandLoglineDAO)
@@ -125,7 +114,7 @@ func App[Otel otel.Config, Pg postgres.Config](
 		services.NewGenerateBeatsSheetServiceSource(
 			generateBeatsSheetDAO,
 			selectLoglineDAO,
-			selectStoryPlanDAO,
+			selectStoryPlanService,
 		),
 	)
 	generateLoglinesService := services.NewGenerateLoglinesService(generateLoglinesDAO)
@@ -136,13 +125,12 @@ func App[Otel otel.Config, Pg postgres.Config](
 		),
 	)
 	listLoglinesService := services.NewListLoglinesService(listLoglinesDAO)
-	listStoryPlansService := services.NewListStoryPlansService(listStoryPlansDAO)
 	regenerateBeatsService := services.NewRegenerateBeatsService(
 		services.NewRegenerateBeatsServiceSource(
 			regenerateBeatsDAO,
 			selectBeatsSheetDAO,
 			selectLoglineDAO,
-			selectStoryPlanDAO,
+			selectStoryPlanService,
 		),
 	)
 	selectBeatsSheetService := services.NewSelectBeatsSheetService(
@@ -157,13 +145,6 @@ func App[Otel otel.Config, Pg postgres.Config](
 			selectLoglineBySlugDAO,
 		),
 	)
-	selectStoryPlanService := services.NewSelectStoryPlanService(
-		services.NewSelectStoryPlanServiceSource(
-			selectStoryPlanDAO,
-			selectStoryPlanBySlugDAO,
-		),
-	)
-	updateStoryPlanService := services.NewUpdateStoryPlanService(updateStoryPlanDAO)
 
 	// =================================================================================================================
 	// SETUP ROUTER
@@ -194,7 +175,6 @@ func App[Otel otel.Config, Pg postgres.Config](
 	handler := &api.API{
 		CreateBeatsSheetService: createBeatsSheetService,
 		CreateLoglineService:    createLoglineService,
-		CreateStoryPlanService:  createStoryPlanService,
 
 		ExpandBeatService:    expandBeatService,
 		ExpandLoglineService: expandLoglineService,
@@ -204,15 +184,11 @@ func App[Otel otel.Config, Pg postgres.Config](
 
 		ListBeatsSheetsService: listBeatsSheetsService,
 		ListLoglinesService:    listLoglinesService,
-		ListStoryPlansService:  listStoryPlansService,
 
 		RegenerateBeatsService: regenerateBeatsService,
 
 		SelectBeatsSheetService: selectBeatsSheetService,
 		SelectLoglineService:    selectLoglineService,
-		SelectStoryPlanService:  selectStoryPlanService,
-
-		UpdateStoryPlanService: updateStoryPlanService,
 
 		JKClient: jkClient,
 	}

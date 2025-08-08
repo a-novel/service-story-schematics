@@ -84,84 +84,6 @@ func (s *Beat) SetContent(val string) {
 
 func (*Beat) expandBeatRes() {}
 
-// A beat is a key event in a story that drives the plot forward. It is used to structure the story
-// and ensure its coherence. A beat describes the content of a beat.
-// Ref: #/components/schemas/BeatDefinition
-type BeatDefinition struct {
-	// The name of the beat.
-	Name string `json:"name"`
-	// The key of the beat.
-	Key string `json:"key"`
-	// The key points of the beat.
-	KeyPoints []string `json:"keyPoints"`
-	// The purpose of the beat.
-	Purpose string `json:"purpose"`
-	// The minimum number of scenes in the beat.
-	MinScenes int `json:"minScenes"`
-	// The maximum number of scenes in the beat.
-	MaxScenes int `json:"maxScenes"`
-}
-
-// GetName returns the value of Name.
-func (s *BeatDefinition) GetName() string {
-	return s.Name
-}
-
-// GetKey returns the value of Key.
-func (s *BeatDefinition) GetKey() string {
-	return s.Key
-}
-
-// GetKeyPoints returns the value of KeyPoints.
-func (s *BeatDefinition) GetKeyPoints() []string {
-	return s.KeyPoints
-}
-
-// GetPurpose returns the value of Purpose.
-func (s *BeatDefinition) GetPurpose() string {
-	return s.Purpose
-}
-
-// GetMinScenes returns the value of MinScenes.
-func (s *BeatDefinition) GetMinScenes() int {
-	return s.MinScenes
-}
-
-// GetMaxScenes returns the value of MaxScenes.
-func (s *BeatDefinition) GetMaxScenes() int {
-	return s.MaxScenes
-}
-
-// SetName sets the value of Name.
-func (s *BeatDefinition) SetName(val string) {
-	s.Name = val
-}
-
-// SetKey sets the value of Key.
-func (s *BeatDefinition) SetKey(val string) {
-	s.Key = val
-}
-
-// SetKeyPoints sets the value of KeyPoints.
-func (s *BeatDefinition) SetKeyPoints(val []string) {
-	s.KeyPoints = val
-}
-
-// SetPurpose sets the value of Purpose.
-func (s *BeatDefinition) SetPurpose(val string) {
-	s.Purpose = val
-}
-
-// SetMinScenes sets the value of MinScenes.
-func (s *BeatDefinition) SetMinScenes(val int) {
-	s.MinScenes = val
-}
-
-// SetMaxScenes sets the value of MaxScenes.
-func (s *BeatDefinition) SetMaxScenes(val int) {
-	s.MaxScenes = val
-}
-
 type Beats []Beat
 
 func (*Beats) regenerateBeatsRes() {}
@@ -169,10 +91,9 @@ func (*Beats) regenerateBeatsRes() {}
 // A beats sheet is a detailed outline of a story, breaking it down into its individual beats.
 // Ref: #/components/schemas/BeatsSheet
 type BeatsSheet struct {
-	ID          BeatsSheetID `json:"id"`
-	LoglineID   LoglineID    `json:"loglineID"`
-	StoryPlanID StoryPlanID  `json:"storyPlanID"`
-	Content     []Beat       `json:"content"`
+	ID        BeatsSheetID `json:"id"`
+	LoglineID LoglineID    `json:"loglineID"`
+	Content   []Beat       `json:"content"`
 	// The language of the beats sheet.
 	Lang Lang `json:"lang"`
 	// The date and time at which the beats sheet was created.
@@ -187,11 +108,6 @@ func (s *BeatsSheet) GetID() BeatsSheetID {
 // GetLoglineID returns the value of LoglineID.
 func (s *BeatsSheet) GetLoglineID() LoglineID {
 	return s.LoglineID
-}
-
-// GetStoryPlanID returns the value of StoryPlanID.
-func (s *BeatsSheet) GetStoryPlanID() StoryPlanID {
-	return s.StoryPlanID
 }
 
 // GetContent returns the value of Content.
@@ -217,11 +133,6 @@ func (s *BeatsSheet) SetID(val BeatsSheetID) {
 // SetLoglineID sets the value of LoglineID.
 func (s *BeatsSheet) SetLoglineID(val LoglineID) {
 	s.LoglineID = val
-}
-
-// SetStoryPlanID sets the value of StoryPlanID.
-func (s *BeatsSheet) SetStoryPlanID(val StoryPlanID) {
-	s.StoryPlanID = val
 }
 
 // SetContent sets the value of Content.
@@ -315,8 +226,7 @@ func (s *BeatsSheetPreview) SetCreatedAt(val time.Time) {
 
 // Ref: #/components/schemas/CreateBeatsSheetForm
 type CreateBeatsSheetForm struct {
-	LoglineID   LoglineID   `json:"loglineID"`
-	StoryPlanID StoryPlanID `json:"storyPlanID"`
+	LoglineID LoglineID `json:"loglineID"`
 	// The beats of the story, in order.
 	Content []Beat `json:"content"`
 	// The language of the beats sheet.
@@ -326,11 +236,6 @@ type CreateBeatsSheetForm struct {
 // GetLoglineID returns the value of LoglineID.
 func (s *CreateBeatsSheetForm) GetLoglineID() LoglineID {
 	return s.LoglineID
-}
-
-// GetStoryPlanID returns the value of StoryPlanID.
-func (s *CreateBeatsSheetForm) GetStoryPlanID() StoryPlanID {
-	return s.StoryPlanID
 }
 
 // GetContent returns the value of Content.
@@ -346,11 +251,6 @@ func (s *CreateBeatsSheetForm) GetLang() Lang {
 // SetLoglineID sets the value of LoglineID.
 func (s *CreateBeatsSheetForm) SetLoglineID(val LoglineID) {
 	s.LoglineID = val
-}
-
-// SetStoryPlanID sets the value of StoryPlanID.
-func (s *CreateBeatsSheetForm) SetStoryPlanID(val StoryPlanID) {
-	s.StoryPlanID = val
 }
 
 // SetContent sets the value of Content.
@@ -411,69 +311,6 @@ func (s *CreateLoglineForm) SetContent(val string) {
 
 // SetLang sets the value of Lang.
 func (s *CreateLoglineForm) SetLang(val Lang) {
-	s.Lang = val
-}
-
-// Ref: #/components/schemas/CreateStoryPlanForm
-type CreateStoryPlanForm struct {
-	Slug Slug `json:"slug"`
-	// The name of the story plan.
-	Name string `json:"name"`
-	// The description of the story plan.
-	Description string `json:"description"`
-	// The beats of the story plan.
-	Beats []BeatDefinition `json:"beats"`
-	// The language of the story plan.
-	Lang Lang `json:"lang"`
-}
-
-// GetSlug returns the value of Slug.
-func (s *CreateStoryPlanForm) GetSlug() Slug {
-	return s.Slug
-}
-
-// GetName returns the value of Name.
-func (s *CreateStoryPlanForm) GetName() string {
-	return s.Name
-}
-
-// GetDescription returns the value of Description.
-func (s *CreateStoryPlanForm) GetDescription() string {
-	return s.Description
-}
-
-// GetBeats returns the value of Beats.
-func (s *CreateStoryPlanForm) GetBeats() []BeatDefinition {
-	return s.Beats
-}
-
-// GetLang returns the value of Lang.
-func (s *CreateStoryPlanForm) GetLang() Lang {
-	return s.Lang
-}
-
-// SetSlug sets the value of Slug.
-func (s *CreateStoryPlanForm) SetSlug(val Slug) {
-	s.Slug = val
-}
-
-// SetName sets the value of Name.
-func (s *CreateStoryPlanForm) SetName(val string) {
-	s.Name = val
-}
-
-// SetDescription sets the value of Description.
-func (s *CreateStoryPlanForm) SetDescription(val string) {
-	s.Description = val
-}
-
-// SetBeats sets the value of Beats.
-func (s *CreateStoryPlanForm) SetBeats(val []BeatDefinition) {
-	s.Beats = val
-}
-
-// SetLang sets the value of Lang.
-func (s *CreateStoryPlanForm) SetLang(val Lang) {
 	s.Lang = val
 }
 
@@ -621,7 +458,6 @@ func (s *ForbiddenError) SetError(val string) {
 
 func (*ForbiddenError) createBeatsSheetRes()   {}
 func (*ForbiddenError) createLoglineRes()      {}
-func (*ForbiddenError) createStoryPlanRes()    {}
 func (*ForbiddenError) expandBeatRes()         {}
 func (*ForbiddenError) expandLoglineRes()      {}
 func (*ForbiddenError) generateBeatsSheetRes() {}
@@ -630,15 +466,11 @@ func (*ForbiddenError) getBeatsSheetRes()      {}
 func (*ForbiddenError) getBeatsSheetsRes()     {}
 func (*ForbiddenError) getLoglineRes()         {}
 func (*ForbiddenError) getLoglinesRes()        {}
-func (*ForbiddenError) getStoryPlanRes()       {}
-func (*ForbiddenError) getStoryPlansRes()      {}
 func (*ForbiddenError) regenerateBeatsRes()    {}
-func (*ForbiddenError) updateStoryPlanRes()    {}
 
 // Ref: #/components/schemas/GenerateBeatsSheetForm
 type GenerateBeatsSheetForm struct {
-	LoglineID   LoglineID   `json:"loglineID"`
-	StoryPlanID StoryPlanID `json:"storyPlanID"`
+	LoglineID LoglineID `json:"loglineID"`
 	// The language of the beats sheet to generate.
 	Lang Lang `json:"lang"`
 }
@@ -646,11 +478,6 @@ type GenerateBeatsSheetForm struct {
 // GetLoglineID returns the value of LoglineID.
 func (s *GenerateBeatsSheetForm) GetLoglineID() LoglineID {
 	return s.LoglineID
-}
-
-// GetStoryPlanID returns the value of StoryPlanID.
-func (s *GenerateBeatsSheetForm) GetStoryPlanID() StoryPlanID {
-	return s.StoryPlanID
 }
 
 // GetLang returns the value of Lang.
@@ -661,11 +488,6 @@ func (s *GenerateBeatsSheetForm) GetLang() Lang {
 // SetLoglineID sets the value of LoglineID.
 func (s *GenerateBeatsSheetForm) SetLoglineID(val LoglineID) {
 	s.LoglineID = val
-}
-
-// SetStoryPlanID sets the value of StoryPlanID.
-func (s *GenerateBeatsSheetForm) SetStoryPlanID(val StoryPlanID) {
-	s.StoryPlanID = val
 }
 
 // SetLang sets the value of Lang.
@@ -724,10 +546,6 @@ func (*GetBeatsSheetsOKApplicationJSON) getBeatsSheetsRes() {}
 type GetLoglinesOKApplicationJSON []LoglinePreview
 
 func (*GetLoglinesOKApplicationJSON) getLoglinesRes() {}
-
-type GetStoryPlansOKApplicationJSON []StoryPlanPreview
-
-func (*GetStoryPlansOKApplicationJSON) getStoryPlansRes() {}
 
 // Ref: #/components/schemas/Health
 type Health struct {
@@ -1022,9 +840,7 @@ func (*NotFoundError) expandBeatRes()         {}
 func (*NotFoundError) generateBeatsSheetRes() {}
 func (*NotFoundError) getBeatsSheetRes()      {}
 func (*NotFoundError) getLoglineRes()         {}
-func (*NotFoundError) getStoryPlanRes()       {}
 func (*NotFoundError) regenerateBeatsRes()    {}
-func (*NotFoundError) updateStoryPlanRes()    {}
 
 // NewOptInt returns new OptInt with value set to v.
 func NewOptInt(v int) OptInt {
@@ -1164,52 +980,6 @@ func (o OptSlug) Or(d Slug) Slug {
 	return d
 }
 
-// NewOptStoryPlanID returns new OptStoryPlanID with value set to v.
-func NewOptStoryPlanID(v StoryPlanID) OptStoryPlanID {
-	return OptStoryPlanID{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptStoryPlanID is optional StoryPlanID.
-type OptStoryPlanID struct {
-	Value StoryPlanID
-	Set   bool
-}
-
-// IsSet returns true if OptStoryPlanID was set.
-func (o OptStoryPlanID) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptStoryPlanID) Reset() {
-	var v StoryPlanID
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptStoryPlanID) SetTo(v StoryPlanID) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptStoryPlanID) Get() (v StoryPlanID, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptStoryPlanID) Or(d StoryPlanID) StoryPlanID {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
 // PingIMATeapot is response for Ping operation.
 type PingIMATeapot struct{}
 
@@ -1260,174 +1030,6 @@ func (s *RegenerateBeatsForm) SetRegenerateKeys(val []string) {
 
 type Slug string
 
-// A story plan structures the output of the story schematics service. It describes the different
-// beats of a story, controlling its final shape.
-// Ref: #/components/schemas/StoryPlan
-type StoryPlan struct {
-	ID   StoryPlanID `json:"id"`
-	Slug Slug        `json:"slug"`
-	// The name of the story plan.
-	Name string `json:"name"`
-	// The description of the story plan.
-	Description string `json:"description"`
-	// The beats of the story plan.
-	Beats []BeatDefinition `json:"beats"`
-	// The language of the story plan.
-	Lang Lang `json:"lang"`
-	// The date and time at which the story plan was created.
-	CreatedAt time.Time `json:"createdAt"`
-}
-
-// GetID returns the value of ID.
-func (s *StoryPlan) GetID() StoryPlanID {
-	return s.ID
-}
-
-// GetSlug returns the value of Slug.
-func (s *StoryPlan) GetSlug() Slug {
-	return s.Slug
-}
-
-// GetName returns the value of Name.
-func (s *StoryPlan) GetName() string {
-	return s.Name
-}
-
-// GetDescription returns the value of Description.
-func (s *StoryPlan) GetDescription() string {
-	return s.Description
-}
-
-// GetBeats returns the value of Beats.
-func (s *StoryPlan) GetBeats() []BeatDefinition {
-	return s.Beats
-}
-
-// GetLang returns the value of Lang.
-func (s *StoryPlan) GetLang() Lang {
-	return s.Lang
-}
-
-// GetCreatedAt returns the value of CreatedAt.
-func (s *StoryPlan) GetCreatedAt() time.Time {
-	return s.CreatedAt
-}
-
-// SetID sets the value of ID.
-func (s *StoryPlan) SetID(val StoryPlanID) {
-	s.ID = val
-}
-
-// SetSlug sets the value of Slug.
-func (s *StoryPlan) SetSlug(val Slug) {
-	s.Slug = val
-}
-
-// SetName sets the value of Name.
-func (s *StoryPlan) SetName(val string) {
-	s.Name = val
-}
-
-// SetDescription sets the value of Description.
-func (s *StoryPlan) SetDescription(val string) {
-	s.Description = val
-}
-
-// SetBeats sets the value of Beats.
-func (s *StoryPlan) SetBeats(val []BeatDefinition) {
-	s.Beats = val
-}
-
-// SetLang sets the value of Lang.
-func (s *StoryPlan) SetLang(val Lang) {
-	s.Lang = val
-}
-
-// SetCreatedAt sets the value of CreatedAt.
-func (s *StoryPlan) SetCreatedAt(val time.Time) {
-	s.CreatedAt = val
-}
-
-func (*StoryPlan) createStoryPlanRes() {}
-func (*StoryPlan) getStoryPlanRes()    {}
-func (*StoryPlan) updateStoryPlanRes() {}
-
-type StoryPlanID uuid.UUID
-
-// Ref: #/components/schemas/StoryPlanPreview
-type StoryPlanPreview struct {
-	ID   StoryPlanID `json:"id"`
-	Slug Slug        `json:"slug"`
-	// The name of the story plan.
-	Name string `json:"name"`
-	// The description of the story plan.
-	Description string `json:"description"`
-	// The language of the story plan.
-	Lang Lang `json:"lang"`
-	// The date and time at which the story plan was created.
-	CreatedAt time.Time `json:"createdAt"`
-}
-
-// GetID returns the value of ID.
-func (s *StoryPlanPreview) GetID() StoryPlanID {
-	return s.ID
-}
-
-// GetSlug returns the value of Slug.
-func (s *StoryPlanPreview) GetSlug() Slug {
-	return s.Slug
-}
-
-// GetName returns the value of Name.
-func (s *StoryPlanPreview) GetName() string {
-	return s.Name
-}
-
-// GetDescription returns the value of Description.
-func (s *StoryPlanPreview) GetDescription() string {
-	return s.Description
-}
-
-// GetLang returns the value of Lang.
-func (s *StoryPlanPreview) GetLang() Lang {
-	return s.Lang
-}
-
-// GetCreatedAt returns the value of CreatedAt.
-func (s *StoryPlanPreview) GetCreatedAt() time.Time {
-	return s.CreatedAt
-}
-
-// SetID sets the value of ID.
-func (s *StoryPlanPreview) SetID(val StoryPlanID) {
-	s.ID = val
-}
-
-// SetSlug sets the value of Slug.
-func (s *StoryPlanPreview) SetSlug(val Slug) {
-	s.Slug = val
-}
-
-// SetName sets the value of Name.
-func (s *StoryPlanPreview) SetName(val string) {
-	s.Name = val
-}
-
-// SetDescription sets the value of Description.
-func (s *StoryPlanPreview) SetDescription(val string) {
-	s.Description = val
-}
-
-// SetLang sets the value of Lang.
-func (s *StoryPlanPreview) SetLang(val Lang) {
-	s.Lang = val
-}
-
-// SetCreatedAt sets the value of CreatedAt.
-func (s *StoryPlanPreview) SetCreatedAt(val time.Time) {
-	s.CreatedAt = val
-}
-
 // Ref: #/components/schemas/UnauthorizedError
 type UnauthorizedError struct {
 	// The error message.
@@ -1446,7 +1048,6 @@ func (s *UnauthorizedError) SetError(val string) {
 
 func (*UnauthorizedError) createBeatsSheetRes()   {}
 func (*UnauthorizedError) createLoglineRes()      {}
-func (*UnauthorizedError) createStoryPlanRes()    {}
 func (*UnauthorizedError) expandBeatRes()         {}
 func (*UnauthorizedError) expandLoglineRes()      {}
 func (*UnauthorizedError) generateBeatsSheetRes() {}
@@ -1455,10 +1056,7 @@ func (*UnauthorizedError) getBeatsSheetRes()      {}
 func (*UnauthorizedError) getBeatsSheetsRes()     {}
 func (*UnauthorizedError) getLoglineRes()         {}
 func (*UnauthorizedError) getLoglinesRes()        {}
-func (*UnauthorizedError) getStoryPlanRes()       {}
-func (*UnauthorizedError) getStoryPlansRes()      {}
 func (*UnauthorizedError) regenerateBeatsRes()    {}
-func (*UnauthorizedError) updateStoryPlanRes()    {}
 
 // Ref: #/components/schemas/UnexpectedError
 type UnexpectedError struct {
@@ -1520,68 +1118,5 @@ func (s *UnprocessableEntityError) SetError(val string) {
 
 func (*UnprocessableEntityError) createBeatsSheetRes() {}
 func (*UnprocessableEntityError) expandBeatRes()       {}
-
-// Ref: #/components/schemas/UpdateStoryPlanForm
-type UpdateStoryPlanForm struct {
-	Slug Slug `json:"slug"`
-	// The name of the story plan.
-	Name string `json:"name"`
-	// The description of the story plan.
-	Description string `json:"description"`
-	// The beats of the story plan.
-	Beats []BeatDefinition `json:"beats"`
-	// The language of the story plan.
-	Lang Lang `json:"lang"`
-}
-
-// GetSlug returns the value of Slug.
-func (s *UpdateStoryPlanForm) GetSlug() Slug {
-	return s.Slug
-}
-
-// GetName returns the value of Name.
-func (s *UpdateStoryPlanForm) GetName() string {
-	return s.Name
-}
-
-// GetDescription returns the value of Description.
-func (s *UpdateStoryPlanForm) GetDescription() string {
-	return s.Description
-}
-
-// GetBeats returns the value of Beats.
-func (s *UpdateStoryPlanForm) GetBeats() []BeatDefinition {
-	return s.Beats
-}
-
-// GetLang returns the value of Lang.
-func (s *UpdateStoryPlanForm) GetLang() Lang {
-	return s.Lang
-}
-
-// SetSlug sets the value of Slug.
-func (s *UpdateStoryPlanForm) SetSlug(val Slug) {
-	s.Slug = val
-}
-
-// SetName sets the value of Name.
-func (s *UpdateStoryPlanForm) SetName(val string) {
-	s.Name = val
-}
-
-// SetDescription sets the value of Description.
-func (s *UpdateStoryPlanForm) SetDescription(val string) {
-	s.Description = val
-}
-
-// SetBeats sets the value of Beats.
-func (s *UpdateStoryPlanForm) SetBeats(val []BeatDefinition) {
-	s.Beats = val
-}
-
-// SetLang sets the value of Lang.
-func (s *UpdateStoryPlanForm) SetLang(val Lang) {
-	s.Lang = val
-}
 
 type UserID uuid.UUID

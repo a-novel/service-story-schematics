@@ -12,6 +12,7 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 func TestRegenerateBeats(t *testing.T) {
@@ -31,9 +32,10 @@ func TestRegenerateBeats(t *testing.T) {
 					t.Parallel()
 
 					beatsSheet, err := repository.RegenerateBeats(t.Context(), daoai.RegenerateBeatsRequest{
-						Logline:        testCase.Logline,
-						Beats:          testCase.Beats,
-						Plan:           testCase.Plan,
+						Logline: testCase.Logline,
+						Beats:   testCase.Beats,
+						Plan: storyplanmodel.SaveTheCat[lang].
+							Pick("openingImage", "themeStated", "setup", "catalyst", "debate"),
 						RegenerateKeys: testCase.RegenerateKeys,
 						UserID:         TestUser,
 						Lang:           lang,
@@ -41,7 +43,7 @@ func TestRegenerateBeats(t *testing.T) {
 					require.NoError(t, err)
 
 					require.NotNil(t, beatsSheet)
-					require.Len(t, beatsSheet, len(testCase.Plan.Beats))
+					require.Len(t, beatsSheet, 5)
 
 					var aggregatedBeats, aggregatedNewBeats []string
 

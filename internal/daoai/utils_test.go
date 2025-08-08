@@ -10,7 +10,6 @@ import (
 	"github.com/openai/openai-go/v2/packages/param"
 	"github.com/stretchr/testify/require"
 
-	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
@@ -54,87 +53,4 @@ func CheckLang(t *testing.T, lang models.Lang, rawAnswer string) {
 		fmt.Sprintf(testdata.Langs[lang], rawAnswer),
 		fmt.Sprintf("answer is not in expected language %s\n%s", lang, rawAnswer),
 	)
-}
-
-func TestStoryPlanToPrompt(t *testing.T) {
-	t.Parallel()
-
-	testCases := []struct {
-		name string
-
-		plan models.StoryPlan
-
-		expect string
-	}{
-		{
-			name: "En",
-
-			plan: models.StoryPlan{
-				Description: "Test Description.",
-				Beats: []models.BeatDefinition{
-					{
-						Name:      "Beat 1",
-						MinScenes: 1,
-						Key:       "beat1",
-						KeyPoints: []string{
-							"Beat 1 - Key Point 1",
-							"Beat 1 - Key Point 2",
-						},
-						Purpose: "Beat 1 - Purpose",
-					},
-					{
-						Name:      "Beat 2",
-						MinScenes: 2,
-						MaxScenes: 5,
-						Key:       "beat2",
-						KeyPoints: []string{
-							"Beat 2 - Key Point 1",
-						},
-						Purpose: "Beat 2 - Purpose",
-					},
-				},
-			},
-
-			expect: `Test Description.
-
-Here's a detailed breakdown with minimum scenes and key points for each beat:
-
-Beat 1 (1 scene)
-JSON Key: beat1
-Key points:
-  - Beat 1 - Key Point 1
-  - Beat 1 - Key Point 2
-Purpose: Beat 1 - Purpose
-
-Beat 2 (2 to 5 scenes)
-JSON Key: beat2
-Key points:
-  - Beat 2 - Key Point 1
-Purpose: Beat 2 - Purpose
-
-This concludes the breakdown. Below are important things for you to consider.
-
-Focus on Essentials:
-Ensure each scene serves a clear purpose and advances the plot.
-
-Avoid Redundancy:
-Eliminate unnecessary scenes that don't contribute to character development or plot progression.
-
-Balance Pacing:
-Allocate scenes strategically to maintain engagement throughout the story.
-
-Character Development:
-Ensure each scene contributes to character growth and progression.`,
-		},
-	}
-
-	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
-			t.Parallel()
-
-			prompt, err := daoai.StoryPlanToPrompt(testCase.plan)
-			require.NoError(t, err)
-			require.Equal(t, strings.TrimSpace(testCase.expect), strings.TrimSpace(prompt))
-		})
-	}
 }

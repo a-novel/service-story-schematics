@@ -25,7 +25,6 @@ func TestApp(t *testing.T) {
 		"Ping":                  testAppPing,
 		"BeatsSheetsPlayground": testAppBeatsSheetsPlayground,
 		"LoglinesPlayground":    testAppLoglinesPlayground,
-		"StoryPlansCRUD":        testAppStoryPlansCRUD,
 	}
 
 	for testName, testSuite := range testSuites {

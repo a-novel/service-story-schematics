@@ -11,31 +11,32 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 type RegenerateBeatsSource interface {
 	RegenerateBeats(ctx context.Context, request daoai.RegenerateBeatsRequest) ([]models.Beat, error)
 	SelectBeatsSheet(ctx context.Context, data uuid.UUID) (*dao.BeatsSheetEntity, error)
 	SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)
-	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
+	SelectStoryPlan(ctx context.Context, request SelectStoryPlanRequest) (*storyplanmodel.Plan, error)
 }
 
 func NewRegenerateBeatsServiceSource(
 	regenerateBeatsDAO *daoai.RegenerateBeatsRepository,
 	selectBeatsSheetDAO *dao.SelectBeatsSheetRepository,
 	selectLoglineDAO *dao.SelectLoglineRepository,
-	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
+	selectStoryPlan *SelectStoryPlanService,
 ) RegenerateBeatsSource {
 	return &struct {
 		*daoai.RegenerateBeatsRepository
 		*dao.SelectBeatsSheetRepository
 		*dao.SelectLoglineRepository
-		*dao.SelectStoryPlanRepository
+		*SelectStoryPlanService
 	}{
 		RegenerateBeatsRepository:  regenerateBeatsDAO,
 		SelectBeatsSheetRepository: selectBeatsSheetDAO,
 		SelectLoglineRepository:    selectLoglineDAO,
-		SelectStoryPlanRepository:  selectStoryPlanDAO,
+		SelectStoryPlanService:     selectStoryPlan,
 	}
 }
 
@@ -79,22 +80,16 @@ func (service *RegenerateBeatsService) RegenerateBeats(
 		return nil, otel.ReportError(span, err)
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(ctx, beatsSheet.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(ctx, SelectStoryPlanRequest{
+		Lang: beatsSheet.Lang,
+	})
 	if err != nil {
 		return nil, otel.ReportError(span, err)
 	}
 
 	regenerated, err := service.source.RegenerateBeats(ctx, daoai.RegenerateBeatsRequest{
-		Logline: logline.Name + "\n\n" + logline.Content,
-		Plan: models.StoryPlan{
-			ID:          storyPlan.ID,
-			Slug:        storyPlan.Slug,
-			Name:        storyPlan.Name,
-			Description: storyPlan.Description,
-			Beats:       storyPlan.Beats,
-			Lang:        storyPlan.Lang,
-			CreatedAt:   storyPlan.CreatedAt,
-		},
+		Logline:        logline.Name + "\n\n" + logline.Content,
+		Plan:           storyPlan,
 		UserID:         request.UserID.String(),
 		Lang:           beatsSheet.Lang,
 		Beats:          beatsSheet.Content,

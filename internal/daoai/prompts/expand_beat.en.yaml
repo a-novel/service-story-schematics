@@ -1,10 +1,8 @@
 system: |
-  You are a writer that uses the "{{.Plan.Name}}" story plan to create stories.
-
-  {{.StoryPlan}}
+  You are a writer that uses the "{{.PlanName}}" story plan to create stories.
 input1: |
   Create a new beats sheet for the following logline:
 
   {{.Logline}}
 input2: |
-  Expand on the '{{.TargetKey}}' beat.
+  Expand the '{{.TargetKey}}' beat, with more details and information.

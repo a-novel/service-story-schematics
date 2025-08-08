@@ -39,20 +39,6 @@ func encodeCreateLoglineRequest(
 	return nil
 }
 
-func encodeCreateStoryPlanRequest(
-	req *CreateStoryPlanForm,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
 func encodeExpandBeatRequest(
 	req *ExpandBeatForm,
 	r *http.Request,
@@ -111,20 +97,6 @@ func encodeGenerateLoglinesRequest(
 
 func encodeRegenerateBeatsRequest(
 	req *RegenerateBeatsForm,
-	r *http.Request,
-) error {
-	const contentType = "application/json"
-	e := new(jx.Encoder)
-	{
-		req.Encode(e)
-	}
-	encoded := e.Bytes()
-	ht.SetBody(r, bytes.NewReader(encoded), contentType)
-	return nil
-}
-
-func encodeUpdateStoryPlanRequest(
-	req *UpdateStoryPlanForm,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

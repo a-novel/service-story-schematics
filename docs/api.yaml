@@ -25,10 +25,6 @@ security:
 tags:
   - name: health
     description: Routes used to check the health of the service.
-  - name: story-plan
-    description: |
-      Story plan structures the output of the story schematics service. It describes the different beats of a story,
-      controlling its final shape.
   - name: logline
     description: |
       Logline is a brief summary of a story, used to quickly convey its essence. It is used to pitch the story to
@@ -584,182 +580,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/UnexpectedError"
 
-  /story-plan:
-    put:
-      tags:
-        - story-plan
-      security:
-        - bearerAuth:
-            - "story-plan:create"
-      summary: Create a new story plan.
-      description: |
-        Create a new story plan.
-      operationId: createStoryPlan
-      requestBody:
-        $ref: "#/components/requestBodies/CreateStoryPlanForm"
-      responses:
-        "200":
-          description: The story plan was created successfully.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StoryPlan"
-        "401":
-          description: Authentication failed.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnauthorizedError"
-        "403":
-          description: Access denied.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ForbiddenError"
-        default:
-          description: An unexpected error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
-    patch:
-      tags:
-        - story-plan
-      security:
-        - bearerAuth:
-            - "story-plan:update"
-      summary: Update a story plan.
-      description: |
-        Update a story plan.
-      operationId: updateStoryPlan
-      requestBody:
-        $ref: "#/components/requestBodies/UpdateStoryPlanForm"
-      responses:
-        "200":
-          description: The story plan was updated successfully.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StoryPlan"
-        "401":
-          description: Authentication failed.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnauthorizedError"
-        "403":
-          description: Access denied.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ForbiddenError"
-        "404":
-          description: The story plan does not exist.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFoundError"
-        default:
-          description: An unexpected error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
-    get:
-      tags:
-        - story-plan
-      security:
-        - bearerAuth:
-            - "story-plan:read"
-      summary: Get a story plan.
-      description: |
-        Get a story plan.
-      operationId: getStoryPlan
-      parameters:
-        - in: query
-          name: id
-          required: false
-          schema:
-            $ref: "#/components/schemas/StoryPlanID"
-        - in: query
-          name: slug
-          required: false
-          schema:
-            $ref: "#/components/schemas/Slug"
-      responses:
-        "200":
-          description: The story plan was retrieved successfully.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/StoryPlan"
-        "401":
-          description: Authentication failed.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnauthorizedError"
-        "403":
-          description: Access denied.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ForbiddenError"
-        "404":
-          description: The story plan does not exist.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFoundError"
-        default:
-          description: An unexpected error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
-
-  /story-plans:
-    get:
-      tags:
-        - story-plan
-      security:
-        - bearerAuth:
-            - "story-plans:read"
-      summary: Get all story plans.
-      description: |
-        Get all story plans.
-      operationId: getStoryPlans
-      parameters:
-        - $ref: "#/components/parameters/Limit"
-        - $ref: "#/components/parameters/Offset"
-      responses:
-        "200":
-          description: The story plans were retrieved successfully.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/StoryPlanPreview"
-        "401":
-          description: Authentication failed.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnauthorizedError"
-        "403":
-          description: Access denied.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ForbiddenError"
-        default:
-          description: An unexpected error occurred while processing the request.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UnexpectedError"
-
 # ======================================================================================================================
 # Components
 # ======================================================================================================================
@@ -809,14 +629,11 @@ components:
       type: object
       required:
         - loglineID
-        - storyPlanID
         - content
         - lang
       properties:
         loglineID:
           $ref: "#/components/schemas/LoglineID"
-        storyPlanID:
-          $ref: "#/components/schemas/StoryPlanID"
         content:
           type: array
           maxItems: 128
@@ -851,37 +668,6 @@ components:
           $ref: "#/components/schemas/Lang"
           description: The language of the logline.
           example: en
-    CreateStoryPlanForm:
-      type: object
-      required:
-        - slug
-        - name
-        - description
-        - beats
-        - lang
-      properties:
-        slug:
-          $ref: "#/components/schemas/Slug"
-        name:
-          type: string
-          maxLength: 512
-          description: The name of the story plan.
-          example: My Story Plan
-        description:
-          type: string
-          maxLength: 4096
-          description: The description of the story plan.
-          example: A story plan for a hero's journey.
-        beats:
-          type: array
-          maxItems: 128
-          items:
-            $ref: "#/components/schemas/BeatDefinition"
-          description: The beats of the story plan.
-        lang:
-          $ref: "#/components/schemas/Lang"
-          description: The language of the story plan.
-          example: en
     ExpandBeatForm:
       type: object
       required:
@@ -899,13 +685,10 @@ components:
       type: object
       required:
         - loglineID
-        - storyPlanID
         - lang
       properties:
         loglineID:
           $ref: "#/components/schemas/LoglineID"
-        storyPlanID:
-          $ref: "#/components/schemas/StoryPlanID"
         lang:
           $ref: "#/components/schemas/Lang"
           description: The language of the beats sheet to generate.
@@ -947,37 +730,6 @@ components:
             type: string
             maxLength: 128
           description: The keys of the beats to regenerate.
-    UpdateStoryPlanForm:
-      type: object
-      required:
-        - slug
-        - name
-        - description
-        - beats
-        - lang
-      properties:
-        slug:
-          $ref: "#/components/schemas/Slug"
-        name:
-          type: string
-          maxLength: 512
-          description: The name of the story plan.
-          example: My Story Plan
-        description:
-          type: string
-          maxLength: 4096
-          description: The description of the story plan.
-          example: A story plan for a hero's journey.
-        beats:
-          type: array
-          maxItems: 128
-          items:
-            $ref: "#/components/schemas/BeatDefinition"
-          description: The beats of the story plan.
-        lang:
-          $ref: "#/components/schemas/Lang"
-          description: The language of the story plan.
-          example: en
     # ======================================================== TYPES ===================================================
     UserID:
       type: string
@@ -988,11 +740,6 @@ components:
       type: string
       format: uuid
       description: The unique identifier of the logline.
-      example: 29f71c01-5ae1-4b01-b729-e17488538e15
-    StoryPlanID:
-      type: string
-      format: uuid
-      description: The unique identifier of the story plan.
       example: 29f71c01-5ae1-4b01-b729-e17488538e15
     BeatsSheetID:
       type: string
@@ -1041,7 +788,6 @@ components:
       required:
         - id
         - loglineID
-        - storyPlanID
         - content
         - lang
         - createdAt
@@ -1051,8 +797,6 @@ components:
           $ref: "#/components/schemas/BeatsSheetID"
         loglineID:
           $ref: "#/components/schemas/LoglineID"
-        storyPlanID:
-          $ref: "#/components/schemas/StoryPlanID"
         content:
           type: array
           maxItems: 128
@@ -1192,131 +936,6 @@ components:
           $ref: "#/components/schemas/Lang"
           description: The language of the logline idea.
           example: en
-    BeatDefinition:
-      type: object
-      required:
-        - name
-        - key
-        - keyPoints
-        - purpose
-        - minScenes
-        - maxScenes
-      description: A beat is a key event in a story that drives the plot forward. It is used to structure the story and
-        ensure its coherence. A beat describes the content of a beat.
-      properties:
-        name:
-          type: string
-          maxLength: 512
-          description: The name of the beat.
-          example: Introduction
-        key:
-          type: string
-          maxLength: 128
-          description: The key of the beat.
-          example: 1
-        keyPoints:
-          type: array
-          maxItems: 128
-          items:
-            type: string
-            maxLength: 2048
-          description: The key points of the beat.
-          example:
-            - The protagonist is introduced to the reader.
-            - The protagonist's goal is revealed.
-        purpose:
-          type: string
-          maxLength: 8192
-          description: The purpose of the beat.
-          example: Introduce the protagonist.
-        minScenes:
-          type: integer
-          minimum: 0
-          maximum: 10
-          description: The minimum number of scenes in the beat.
-          example: 1
-        maxScenes:
-          type: integer
-          minimum: 0
-          maximum: 10
-          description: The maximum number of scenes in the beat.
-          example: 3
-    StoryPlan:
-      type: object
-      required:
-        - id
-        - slug
-        - name
-        - description
-        - beats
-        - lang
-        - createdAt
-      description:
-        A story plan structures the output of the story schematics service. It describes the different beats of a story,
-        controlling its final shape.
-      properties:
-        id:
-          $ref: "#/components/schemas/StoryPlanID"
-        slug:
-          $ref: "#/components/schemas/Slug"
-        name:
-          type: string
-          maxLength: 512
-          description: The name of the story plan.
-          example: My Story Plan
-        description:
-          type: string
-          maxLength: 4096
-          description: The description of the story plan.
-          example: A story plan for a hero's journey.
-        beats:
-          type: array
-          maxItems: 128
-          items:
-            $ref: "#/components/schemas/BeatDefinition"
-          description: The beats of the story plan.
-        lang:
-          $ref: "#/components/schemas/Lang"
-          description: The language of the story plan.
-          example: en
-        createdAt:
-          type: string
-          format: date-time
-          description: The date and time at which the story plan was created.
-          example: 2022-01-01T00:00:00Z
-    StoryPlanPreview:
-      type: object
-      required:
-        - id
-        - slug
-        - name
-        - description
-        - lang
-        - createdAt
-      properties:
-        id:
-          $ref: "#/components/schemas/StoryPlanID"
-        slug:
-          $ref: "#/components/schemas/Slug"
-        name:
-          type: string
-          maxLength: 512
-          description: The name of the story plan.
-          example: My Story Plan
-        description:
-          type: string
-          maxLength: 4096
-          description: The description of the story plan.
-          example: A story plan for a hero's journey.
-        lang:
-          $ref: "#/components/schemas/Lang"
-          description: The language of the story plan.
-          example: en
-        createdAt:
-          type: string
-          format: date-time
-          description: The date and time at which the story plan was created.
-          example: 2022-01-01T00:00:00Z
     # ======================================================= ERRORS ===================================================
     UnauthorizedError:
       type: object
@@ -1377,12 +996,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/CreateLoglineForm"
-    CreateStoryPlanForm:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/CreateStoryPlanForm"
     ExpandBeatForm:
       required: true
       content:
@@ -1413,12 +1026,6 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/RegenerateBeatsForm"
-    UpdateStoryPlanForm:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/UpdateStoryPlanForm"
   # ================================================== QUERY PARAMETERS ================================================
   parameters:
     LoglineID:

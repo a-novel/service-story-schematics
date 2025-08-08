@@ -9,10 +9,6 @@ type CreateLoglineRes interface {
 	createLoglineRes()
 }
 
-type CreateStoryPlanRes interface {
-	createStoryPlanRes()
-}
-
 type ExpandBeatRes interface {
 	expandBeatRes()
 }
@@ -45,14 +41,6 @@ type GetLoglinesRes interface {
 	getLoglinesRes()
 }
 
-type GetStoryPlanRes interface {
-	getStoryPlanRes()
-}
-
-type GetStoryPlansRes interface {
-	getStoryPlansRes()
-}
-
 type HealthcheckRes interface {
 	healthcheckRes()
 }
@@ -63,8 +51,4 @@ type PingRes interface {
 
 type RegenerateBeatsRes interface {
 	regenerateBeatsRes()
-}
-
-type UpdateStoryPlanRes interface {
-	updateStoryPlanRes()
 }

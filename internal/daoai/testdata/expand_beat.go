@@ -12,10 +12,9 @@ import (
 var expandBeatEnFile []byte
 
 type ExpandBeatTestCase struct {
-	Logline   string           `yaml:"logline"`
-	Plan      models.StoryPlan `yaml:"plan"`
-	Beats     []models.Beat    `yaml:"beats"`
-	TargetKey string           `yaml:"targetKey"`
+	Logline   string        `yaml:"logline"`
+	Beats     []models.Beat `yaml:"beats"`
+	TargetKey string        `yaml:"targetKey"`
 }
 
 type ExpandBeatPromptsType struct {

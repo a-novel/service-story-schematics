@@ -42,7 +42,7 @@ func (api *API) RegenerateBeats(
 	switch {
 	case errors.Is(err, dao.ErrBeatsSheetNotFound),
 		errors.Is(err, dao.ErrLoglineNotFound),
-		errors.Is(err, dao.ErrStoryPlanNotFound):
+		errors.Is(err, services.ErrStoryPlanNotFound):
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "")
 

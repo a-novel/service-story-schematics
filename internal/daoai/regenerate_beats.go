@@ -15,10 +15,9 @@ import (
 	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
-	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 var RegenerateBeatsPrompts = struct {
@@ -34,7 +33,7 @@ var RegenerateBeatsPrompts = struct {
 type RegenerateBeatsRequest struct {
 	Logline        string
 	Beats          []models.Beat
-	Plan           models.StoryPlan
+	Plan           *storyplanmodel.Plan
 	RegenerateKeys []string
 	UserID         string
 	Lang           models.Lang
@@ -57,21 +56,14 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 	span.SetAttributes(
 		attribute.String("request.logline", request.Logline),
 		attribute.String("request.userID", request.UserID),
-		attribute.String("request.plan.id", request.Plan.ID.String()),
 		attribute.StringSlice("request.regenerateKeys", request.RegenerateKeys),
 		attribute.String("request.lang", request.Lang.String()),
 	)
 
-	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Plan)
-	if err != nil {
-		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
-	}
-
 	systemPrompt := new(strings.Builder)
 
-	err = RegenerateBeatsPrompts.System.Execute(systemPrompt, map[string]any{
-		"StoryPlan": storyPlanPartialPrompt,
-		"Plan":      request.Plan,
+	err := RegenerateBeatsPrompts.System.Execute(systemPrompt, map[string]any{
+		"PlanName": request.Plan.Metadata.Name,
 	})
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("parse system message: %w", err))
@@ -110,8 +102,8 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 						Name:        "beats",
-						Description: openai.String(schemas.Beats.Description),
-						Schema:      schemas.Beats.Schema,
+						Description: openai.String("The new version of the regenerated beats."),
+						Schema:      request.Plan.Pick(request.RegenerateKeys...).OutputSchema(),
 						Strict:      openai.Bool(true),
 					},
 				},
@@ -130,7 +122,7 @@ func (repository *RegenerateBeatsRepository) RegenerateBeats(
 		return nil, otel.ReportError(span, err)
 	}
 
-	err = lib.CheckStoryPlan(beats.Beats, repository.buildExpectedStoryPlan(request))
+	err = request.Plan.Pick(request.RegenerateKeys...).Validate(beats.Beats)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("check story plan: %w", err))
 	}
@@ -150,22 +142,6 @@ func (repository *RegenerateBeatsRepository) extrudedBeatsSheet(request Regenera
 	}
 
 	return strings.Join(parts, "\n\n")
-}
-
-func (repository *RegenerateBeatsRepository) buildExpectedStoryPlan(
-	request RegenerateBeatsRequest,
-) []models.BeatDefinition {
-	beats := make([]models.BeatDefinition, 0, len(request.Plan.Beats))
-
-	for _, beat := range request.Plan.Beats {
-		if !lo.Contains(request.RegenerateKeys, beat.Key) {
-			continue
-		}
-
-		beats = append(beats, beat)
-	}
-
-	return beats
 }
 
 func (repository *RegenerateBeatsRepository) mergeSourceAndNewBeats(

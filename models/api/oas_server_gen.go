@@ -20,12 +20,6 @@ type Handler interface {
 	//
 	// PUT /logline
 	CreateLogline(ctx context.Context, req *CreateLoglineForm) (CreateLoglineRes, error)
-	// CreateStoryPlan implements createStoryPlan operation.
-	//
-	// Create a new story plan.
-	//
-	// PUT /story-plan
-	CreateStoryPlan(ctx context.Context, req *CreateStoryPlanForm) (CreateStoryPlanRes, error)
 	// ExpandBeat implements expandBeat operation.
 	//
 	// Add more details to a specific beat in a beats sheet.
@@ -74,18 +68,6 @@ type Handler interface {
 	//
 	// GET /loglines
 	GetLoglines(ctx context.Context, params GetLoglinesParams) (GetLoglinesRes, error)
-	// GetStoryPlan implements getStoryPlan operation.
-	//
-	// Get a story plan.
-	//
-	// GET /story-plan
-	GetStoryPlan(ctx context.Context, params GetStoryPlanParams) (GetStoryPlanRes, error)
-	// GetStoryPlans implements getStoryPlans operation.
-	//
-	// Get all story plans.
-	//
-	// GET /story-plans
-	GetStoryPlans(ctx context.Context, params GetStoryPlansParams) (GetStoryPlansRes, error)
 	// Healthcheck implements healthcheck operation.
 	//
 	// Returns a detailed report of the health of the service, including every dependency.
@@ -104,12 +86,6 @@ type Handler interface {
 	//
 	// POST /beats-sheet/regenerate
 	RegenerateBeats(ctx context.Context, req *RegenerateBeatsForm) (RegenerateBeatsRes, error)
-	// UpdateStoryPlan implements updateStoryPlan operation.
-	//
-	// Update a story plan.
-	//
-	// PATCH /story-plan
-	UpdateStoryPlan(ctx context.Context, req *UpdateStoryPlanForm) (UpdateStoryPlanRes, error)
 	// NewError creates *UnexpectedErrorStatusCode from error returned by handler.
 	//
 	// Used for common default response.

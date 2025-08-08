@@ -11,10 +11,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	servicesmocks "github.com/a-novel/service-story-schematics/internal/services/mocks"
 	"github.com/a-novel/service-story-schematics/models"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 func TestCreateBeatsSheet(t *testing.T) {
@@ -28,7 +28,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 	}
 
 	type selectStoryPlanData struct {
-		resp *dao.StoryPlanEntity
+		resp *storyplanmodel.Plan
 		err  error
 	}
 
@@ -53,9 +53,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "Success",
 
 			request: services.CreateBeatsSheetRequest{
-				UserID:      uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				LoglineID:   uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				LoglineID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",
@@ -84,13 +83,12 @@ func TestCreateBeatsSheet(t *testing.T) {
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
-				resp: &dao.StoryPlanEntity{
-					ID:          uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					Slug:        "test-slug",
-					Name:        "Test Name",
-					Description: "Lorem ipsum dolor sit amet",
-					Lang:        models.LangEN,
-					Beats: []models.BeatDefinition{
+				resp: &storyplanmodel.Plan{
+					Metadata: storyplanmodel.Metadata{
+						Name: "Test Story Plan",
+						Lang: models.LangEN,
+					},
+					Beats: []storyplanmodel.Beat{
 						{
 							Name: "Test Beat",
 							Key:  "test-beat",
@@ -113,9 +111,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 
 			insertBeatsSheetData: &insertBeatsSheetData{
 				resp: &dao.BeatsSheetEntity{
-					ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-1000-0000-0000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "test-beat",
@@ -134,9 +131,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 			},
 
 			expect: &models.BeatsSheet{
-				ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-				LoglineID:   uuid.MustParse("00000000-1000-0000-0000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
+				ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				LoglineID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",
@@ -157,9 +153,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "Insert/Error",
 
 			request: services.CreateBeatsSheetRequest{
-				UserID:      uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				LoglineID:   uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				LoglineID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",
@@ -188,12 +183,12 @@ func TestCreateBeatsSheet(t *testing.T) {
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
-				resp: &dao.StoryPlanEntity{
-					ID:          uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					Slug:        "test-slug",
-					Name:        "Test Name",
-					Description: "Lorem ipsum dolor sit amet",
-					Beats: []models.BeatDefinition{
+				resp: &storyplanmodel.Plan{
+					Metadata: storyplanmodel.Metadata{
+						Name: "Test Story Plan",
+						Lang: models.LangEN,
+					},
+					Beats: []storyplanmodel.Beat{
 						{
 							Name: "Test Beat",
 							Key:  "test-beat",
@@ -211,7 +206,6 @@ func TestCreateBeatsSheet(t *testing.T) {
 							Purpose: "Test Purpose 2",
 						},
 					},
-					Lang: models.LangEN,
 				},
 			},
 
@@ -225,9 +219,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "SelectStoryPlan/Error",
 
 			request: services.CreateBeatsSheetRequest{
-				UserID:      uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				LoglineID:   uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				LoglineID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",
@@ -265,9 +258,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "CheckLogline/Error",
 
 			request: services.CreateBeatsSheetRequest{
-				UserID:      uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				LoglineID:   uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				LoglineID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",
@@ -293,9 +285,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "StoryPlanMismatch",
 
 			request: services.CreateBeatsSheetRequest{
-				UserID:      uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				LoglineID:   uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				LoglineID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",
@@ -324,12 +315,12 @@ func TestCreateBeatsSheet(t *testing.T) {
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
-				resp: &dao.StoryPlanEntity{
-					ID:          uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					Slug:        "test-slug",
-					Name:        "Test Name",
-					Description: "Lorem ipsum dolor sit amet",
-					Beats: []models.BeatDefinition{
+				resp: &storyplanmodel.Plan{
+					Metadata: storyplanmodel.Metadata{
+						Name: "Test Story Plan",
+						Lang: models.LangEN,
+					},
+					Beats: []storyplanmodel.Beat{
 						{
 							Name: "Test Beat",
 							Key:  "test-beat",
@@ -339,11 +330,10 @@ func TestCreateBeatsSheet(t *testing.T) {
 							Purpose: "Test Purpose",
 						},
 					},
-					Lang: models.LangEN,
 				},
 			},
 
-			expectErr: lib.ErrInvalidStoryPlan,
+			expectErr: storyplanmodel.ErrInvalidPlan,
 		},
 	}
 
@@ -366,7 +356,9 @@ func TestCreateBeatsSheet(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(mock.Anything, testCase.request.StoryPlanID).
+					SelectStoryPlan(mock.Anything, services.SelectStoryPlanRequest{
+						Lang: testCase.request.Lang,
+					}).
 					Return(testCase.selectStoryPlanData.resp, testCase.selectStoryPlanData.err)
 			}
 
@@ -375,7 +367,6 @@ func TestCreateBeatsSheet(t *testing.T) {
 					InsertBeatsSheet(mock.Anything, mock.MatchedBy(func(data dao.InsertBeatsSheetData) bool {
 						return assert.NotEqual(t, data.Sheet.ID, uuid.Nil) &&
 							assert.Equal(t, testCase.request.LoglineID, data.Sheet.LoglineID) &&
-							assert.Equal(t, testCase.request.StoryPlanID, data.Sheet.StoryPlanID) &&
 							assert.Equal(t, testCase.request.Content, data.Sheet.Content) &&
 							assert.Equal(t, testCase.request.Lang, data.Sheet.Lang) &&
 							assert.WithinDuration(t, time.Now(), data.Sheet.CreatedAt, time.Second)

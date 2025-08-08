@@ -7,6 +7,5 @@ func (entity SlugIterationTarget) String() string {
 }
 
 const (
-	SlugIterationTargetStoryPlan SlugIterationTarget = "story_plan"
-	SlugIterationTargetLogline   SlugIterationTarget = "logline"
+	SlugIterationTargetLogline SlugIterationTarget = "logline"
 )

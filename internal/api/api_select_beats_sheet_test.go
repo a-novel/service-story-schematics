@@ -51,9 +51,8 @@ func TestSelectBeatsSheet(t *testing.T) {
 
 			selectBeatsSheetData: &selectBeatsSheetData{
 				resp: &models.BeatsSheet{
-					ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-0000-0000-0100-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "test-beat",
@@ -72,9 +71,8 @@ func TestSelectBeatsSheet(t *testing.T) {
 			},
 
 			expect: &apimodels.BeatsSheet{
-				ID:          apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-0000-0100-000000000001")),
+				ID:        apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				Content: []apimodels.Beat{
 					{
 						Key:     "test-beat",

@@ -2,7 +2,6 @@ CREATE TABLE beats_sheets
 (
   id uuid PRIMARY KEY NOT NULL,
   logline_id uuid NOT NULL,
-  story_plan_id uuid NOT NULL,
 
   content jsonb NOT NULL,
 

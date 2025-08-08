@@ -11,7 +11,6 @@ COPY "./cmd/api" "./cmd/api"
 COPY ./internal/api ./internal/api
 COPY ./internal/dao ./internal/dao
 COPY ./internal/daoai ./internal/daoai
-COPY ./internal/lib ./internal/lib
 COPY ./internal/services ./internal/services
 COPY ./pkg ./pkg
 COPY ./models ./models

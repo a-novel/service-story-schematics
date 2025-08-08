@@ -31,9 +31,8 @@ func TestInsertBeatsSheet(t *testing.T) {
 
 			data: dao.InsertBeatsSheetData{
 				Sheet: models.BeatsSheet{
-					ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-0000-0000-0002-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "test-beat",
@@ -52,9 +51,8 @@ func TestInsertBeatsSheet(t *testing.T) {
 			},
 
 			expect: &dao.BeatsSheetEntity{
-				ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-0000-0002-000000000001"),
+				ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",
@@ -76,9 +74,8 @@ func TestInsertBeatsSheet(t *testing.T) {
 
 			fixtures: []*dao.BeatsSheetEntity{
 				{
-					ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-0000-0000-0002-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "test-beat",
@@ -93,9 +90,8 @@ func TestInsertBeatsSheet(t *testing.T) {
 
 			data: dao.InsertBeatsSheetData{
 				Sheet: models.BeatsSheet{
-					ID:          uuid.MustParse("00000000-0000-0000-0000-000000000002"),
-					LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-0000-0000-0002-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+					LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "test-beat",
@@ -114,9 +110,8 @@ func TestInsertBeatsSheet(t *testing.T) {
 			},
 
 			expect: &dao.BeatsSheetEntity{
-				ID:          uuid.MustParse("00000000-0000-0000-0000-000000000002"),
-				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-0000-0002-000000000001"),
+				ID:        uuid.MustParse("00000000-0000-0000-0000-000000000002"),
+				LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 				Content: []models.Beat{
 					{
 						Key:     "test-beat",

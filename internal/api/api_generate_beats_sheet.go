@@ -36,15 +36,14 @@ func (api *API) GenerateBeatsSheet(
 	beatsSheet, err := api.GenerateBeatsSheetService.GenerateBeatsSheet(
 		ctx,
 		services.GenerateBeatsSheetRequest{
-			LoglineID:   uuid.UUID(req.GetLoglineID()),
-			StoryPlanID: uuid.UUID(req.GetStoryPlanID()),
-			UserID:      userID,
-			Lang:        models.Lang(req.GetLang()),
+			LoglineID: uuid.UUID(req.GetLoglineID()),
+			UserID:    userID,
+			Lang:      models.Lang(req.GetLang()),
 		},
 	)
 
 	switch {
-	case errors.Is(err, dao.ErrLoglineNotFound), errors.Is(err, dao.ErrStoryPlanNotFound):
+	case errors.Is(err, dao.ErrLoglineNotFound), errors.Is(err, services.ErrStoryPlanNotFound):
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "")
 

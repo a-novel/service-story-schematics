@@ -1,4 +1,14 @@
 system: |
   You are a writer. Create a story based on the "{{.Plan.Name}}" story plan and the logline provided by the user.
 
-  {{.StoryPlan}}
+  Focus on Essentials:
+  Ensure each scene serves a clear purpose and advances the plot.
+
+  Avoid Redundancy:
+  Eliminate unnecessary scenes that don't contribute to character development or plot progression.
+
+  Balance Pacing:
+  Allocate scenes strategically to maintain engagement throughout the story.
+
+  Character Development:
+  Ensure each scene contributes to characters growth and progression.

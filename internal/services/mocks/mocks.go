@@ -9,7 +9,9 @@ import (
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
+	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
+	"github.com/a-novel/service-story-schematics/models/story_plan"
 	"github.com/google/uuid"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -156,27 +158,27 @@ func (_c *MockCreateBeatsSheetSource_SelectLogline_Call) RunAndReturn(run func(c
 }
 
 // SelectStoryPlan provides a mock function for the type MockCreateBeatsSheetSource
-func (_mock *MockCreateBeatsSheetSource) SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
+func (_mock *MockCreateBeatsSheetSource) SelectStoryPlan(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error) {
+	ret := _mock.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SelectStoryPlan")
 	}
 
-	var r0 *dao.StoryPlanEntity
+	var r0 *storyplanmodel.Plan
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)); ok {
+		return returnFunc(ctx, request)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) *storyplanmodel.Plan); ok {
+		r0 = returnFunc(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
+			r0 = ret.Get(0).(*storyplanmodel.Plan)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
-		r1 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, services.SelectStoryPlanRequest) error); ok {
+		r1 = returnFunc(ctx, request)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -190,24 +192,24 @@ type MockCreateBeatsSheetSource_SelectStoryPlan_Call struct {
 
 // SelectStoryPlan is a helper method to define mock.On call
 //   - ctx
-//   - data
-func (_e *MockCreateBeatsSheetSource_Expecter) SelectStoryPlan(ctx interface{}, data interface{}) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
-	return &MockCreateBeatsSheetSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, data)}
+//   - request
+func (_e *MockCreateBeatsSheetSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
+	return &MockCreateBeatsSheetSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
-func (_c *MockCreateBeatsSheetSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
+func (_c *MockCreateBeatsSheetSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
+		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
 	})
 	return _c
 }
 
-func (_c *MockCreateBeatsSheetSource_SelectStoryPlan_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
-	_c.Call.Return(storyPlanEntity, err)
+func (_c *MockCreateBeatsSheetSource_SelectStoryPlan_Call) Return(plan *storyplanmodel.Plan, err error) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
+	_c.Call.Return(plan, err)
 	return _c
 }
 
-func (_c *MockCreateBeatsSheetSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
+func (_c *MockCreateBeatsSheetSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -353,151 +355,6 @@ func (_c *MockCreateLoglineSource_SelectSlugIteration_Call) Return(slug models.S
 }
 
 func (_c *MockCreateLoglineSource_SelectSlugIteration_Call) RunAndReturn(run func(ctx context.Context, data dao.SelectSlugIterationData) (models.Slug, int, error)) *MockCreateLoglineSource_SelectSlugIteration_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// NewMockCreateStoryPlanSource creates a new instance of MockCreateStoryPlanSource. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
-// The first argument is typically a *testing.T value.
-func NewMockCreateStoryPlanSource(t interface {
-	mock.TestingT
-	Cleanup(func())
-}) *MockCreateStoryPlanSource {
-	mock := &MockCreateStoryPlanSource{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
-}
-
-// MockCreateStoryPlanSource is an autogenerated mock type for the CreateStoryPlanSource type
-type MockCreateStoryPlanSource struct {
-	mock.Mock
-}
-
-type MockCreateStoryPlanSource_Expecter struct {
-	mock *mock.Mock
-}
-
-func (_m *MockCreateStoryPlanSource) EXPECT() *MockCreateStoryPlanSource_Expecter {
-	return &MockCreateStoryPlanSource_Expecter{mock: &_m.Mock}
-}
-
-// InsertStoryPlan provides a mock function for the type MockCreateStoryPlanSource
-func (_mock *MockCreateStoryPlanSource) InsertStoryPlan(ctx context.Context, data dao.InsertStoryPlanData) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
-
-	if len(ret) == 0 {
-		panic("no return value specified for InsertStoryPlan")
-	}
-
-	var r0 *dao.StoryPlanEntity
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.InsertStoryPlanData) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.InsertStoryPlanData) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, dao.InsertStoryPlanData) error); ok {
-		r1 = returnFunc(ctx, data)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockCreateStoryPlanSource_InsertStoryPlan_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'InsertStoryPlan'
-type MockCreateStoryPlanSource_InsertStoryPlan_Call struct {
-	*mock.Call
-}
-
-// InsertStoryPlan is a helper method to define mock.On call
-//   - ctx
-//   - data
-func (_e *MockCreateStoryPlanSource_Expecter) InsertStoryPlan(ctx interface{}, data interface{}) *MockCreateStoryPlanSource_InsertStoryPlan_Call {
-	return &MockCreateStoryPlanSource_InsertStoryPlan_Call{Call: _e.mock.On("InsertStoryPlan", ctx, data)}
-}
-
-func (_c *MockCreateStoryPlanSource_InsertStoryPlan_Call) Run(run func(ctx context.Context, data dao.InsertStoryPlanData)) *MockCreateStoryPlanSource_InsertStoryPlan_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.InsertStoryPlanData))
-	})
-	return _c
-}
-
-func (_c *MockCreateStoryPlanSource_InsertStoryPlan_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockCreateStoryPlanSource_InsertStoryPlan_Call {
-	_c.Call.Return(storyPlanEntity, err)
-	return _c
-}
-
-func (_c *MockCreateStoryPlanSource_InsertStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data dao.InsertStoryPlanData) (*dao.StoryPlanEntity, error)) *MockCreateStoryPlanSource_InsertStoryPlan_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SelectSlugIteration provides a mock function for the type MockCreateStoryPlanSource
-func (_mock *MockCreateStoryPlanSource) SelectSlugIteration(ctx context.Context, data dao.SelectSlugIterationData) (models.Slug, int, error) {
-	ret := _mock.Called(ctx, data)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SelectSlugIteration")
-	}
-
-	var r0 models.Slug
-	var r1 int
-	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.SelectSlugIterationData) (models.Slug, int, error)); ok {
-		return returnFunc(ctx, data)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.SelectSlugIterationData) models.Slug); ok {
-		r0 = returnFunc(ctx, data)
-	} else {
-		r0 = ret.Get(0).(models.Slug)
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, dao.SelectSlugIterationData) int); ok {
-		r1 = returnFunc(ctx, data)
-	} else {
-		r1 = ret.Get(1).(int)
-	}
-	if returnFunc, ok := ret.Get(2).(func(context.Context, dao.SelectSlugIterationData) error); ok {
-		r2 = returnFunc(ctx, data)
-	} else {
-		r2 = ret.Error(2)
-	}
-	return r0, r1, r2
-}
-
-// MockCreateStoryPlanSource_SelectSlugIteration_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SelectSlugIteration'
-type MockCreateStoryPlanSource_SelectSlugIteration_Call struct {
-	*mock.Call
-}
-
-// SelectSlugIteration is a helper method to define mock.On call
-//   - ctx
-//   - data
-func (_e *MockCreateStoryPlanSource_Expecter) SelectSlugIteration(ctx interface{}, data interface{}) *MockCreateStoryPlanSource_SelectSlugIteration_Call {
-	return &MockCreateStoryPlanSource_SelectSlugIteration_Call{Call: _e.mock.On("SelectSlugIteration", ctx, data)}
-}
-
-func (_c *MockCreateStoryPlanSource_SelectSlugIteration_Call) Run(run func(ctx context.Context, data dao.SelectSlugIterationData)) *MockCreateStoryPlanSource_SelectSlugIteration_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectSlugIterationData))
-	})
-	return _c
-}
-
-func (_c *MockCreateStoryPlanSource_SelectSlugIteration_Call) Return(slug models.Slug, n int, err error) *MockCreateStoryPlanSource_SelectSlugIteration_Call {
-	_c.Call.Return(slug, n, err)
-	return _c
-}
-
-func (_c *MockCreateStoryPlanSource_SelectSlugIteration_Call) RunAndReturn(run func(ctx context.Context, data dao.SelectSlugIterationData) (models.Slug, int, error)) *MockCreateStoryPlanSource_SelectSlugIteration_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -701,27 +558,27 @@ func (_c *MockExpandBeatSource_SelectLogline_Call) RunAndReturn(run func(ctx con
 }
 
 // SelectStoryPlan provides a mock function for the type MockExpandBeatSource
-func (_mock *MockExpandBeatSource) SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
+func (_mock *MockExpandBeatSource) SelectStoryPlan(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error) {
+	ret := _mock.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SelectStoryPlan")
 	}
 
-	var r0 *dao.StoryPlanEntity
+	var r0 *storyplanmodel.Plan
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)); ok {
+		return returnFunc(ctx, request)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) *storyplanmodel.Plan); ok {
+		r0 = returnFunc(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
+			r0 = ret.Get(0).(*storyplanmodel.Plan)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
-		r1 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, services.SelectStoryPlanRequest) error); ok {
+		r1 = returnFunc(ctx, request)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -735,24 +592,24 @@ type MockExpandBeatSource_SelectStoryPlan_Call struct {
 
 // SelectStoryPlan is a helper method to define mock.On call
 //   - ctx
-//   - data
-func (_e *MockExpandBeatSource_Expecter) SelectStoryPlan(ctx interface{}, data interface{}) *MockExpandBeatSource_SelectStoryPlan_Call {
-	return &MockExpandBeatSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, data)}
+//   - request
+func (_e *MockExpandBeatSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockExpandBeatSource_SelectStoryPlan_Call {
+	return &MockExpandBeatSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
-func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockExpandBeatSource_SelectStoryPlan_Call {
+func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockExpandBeatSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
+		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
 	})
 	return _c
 }
 
-func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockExpandBeatSource_SelectStoryPlan_Call {
-	_c.Call.Return(storyPlanEntity, err)
+func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Return(plan *storyplanmodel.Plan, err error) *MockExpandBeatSource_SelectStoryPlan_Call {
+	_c.Call.Return(plan, err)
 	return _c
 }
 
-func (_c *MockExpandBeatSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)) *MockExpandBeatSource_SelectStoryPlan_Call {
+func (_c *MockExpandBeatSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)) *MockExpandBeatSource_SelectStoryPlan_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -983,27 +840,27 @@ func (_c *MockGenerateBeatsSheetSource_SelectLogline_Call) RunAndReturn(run func
 }
 
 // SelectStoryPlan provides a mock function for the type MockGenerateBeatsSheetSource
-func (_mock *MockGenerateBeatsSheetSource) SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
+func (_mock *MockGenerateBeatsSheetSource) SelectStoryPlan(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error) {
+	ret := _mock.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SelectStoryPlan")
 	}
 
-	var r0 *dao.StoryPlanEntity
+	var r0 *storyplanmodel.Plan
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)); ok {
+		return returnFunc(ctx, request)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) *storyplanmodel.Plan); ok {
+		r0 = returnFunc(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
+			r0 = ret.Get(0).(*storyplanmodel.Plan)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
-		r1 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, services.SelectStoryPlanRequest) error); ok {
+		r1 = returnFunc(ctx, request)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1017,24 +874,24 @@ type MockGenerateBeatsSheetSource_SelectStoryPlan_Call struct {
 
 // SelectStoryPlan is a helper method to define mock.On call
 //   - ctx
-//   - data
-func (_e *MockGenerateBeatsSheetSource_Expecter) SelectStoryPlan(ctx interface{}, data interface{}) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
-	return &MockGenerateBeatsSheetSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, data)}
+//   - request
+func (_e *MockGenerateBeatsSheetSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
+	return &MockGenerateBeatsSheetSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
-func (_c *MockGenerateBeatsSheetSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
+func (_c *MockGenerateBeatsSheetSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
+		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
 	})
 	return _c
 }
 
-func (_c *MockGenerateBeatsSheetSource_SelectStoryPlan_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
-	_c.Call.Return(storyPlanEntity, err)
+func (_c *MockGenerateBeatsSheetSource_SelectStoryPlan_Call) Return(plan *storyplanmodel.Plan, err error) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
+	_c.Call.Return(plan, err)
 	return _c
 }
 
-func (_c *MockGenerateBeatsSheetSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
+func (_c *MockGenerateBeatsSheetSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1348,90 +1205,6 @@ func (_c *MockListLoglinesSource_ListLoglines_Call) RunAndReturn(run func(ctx co
 	return _c
 }
 
-// NewMockListStoryPlansSource creates a new instance of MockListStoryPlansSource. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
-// The first argument is typically a *testing.T value.
-func NewMockListStoryPlansSource(t interface {
-	mock.TestingT
-	Cleanup(func())
-}) *MockListStoryPlansSource {
-	mock := &MockListStoryPlansSource{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
-}
-
-// MockListStoryPlansSource is an autogenerated mock type for the ListStoryPlansSource type
-type MockListStoryPlansSource struct {
-	mock.Mock
-}
-
-type MockListStoryPlansSource_Expecter struct {
-	mock *mock.Mock
-}
-
-func (_m *MockListStoryPlansSource) EXPECT() *MockListStoryPlansSource_Expecter {
-	return &MockListStoryPlansSource_Expecter{mock: &_m.Mock}
-}
-
-// ListStoryPlans provides a mock function for the type MockListStoryPlansSource
-func (_mock *MockListStoryPlansSource) ListStoryPlans(ctx context.Context, data dao.ListStoryPlansData) ([]*dao.StoryPlanPreviewEntity, error) {
-	ret := _mock.Called(ctx, data)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ListStoryPlans")
-	}
-
-	var r0 []*dao.StoryPlanPreviewEntity
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.ListStoryPlansData) ([]*dao.StoryPlanPreviewEntity, error)); ok {
-		return returnFunc(ctx, data)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.ListStoryPlansData) []*dao.StoryPlanPreviewEntity); ok {
-		r0 = returnFunc(ctx, data)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*dao.StoryPlanPreviewEntity)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, dao.ListStoryPlansData) error); ok {
-		r1 = returnFunc(ctx, data)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockListStoryPlansSource_ListStoryPlans_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListStoryPlans'
-type MockListStoryPlansSource_ListStoryPlans_Call struct {
-	*mock.Call
-}
-
-// ListStoryPlans is a helper method to define mock.On call
-//   - ctx
-//   - data
-func (_e *MockListStoryPlansSource_Expecter) ListStoryPlans(ctx interface{}, data interface{}) *MockListStoryPlansSource_ListStoryPlans_Call {
-	return &MockListStoryPlansSource_ListStoryPlans_Call{Call: _e.mock.On("ListStoryPlans", ctx, data)}
-}
-
-func (_c *MockListStoryPlansSource_ListStoryPlans_Call) Run(run func(ctx context.Context, data dao.ListStoryPlansData)) *MockListStoryPlansSource_ListStoryPlans_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.ListStoryPlansData))
-	})
-	return _c
-}
-
-func (_c *MockListStoryPlansSource_ListStoryPlans_Call) Return(storyPlanPreviewEntitys []*dao.StoryPlanPreviewEntity, err error) *MockListStoryPlansSource_ListStoryPlans_Call {
-	_c.Call.Return(storyPlanPreviewEntitys, err)
-	return _c
-}
-
-func (_c *MockListStoryPlansSource_ListStoryPlans_Call) RunAndReturn(run func(ctx context.Context, data dao.ListStoryPlansData) ([]*dao.StoryPlanPreviewEntity, error)) *MockListStoryPlansSource_ListStoryPlans_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // NewMockRegenerateBeatsSource creates a new instance of MockRegenerateBeatsSource. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewMockRegenerateBeatsSource(t interface {
@@ -1631,27 +1404,27 @@ func (_c *MockRegenerateBeatsSource_SelectLogline_Call) RunAndReturn(run func(ct
 }
 
 // SelectStoryPlan provides a mock function for the type MockRegenerateBeatsSource
-func (_mock *MockRegenerateBeatsSource) SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
+func (_mock *MockRegenerateBeatsSource) SelectStoryPlan(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error) {
+	ret := _mock.Called(ctx, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for SelectStoryPlan")
 	}
 
-	var r0 *dao.StoryPlanEntity
+	var r0 *storyplanmodel.Plan
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)); ok {
+		return returnFunc(ctx, request)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, services.SelectStoryPlanRequest) *storyplanmodel.Plan); ok {
+		r0 = returnFunc(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
+			r0 = ret.Get(0).(*storyplanmodel.Plan)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
-		r1 = returnFunc(ctx, data)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, services.SelectStoryPlanRequest) error); ok {
+		r1 = returnFunc(ctx, request)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -1665,24 +1438,24 @@ type MockRegenerateBeatsSource_SelectStoryPlan_Call struct {
 
 // SelectStoryPlan is a helper method to define mock.On call
 //   - ctx
-//   - data
-func (_e *MockRegenerateBeatsSource_Expecter) SelectStoryPlan(ctx interface{}, data interface{}) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
-	return &MockRegenerateBeatsSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, data)}
+//   - request
+func (_e *MockRegenerateBeatsSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
+	return &MockRegenerateBeatsSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
-func (_c *MockRegenerateBeatsSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
+func (_c *MockRegenerateBeatsSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
+		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
 	})
 	return _c
 }
 
-func (_c *MockRegenerateBeatsSource_SelectStoryPlan_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
-	_c.Call.Return(storyPlanEntity, err)
+func (_c *MockRegenerateBeatsSource_SelectStoryPlan_Call) Return(plan *storyplanmodel.Plan, err error) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
+	_c.Call.Return(plan, err)
 	return _c
 }
 
-func (_c *MockRegenerateBeatsSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
+func (_c *MockRegenerateBeatsSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, request services.SelectStoryPlanRequest) (*storyplanmodel.Plan, error)) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1965,231 +1738,6 @@ func (_c *MockSelectLoglineSource_SelectLoglineBySlug_Call) Return(loglineEntity
 }
 
 func (_c *MockSelectLoglineSource_SelectLoglineBySlug_Call) RunAndReturn(run func(ctx context.Context, data dao.SelectLoglineBySlugData) (*dao.LoglineEntity, error)) *MockSelectLoglineSource_SelectLoglineBySlug_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// NewMockSelectStoryPlanSource creates a new instance of MockSelectStoryPlanSource. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
-// The first argument is typically a *testing.T value.
-func NewMockSelectStoryPlanSource(t interface {
-	mock.TestingT
-	Cleanup(func())
-}) *MockSelectStoryPlanSource {
-	mock := &MockSelectStoryPlanSource{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
-}
-
-// MockSelectStoryPlanSource is an autogenerated mock type for the SelectStoryPlanSource type
-type MockSelectStoryPlanSource struct {
-	mock.Mock
-}
-
-type MockSelectStoryPlanSource_Expecter struct {
-	mock *mock.Mock
-}
-
-func (_m *MockSelectStoryPlanSource) EXPECT() *MockSelectStoryPlanSource_Expecter {
-	return &MockSelectStoryPlanSource_Expecter{mock: &_m.Mock}
-}
-
-// SelectStoryPlan provides a mock function for the type MockSelectStoryPlanSource
-func (_mock *MockSelectStoryPlanSource) SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SelectStoryPlan")
-	}
-
-	var r0 *dao.StoryPlanEntity
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, uuid.UUID) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
-		r1 = returnFunc(ctx, data)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockSelectStoryPlanSource_SelectStoryPlan_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SelectStoryPlan'
-type MockSelectStoryPlanSource_SelectStoryPlan_Call struct {
-	*mock.Call
-}
-
-// SelectStoryPlan is a helper method to define mock.On call
-//   - ctx
-//   - data
-func (_e *MockSelectStoryPlanSource_Expecter) SelectStoryPlan(ctx interface{}, data interface{}) *MockSelectStoryPlanSource_SelectStoryPlan_Call {
-	return &MockSelectStoryPlanSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, data)}
-}
-
-func (_c *MockSelectStoryPlanSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockSelectStoryPlanSource_SelectStoryPlan_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
-	})
-	return _c
-}
-
-func (_c *MockSelectStoryPlanSource_SelectStoryPlan_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockSelectStoryPlanSource_SelectStoryPlan_Call {
-	_c.Call.Return(storyPlanEntity, err)
-	return _c
-}
-
-func (_c *MockSelectStoryPlanSource_SelectStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)) *MockSelectStoryPlanSource_SelectStoryPlan_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SelectStoryPlanBySlug provides a mock function for the type MockSelectStoryPlanSource
-func (_mock *MockSelectStoryPlanSource) SelectStoryPlanBySlug(ctx context.Context, data models.Slug) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SelectStoryPlanBySlug")
-	}
-
-	var r0 *dao.StoryPlanEntity
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, models.Slug) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, models.Slug) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, models.Slug) error); ok {
-		r1 = returnFunc(ctx, data)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SelectStoryPlanBySlug'
-type MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call struct {
-	*mock.Call
-}
-
-// SelectStoryPlanBySlug is a helper method to define mock.On call
-//   - ctx
-//   - data
-func (_e *MockSelectStoryPlanSource_Expecter) SelectStoryPlanBySlug(ctx interface{}, data interface{}) *MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call {
-	return &MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call{Call: _e.mock.On("SelectStoryPlanBySlug", ctx, data)}
-}
-
-func (_c *MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call) Run(run func(ctx context.Context, data models.Slug)) *MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(models.Slug))
-	})
-	return _c
-}
-
-func (_c *MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call {
-	_c.Call.Return(storyPlanEntity, err)
-	return _c
-}
-
-func (_c *MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call) RunAndReturn(run func(ctx context.Context, data models.Slug) (*dao.StoryPlanEntity, error)) *MockSelectStoryPlanSource_SelectStoryPlanBySlug_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// NewMockUpdateStoryPlanSource creates a new instance of MockUpdateStoryPlanSource. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
-// The first argument is typically a *testing.T value.
-func NewMockUpdateStoryPlanSource(t interface {
-	mock.TestingT
-	Cleanup(func())
-}) *MockUpdateStoryPlanSource {
-	mock := &MockUpdateStoryPlanSource{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
-}
-
-// MockUpdateStoryPlanSource is an autogenerated mock type for the UpdateStoryPlanSource type
-type MockUpdateStoryPlanSource struct {
-	mock.Mock
-}
-
-type MockUpdateStoryPlanSource_Expecter struct {
-	mock *mock.Mock
-}
-
-func (_m *MockUpdateStoryPlanSource) EXPECT() *MockUpdateStoryPlanSource_Expecter {
-	return &MockUpdateStoryPlanSource_Expecter{mock: &_m.Mock}
-}
-
-// UpdateStoryPlan provides a mock function for the type MockUpdateStoryPlanSource
-func (_mock *MockUpdateStoryPlanSource) UpdateStoryPlan(ctx context.Context, data dao.UpdateStoryPlanData) (*dao.StoryPlanEntity, error) {
-	ret := _mock.Called(ctx, data)
-
-	if len(ret) == 0 {
-		panic("no return value specified for UpdateStoryPlan")
-	}
-
-	var r0 *dao.StoryPlanEntity
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.UpdateStoryPlanData) (*dao.StoryPlanEntity, error)); ok {
-		return returnFunc(ctx, data)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, dao.UpdateStoryPlanData) *dao.StoryPlanEntity); ok {
-		r0 = returnFunc(ctx, data)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*dao.StoryPlanEntity)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, dao.UpdateStoryPlanData) error); ok {
-		r1 = returnFunc(ctx, data)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockUpdateStoryPlanSource_UpdateStoryPlan_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateStoryPlan'
-type MockUpdateStoryPlanSource_UpdateStoryPlan_Call struct {
-	*mock.Call
-}
-
-// UpdateStoryPlan is a helper method to define mock.On call
-//   - ctx
-//   - data
-func (_e *MockUpdateStoryPlanSource_Expecter) UpdateStoryPlan(ctx interface{}, data interface{}) *MockUpdateStoryPlanSource_UpdateStoryPlan_Call {
-	return &MockUpdateStoryPlanSource_UpdateStoryPlan_Call{Call: _e.mock.On("UpdateStoryPlan", ctx, data)}
-}
-
-func (_c *MockUpdateStoryPlanSource_UpdateStoryPlan_Call) Run(run func(ctx context.Context, data dao.UpdateStoryPlanData)) *MockUpdateStoryPlanSource_UpdateStoryPlan_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.UpdateStoryPlanData))
-	})
-	return _c
-}
-
-func (_c *MockUpdateStoryPlanSource_UpdateStoryPlan_Call) Return(storyPlanEntity *dao.StoryPlanEntity, err error) *MockUpdateStoryPlanSource_UpdateStoryPlan_Call {
-	_c.Call.Return(storyPlanEntity, err)
-	return _c
-}
-
-func (_c *MockUpdateStoryPlanSource_UpdateStoryPlan_Call) RunAndReturn(run func(ctx context.Context, data dao.UpdateStoryPlanData) (*dao.StoryPlanEntity, error)) *MockUpdateStoryPlanSource_UpdateStoryPlan_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -12,6 +12,7 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 func TestGenerateBeatsSheet(t *testing.T) {
@@ -32,14 +33,15 @@ func TestGenerateBeatsSheet(t *testing.T) {
 
 					beatsSheet, err := repository.GenerateBeatsSheet(t.Context(), daoai.GenerateBeatsSheetRequest{
 						Logline: testCase.Logline,
-						Plan:    testCase.Plan,
-						UserID:  TestUser,
-						Lang:    lang,
+						Plan: storyplanmodel.SaveTheCat[lang].
+							Pick("openingImage", "themeStated", "setup", "catalyst", "debate"),
+						UserID: TestUser,
+						Lang:   lang,
 					})
 					require.NoError(t, err)
 
 					require.NotNil(t, beatsSheet)
-					require.Len(t, beatsSheet, len(testCase.Plan.Beats))
+					require.Len(t, beatsSheet, 5)
 
 					aggregated := strings.Join(lo.Map(beatsSheet, func(item models.Beat, _ int) string {
 						return item.Title + "\n" + item.Content

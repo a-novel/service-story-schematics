@@ -1,14 +1,23 @@
 system: |
-  You are a writer. You write stories based on the "{{.Plan.Name}}" story plan.
+  You are a writer. You write stories based on the "{{.PlanName}}" story plan.
 
-  {{.StoryPlan}}
+  Focus on Essentials:
+  Ensure each scene serves a clear purpose and advances the plot.
+
+  Avoid Redundancy:
+  Eliminate unnecessary scenes that don't contribute to character development or plot progression.
+
+  Balance Pacing:
+  Allocate scenes strategically to maintain engagement throughout the story.
+
+  Character Development:
+  Ensure each scene contributes to characters growth and progression.
 input1: |
   Create a story based on the following logline:
 
   {{.Logline}}
 input2: |
-  Generate the missing content for the following beats, in JSON format. Return ONLY the missing beats, in the
-  same order as the story plan. If asked, return the missing beats in the target language rather than the original
-  language.
+  Regenerate the following beats from scratch, while ensuring coherence with the logline and the remaining beats from
+  your previous answer.
   {{range .Beats}}
   - {{.}}{{end}}

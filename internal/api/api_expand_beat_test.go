@@ -87,10 +87,10 @@ func TestExpandBeat(t *testing.T) {
 			},
 
 			expandBeatData: &expandBeatData{
-				err: dao.ErrStoryPlanNotFound,
+				err: services.ErrStoryPlanNotFound,
 			},
 
-			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: services.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "UnknownTargetKey",
