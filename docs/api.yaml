@@ -619,10 +619,13 @@ components:
       required:
         - postgres
         - jsonKeys
+        - openai
       properties:
         postgres:
           $ref: "#/components/schemas/Dependency"
         jsonKeys:
+          $ref: "#/components/schemas/Dependency"
+        openai:
           $ref: "#/components/schemas/Dependency"
 
     CreateBeatsSheetForm:

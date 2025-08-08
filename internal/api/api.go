@@ -13,6 +13,7 @@ import (
 	jkApiModels "github.com/a-novel/service-json-keys/models/api"
 
 	"github.com/a-novel/service-story-schematics/models/api"
+	"github.com/a-novel/service-story-schematics/models/config"
 )
 
 var ErrUnauthorized = &apimodels.UnexpectedErrorStatusCode{
@@ -50,7 +51,8 @@ type API struct {
 	SelectBeatsSheetService SelectBeatsSheetService
 	SelectLoglineService    SelectLoglineService
 
-	JKClient *jkApiModels.Client
+	JKClient     *jkApiModels.Client
+	OpenAIClient *config.OpenAI
 }
 
 func (api *API) NewError(ctx context.Context, err error) *apimodels.UnexpectedErrorStatusCode {

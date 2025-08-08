@@ -190,7 +190,8 @@ func App[Otel otel.Config, Pg postgres.Config](
 		SelectBeatsSheetService: selectBeatsSheetService,
 		SelectLoglineService:    selectLoglineService,
 
-		JKClient: jkClient,
+		JKClient:     jkClient,
+		OpenAIClient: &config.OpenAI,
 	}
 
 	securityHandler, err := api.NewSecurity(accessTokenVerifier, config.PermissionsConfig)
