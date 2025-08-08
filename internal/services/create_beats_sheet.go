@@ -11,38 +11,37 @@ import (
 	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 type CreateBeatsSheetSource interface {
 	InsertBeatsSheet(ctx context.Context, data dao.InsertBeatsSheetData) (*dao.BeatsSheetEntity, error)
-	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
+	SelectStoryPlan(ctx context.Context, request SelectStoryPlanRequest) (*storyplanmodel.Plan, error)
 	SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)
 }
 
 func NewCreateBeatsSheetServiceSource(
 	insertBeatSheetDAO *dao.InsertBeatsSheetRepository,
-	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
+	selectStoryPlan *SelectStoryPlanService,
 	selectLoglineDAO *dao.SelectLoglineRepository,
 ) CreateBeatsSheetSource {
 	return &struct {
 		*dao.InsertBeatsSheetRepository
-		*dao.SelectStoryPlanRepository
+		*SelectStoryPlanService
 		*dao.SelectLoglineRepository
 	}{
 		InsertBeatsSheetRepository: insertBeatSheetDAO,
-		SelectStoryPlanRepository:  selectStoryPlanDAO,
+		SelectStoryPlanService:     selectStoryPlan,
 		SelectLoglineRepository:    selectLoglineDAO,
 	}
 }
 
 type CreateBeatsSheetRequest struct {
-	LoglineID   uuid.UUID
-	UserID      uuid.UUID
-	StoryPlanID uuid.UUID
-	Content     []models.Beat
-	Lang        models.Lang
+	LoglineID uuid.UUID
+	UserID    uuid.UUID
+	Content   []models.Beat
+	Lang      models.Lang
 }
 
 type CreateBeatsSheetService struct {
@@ -61,7 +60,6 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 
 	span.SetAttributes(
 		attribute.String("request.loglineID", request.LoglineID.String()),
-		attribute.String("request.storyPlanID", request.StoryPlanID.String()),
 		attribute.String("request.lang", request.Lang.String()),
 		attribute.String("request.userID", request.UserID.String()),
 	)
@@ -74,25 +72,26 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 		return nil, otel.ReportError(span, fmt.Errorf("check logline: %w", err))
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(ctx, request.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(ctx, SelectStoryPlanRequest{
+		Lang: request.Lang,
+	})
 	if err != nil {
-		return nil, otel.ReportError(span, fmt.Errorf("check story plan: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get story plan: %w", err))
 	}
 
 	// Ensure story plan matches the beats sheet.
-	err = lib.CheckStoryPlan(request.Content, storyPlan.Beats)
+	err = storyPlan.Validate(request.Content)
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("check story plan: %w", err))
 	}
 
 	resp, err := service.source.InsertBeatsSheet(ctx, dao.InsertBeatsSheetData{
 		Sheet: models.BeatsSheet{
-			ID:          uuid.New(),
-			LoglineID:   request.LoglineID,
-			StoryPlanID: request.StoryPlanID,
-			Content:     request.Content,
-			Lang:        request.Lang,
-			CreatedAt:   time.Now(),
+			ID:        uuid.New(),
+			LoglineID: request.LoglineID,
+			Content:   request.Content,
+			Lang:      request.Lang,
+			CreatedAt: time.Now(),
 		},
 	})
 	if err != nil {
@@ -102,11 +101,10 @@ func (service *CreateBeatsSheetService) CreateBeatsSheet(
 	span.SetAttributes(attribute.String("dao.insertBeatsSheet.id", resp.ID.String()))
 
 	return otel.ReportSuccess(span, &models.BeatsSheet{
-		ID:          resp.ID,
-		LoglineID:   resp.LoglineID,
-		StoryPlanID: resp.StoryPlanID,
-		Content:     resp.Content,
-		Lang:        resp.Lang,
-		CreatedAt:   resp.CreatedAt,
+		ID:        resp.ID,
+		LoglineID: resp.LoglineID,
+		Content:   resp.Content,
+		Lang:      resp.Lang,
+		CreatedAt: resp.CreatedAt,
 	}), nil
 }

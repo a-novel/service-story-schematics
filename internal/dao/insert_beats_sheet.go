@@ -35,7 +35,6 @@ func (repository *InsertBeatsSheetRepository) InsertBeatsSheet(
 	span.SetAttributes(
 		attribute.String("sheet.id", data.Sheet.ID.String()),
 		attribute.String("sheet.loglineID", data.Sheet.LoglineID.String()),
-		attribute.String("sheet.storyPlanID", data.Sheet.StoryPlanID.String()),
 		attribute.String("sheet.lang", data.Sheet.Lang.String()),
 	)
 
@@ -51,7 +50,6 @@ func (repository *InsertBeatsSheetRepository) InsertBeatsSheet(
 			insertBeatsSheetQuery,
 			data.Sheet.ID,
 			data.Sheet.LoglineID,
-			data.Sheet.StoryPlanID,
 			data.Sheet.Content,
 			data.Sheet.Lang,
 			data.Sheet.CreatedAt,

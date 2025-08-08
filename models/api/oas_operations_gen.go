@@ -8,7 +8,6 @@ type OperationName = string
 const (
 	CreateBeatsSheetOperation   OperationName = "CreateBeatsSheet"
 	CreateLoglineOperation      OperationName = "CreateLogline"
-	CreateStoryPlanOperation    OperationName = "CreateStoryPlan"
 	ExpandBeatOperation         OperationName = "ExpandBeat"
 	ExpandLoglineOperation      OperationName = "ExpandLogline"
 	GenerateBeatsSheetOperation OperationName = "GenerateBeatsSheet"
@@ -17,10 +16,7 @@ const (
 	GetBeatsSheetsOperation     OperationName = "GetBeatsSheets"
 	GetLoglineOperation         OperationName = "GetLogline"
 	GetLoglinesOperation        OperationName = "GetLoglines"
-	GetStoryPlanOperation       OperationName = "GetStoryPlan"
-	GetStoryPlansOperation      OperationName = "GetStoryPlans"
 	HealthcheckOperation        OperationName = "Healthcheck"
 	PingOperation               OperationName = "Ping"
 	RegenerateBeatsOperation    OperationName = "RegenerateBeats"
-	UpdateStoryPlanOperation    OperationName = "UpdateStoryPlan"
 )

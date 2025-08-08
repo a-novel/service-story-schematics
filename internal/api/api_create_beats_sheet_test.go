@@ -17,10 +17,10 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/api"
 	apimocks "github.com/a-novel/service-story-schematics/internal/api/mocks"
 	"github.com/a-novel/service-story-schematics/internal/dao"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/api"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 func TestCreateBeatsSheet(t *testing.T) {
@@ -47,8 +47,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "Success",
 
 			form: &apimodels.CreateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
@@ -66,9 +65,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 
 			createBeatsSheetData: &createBeatsSheetData{
 				resp: &models.BeatsSheet{
-					ID:          uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "beat-1",
@@ -87,9 +85,8 @@ func TestCreateBeatsSheet(t *testing.T) {
 			},
 
 			expect: &apimodels.BeatsSheet{
-				ID:          apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				ID:        apimodels.BeatsSheetID(uuid.MustParse("00000000-0000-0000-0000-000000000001")),
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
@@ -110,8 +107,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "Error/LoglineNotFound",
 
 			form: &apimodels.CreateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
@@ -137,8 +133,7 @@ func TestCreateBeatsSheet(t *testing.T) {
 			name: "Error/StoryPlanNotFound",
 
 			form: &apimodels.CreateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
@@ -155,17 +150,16 @@ func TestCreateBeatsSheet(t *testing.T) {
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
-				err: dao.ErrStoryPlanNotFound,
+				err: services.ErrStoryPlanNotFound,
 			},
 
-			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: services.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "Error/InvalidStoryPlan",
 
 			form: &apimodels.CreateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
@@ -182,17 +176,16 @@ func TestCreateBeatsSheet(t *testing.T) {
 			},
 
 			createBeatsSheetData: &createBeatsSheetData{
-				err: lib.ErrInvalidStoryPlan,
+				err: storyplanmodel.ErrInvalidPlan,
 			},
 
-			expect: &apimodels.UnprocessableEntityError{Error: lib.ErrInvalidStoryPlan.Error()},
+			expect: &apimodels.UnprocessableEntityError{Error: storyplanmodel.ErrInvalidPlan.Error()},
 		},
 		{
 			name: "Error/CreateBeatsSheet",
 
 			form: &apimodels.CreateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.MustParse("00000000-0000-1000-0000-000000000001")),
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
 				Content: []apimodels.Beat{
 					{
 						Key:     "beat-1",
@@ -229,10 +222,9 @@ func TestCreateBeatsSheet(t *testing.T) {
 			if testCase.createBeatsSheetData != nil {
 				source.EXPECT().
 					CreateBeatsSheet(mock.Anything, services.CreateBeatsSheetRequest{
-						LoglineID:   uuid.UUID(testCase.form.GetLoglineID()),
-						UserID:      uuid.MustParse("00000000-1000-0000-0000-000000000001"),
-						StoryPlanID: uuid.UUID(testCase.form.GetStoryPlanID()),
-						Lang:        models.Lang(testCase.form.GetLang()),
+						LoglineID: uuid.UUID(testCase.form.GetLoglineID()),
+						UserID:    uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+						Lang:      models.Lang(testCase.form.GetLang()),
 						Content: lo.Map(testCase.form.GetContent(), func(item apimodels.Beat, _ int) models.Beat {
 							return models.Beat{
 								Key:     item.GetKey(),

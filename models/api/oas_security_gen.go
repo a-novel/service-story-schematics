@@ -40,9 +40,6 @@ var operationRolesBearerAuth = map[string][]string{
 	CreateLoglineOperation: []string{
 		"logline:create",
 	},
-	CreateStoryPlanOperation: []string{
-		"story-plan:create",
-	},
 	ExpandBeatOperation: []string{
 		"beat:expand",
 	},
@@ -67,17 +64,8 @@ var operationRolesBearerAuth = map[string][]string{
 	GetLoglinesOperation: []string{
 		"loglines:read",
 	},
-	GetStoryPlanOperation: []string{
-		"story-plan:read",
-	},
-	GetStoryPlansOperation: []string{
-		"story-plans:read",
-	},
 	RegenerateBeatsOperation: []string{
 		"beats-sheet:regenerate",
-	},
-	UpdateStoryPlanOperation: []string{
-		"story-plan:update",
 	},
 }
 

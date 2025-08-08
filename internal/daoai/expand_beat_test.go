@@ -11,6 +11,7 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/daoai/testdata"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 func TestExpandBeat(t *testing.T) {
@@ -24,6 +25,7 @@ func TestExpandBeat(t *testing.T) {
 			t.Parallel()
 
 			data := testdata.ExpandBeatPrompt
+			plan := storyplanmodel.SaveTheCat[lang].Pick("openingImage", "themeStated", "setup", "catalyst", "debate")
 
 			for name, testCase := range data.Cases {
 				t.Run(name, func(t *testing.T) {
@@ -32,7 +34,7 @@ func TestExpandBeat(t *testing.T) {
 					resp, err := repository.ExpandBeat(t.Context(), daoai.ExpandBeatRequest{
 						Logline:   testCase.Logline,
 						Beats:     testCase.Beats,
-						Plan:      testCase.Plan,
+						Plan:      plan,
 						Lang:      lang,
 						TargetKey: testCase.TargetKey,
 						UserID:    TestUser,

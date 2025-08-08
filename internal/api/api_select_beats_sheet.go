@@ -52,9 +52,8 @@ func (api *API) GetBeatsSheet(
 	}
 
 	return otel.ReportSuccess(span, &apimodels.BeatsSheet{
-		ID:          apimodels.BeatsSheetID(beatsSheet.ID),
-		LoglineID:   apimodels.LoglineID(beatsSheet.LoglineID),
-		StoryPlanID: apimodels.StoryPlanID(beatsSheet.StoryPlanID),
+		ID:        apimodels.BeatsSheetID(beatsSheet.ID),
+		LoglineID: apimodels.LoglineID(beatsSheet.LoglineID),
 		Content: lo.Map(beatsSheet.Content, func(item models.Beat, _ int) apimodels.Beat {
 			return apimodels.Beat{
 				Key:     item.Key,

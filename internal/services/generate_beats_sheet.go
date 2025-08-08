@@ -12,35 +12,35 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/internal/daoai"
 	"github.com/a-novel/service-story-schematics/models"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 type GenerateBeatsSheetSource interface {
 	GenerateBeatsSheet(ctx context.Context, request daoai.GenerateBeatsSheetRequest) ([]models.Beat, error)
 	SelectLogline(ctx context.Context, data dao.SelectLoglineData) (*dao.LoglineEntity, error)
-	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
+	SelectStoryPlan(ctx context.Context, request SelectStoryPlanRequest) (*storyplanmodel.Plan, error)
 }
 
 func NewGenerateBeatsSheetServiceSource(
 	generateDAO *daoai.GenerateBeatsSheetRepository,
 	selectLoglineDAO *dao.SelectLoglineRepository,
-	selectStoryPlanDAO *dao.SelectStoryPlanRepository,
+	selectStoryPlan *SelectStoryPlanService,
 ) GenerateBeatsSheetSource {
 	return &struct {
 		*daoai.GenerateBeatsSheetRepository
 		*dao.SelectLoglineRepository
-		*dao.SelectStoryPlanRepository
+		*SelectStoryPlanService
 	}{
 		GenerateBeatsSheetRepository: generateDAO,
 		SelectLoglineRepository:      selectLoglineDAO,
-		SelectStoryPlanRepository:    selectStoryPlanDAO,
+		SelectStoryPlanService:       selectStoryPlan,
 	}
 }
 
 type GenerateBeatsSheetRequest struct {
-	LoglineID   uuid.UUID
-	StoryPlanID uuid.UUID
-	UserID      uuid.UUID
-	Lang        models.Lang
+	LoglineID uuid.UUID
+	UserID    uuid.UUID
+	Lang      models.Lang
 }
 
 type GenerateBeatsSheetService struct {
@@ -59,7 +59,6 @@ func (service *GenerateBeatsSheetService) GenerateBeatsSheet(
 
 	span.SetAttributes(
 		attribute.String("request.loglineID", request.LoglineID.String()),
-		attribute.String("request.storyPlanID", request.StoryPlanID.String()),
 		attribute.String("request.lang", request.Lang.String()),
 		attribute.String("request.userID", request.UserID.String()),
 	)
@@ -72,24 +71,18 @@ func (service *GenerateBeatsSheetService) GenerateBeatsSheet(
 		return nil, otel.ReportError(span, fmt.Errorf("get logline: %w", err))
 	}
 
-	storyPlan, err := service.source.SelectStoryPlan(ctx, request.StoryPlanID)
+	storyPlan, err := service.source.SelectStoryPlan(ctx, SelectStoryPlanRequest{
+		Lang: request.Lang,
+	})
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("get story plan: %w", err))
 	}
 
 	resp, err := service.source.GenerateBeatsSheet(ctx, daoai.GenerateBeatsSheetRequest{
 		Logline: logline.Name + "\n\n" + logline.Content,
-		Plan: models.StoryPlan{
-			ID:          storyPlan.ID,
-			Slug:        storyPlan.Slug,
-			Name:        storyPlan.Name,
-			Description: storyPlan.Description,
-			Beats:       storyPlan.Beats,
-			Lang:        storyPlan.Lang,
-			CreatedAt:   storyPlan.CreatedAt,
-		},
-		Lang:   request.Lang,
-		UserID: request.UserID.String(),
+		Plan:    storyPlan,
+		Lang:    request.Lang,
+		UserID:  request.UserID.String(),
 	})
 	if err != nil {
 		return nil, otel.ReportError(span, err)

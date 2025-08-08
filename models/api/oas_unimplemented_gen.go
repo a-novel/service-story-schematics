@@ -31,15 +31,6 @@ func (UnimplementedHandler) CreateLogline(ctx context.Context, req *CreateLoglin
 	return r, ht.ErrNotImplemented
 }
 
-// CreateStoryPlan implements createStoryPlan operation.
-//
-// Create a new story plan.
-//
-// PUT /story-plan
-func (UnimplementedHandler) CreateStoryPlan(ctx context.Context, req *CreateStoryPlanForm) (r CreateStoryPlanRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ExpandBeat implements expandBeat operation.
 //
 // Add more details to a specific beat in a beats sheet.
@@ -112,24 +103,6 @@ func (UnimplementedHandler) GetLoglines(ctx context.Context, params GetLoglinesP
 	return r, ht.ErrNotImplemented
 }
 
-// GetStoryPlan implements getStoryPlan operation.
-//
-// Get a story plan.
-//
-// GET /story-plan
-func (UnimplementedHandler) GetStoryPlan(ctx context.Context, params GetStoryPlanParams) (r GetStoryPlanRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetStoryPlans implements getStoryPlans operation.
-//
-// Get all story plans.
-//
-// GET /story-plans
-func (UnimplementedHandler) GetStoryPlans(ctx context.Context, params GetStoryPlansParams) (r GetStoryPlansRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // Healthcheck implements healthcheck operation.
 //
 // Returns a detailed report of the health of the service, including every dependency.
@@ -154,15 +127,6 @@ func (UnimplementedHandler) Ping(ctx context.Context) (r PingRes, _ error) {
 //
 // POST /beats-sheet/regenerate
 func (UnimplementedHandler) RegenerateBeats(ctx context.Context, req *RegenerateBeatsForm) (r RegenerateBeatsRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// UpdateStoryPlan implements updateStoryPlan operation.
-//
-// Update a story plan.
-//
-// PATCH /story-plan
-func (UnimplementedHandler) UpdateStoryPlan(ctx context.Context, req *UpdateStoryPlanForm) (r UpdateStoryPlanRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

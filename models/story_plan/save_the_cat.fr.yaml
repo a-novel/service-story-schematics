@@ -1,0 +1,123 @@
+metadata:
+  name: Save The Cat
+  lang: fr
+beats:
+  - name: Image d'ouverture
+    key: openingImage
+    keyPoints:
+      - Montrer le quotidien du protagoniste avant que l’aventure ne commence.
+    purpose: Pose le ton, l’ambiance et les enjeux ; offre une image forte du point de départ.
+    scenes:
+      exact: 1
+  - name: Thème énoncé
+    key: themeStated
+    keyPoints:
+      - Introduire le thème central ou la morale de l’histoire.
+    purpose: Souvent glissé dans un dialogue ; annonce la transformation à venir du protagoniste.
+    scenes:
+      exact: 1
+  - name: Mise en place
+    key: setup
+    keyPoints:
+      - Présenter les personnages principaux.
+      - Montrer les failles, manques ou défis du protagoniste.
+      - Poser les enjeux et définir le monde de l’histoire.
+    purpose: Crée de l’empathie et installe le spectateur dans l’univers narratif.
+    scenes:
+      min: 3
+      max: 5
+  - name: Déclencheur
+    key: catalyst
+    keyPoints:
+      - Un événement qui vient bouleverser l’ordre établi.
+    purpose: Lance le protagoniste dans le conflit principal.
+    scenes:
+      exact: 1
+  - name: Doute
+    key: debate
+    keyPoints:
+      - Le protagoniste hésite à s’engager dans l’aventure.
+      - Met en lumière ses peurs et ses conflits intérieurs.
+    purpose: Ajoute de la profondeur psychologique et renforce la tension dramatique.
+    scenes:
+      min: 2
+      max: 3
+  - name: Passage à l’acte deux
+    key: breakIntoTwo
+    keyPoints:
+      - Le protagoniste prend la décision irréversible de se lancer.
+    purpose: Marque la bascule du Monde Ordinaire vers le Monde Extraordinaire (Acte I → Acte II).
+    scenes:
+      exact: 1
+  - name: Intrigue secondaire
+    key: bStory
+    keyPoints:
+      - Introduction d’un fil narratif secondaire (souvent une histoire d’amour, d’amitié ou un mentorat).
+    purpose: Apporte un contrepoint et renforce l’intrigue principale.
+    scenes:
+      min: 1
+      max: 2
+  - name: Plaisir et obstacles
+    key: funAndGames
+    keyPoints:
+      - Exploration du nouveau monde.
+      - Succession de défis, de réussites et d’échecs pour le protagoniste.
+    purpose: Exploite pleinement la promesse de l’histoire et maintient l’attention du spectateur.
+    scenes:
+      min: 5
+      max: 7
+  - name: Point médian
+    key: midpoint
+    keyPoints:
+      - Un rebondissement majeur (fausse victoire ou défaite cuisante).
+    purpose: Redirige l’histoire et augmente la tension dramatique.
+    scenes:
+      exact: 1
+  - name: Les obstacles se resserrent
+    key: badGuysCloseIn
+    keyPoints:
+      - Les difficultés s’intensifient.
+      - Les problèmes du protagoniste s’accumulent.
+    purpose: Monte la tension jusqu’au point culminant.
+    scenes:
+      min: 3
+      max: 5
+  - name: Tout est perdu
+    key: allIsLost
+    keyPoints:
+      - Un échec majeur frappe le protagoniste.
+    purpose: Moment de désespoir total ; souvent accompagné d’une perte symbolique.
+    scenes:
+      exact: 1
+  - name: Nuit noire de l’âme
+    key: darkNightOfTheSoul
+    keyPoints:
+      - Le protagoniste réfléchit à tout son parcours.
+      - Phase de doute profond et d’introspection.
+    purpose: Prépare le personnage (et le spectateur) à l’ultime affrontement.
+    scenes:
+      min: 1
+      max: 2
+  - name: Passage à l’acte trois
+    key: breakIntoThree
+    keyPoints:
+      - Le protagoniste trouve une idée, une ressource ou une révélation décisive.
+    purpose: Lance l’acte final avec une détermination nouvelle.
+    scenes:
+      exact: 1
+  - name: Final
+    key: finale
+    keyPoints:
+      - Confrontation directe avec l’antagoniste.
+      - Résolution du conflit central.
+    purpose: Conclut l’histoire et illustre l’évolution du protagoniste.
+    scenes:
+      min: 5
+      max: 7
+  - name: Image finale
+    key: finalImage
+    keyPoints:
+      - Écho visuel à l’Image d’ouverture, révélant la transformation accomplie.
+    purpose: Laisse au spectateur une impression forte et durable.
+    scenes:
+      exact: 1

@@ -4,7 +4,6 @@ import (
 	_ "embed"
 
 	"github.com/a-novel/golib/config"
-	"github.com/a-novel/service-story-schematics/models"
 	"github.com/goccy/go-yaml"
 )
 
@@ -12,8 +11,7 @@ import (
 var generateBeatsSheetEnFile []byte
 
 type GenerateBeatsSheetTestCase struct {
-	Logline string           `yaml:"logline"`
-	Plan    models.StoryPlan `yaml:"plan"`
+	Logline string `yaml:"logline"`
 }
 
 type GenerateBeatsSheetPromptsType struct {

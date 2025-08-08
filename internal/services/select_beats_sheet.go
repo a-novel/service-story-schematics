@@ -70,11 +70,10 @@ func (service *SelectBeatsSheetService) SelectBeatsSheet(
 	}
 
 	return otel.ReportSuccess(span, &models.BeatsSheet{
-		ID:          data.ID,
-		LoglineID:   data.LoglineID,
-		StoryPlanID: data.StoryPlanID,
-		Content:     data.Content,
-		Lang:        data.Lang,
-		CreatedAt:   data.CreatedAt,
+		ID:        data.ID,
+		LoglineID: data.LoglineID,
+		Content:   data.Content,
+		Lang:      data.Lang,
+		CreatedAt: data.CreatedAt,
 	}), nil
 }

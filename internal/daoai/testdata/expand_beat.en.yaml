@@ -6,49 +6,6 @@ cases:
       As a team of scientists discover a way to harness the energy of a nearby supernova, they must also contend with the 
       implications of altering the course of human history and the emergence of a new, technologically advanced world order.
     targetKey: setup
-    plan:
-      name: Save The Cat Simplified
-      lang: en
-      description: |
-        The "Save The Cat" simplified story plan consists of 5 beats that serve as a
-        blueprint for crafting compelling stories.
-      beats:
-        - name: Opening Image
-          key: openingImage
-          keyPoints:
-            - Establish the protagonist's world before the journey begins.
-          purpose: Sets the tone, mood, and stakes; offers a visual representation of the starting point.
-          minScenes: 1
-          maxScenes: 1
-        - name: Theme Stated
-          key: themeStated
-          keyPoints:
-            - Introduce the story's central theme or moral.
-          purpose: Often delivered through dialogue; foreshadows the protagonist transformation
-          minScenes: 1
-        - name: Set-Up
-          key: setup
-          keyPoints:
-            - Introduce the main characters.
-            - Showcase the protagonist's flaws or challenges.
-            - Establish the stakes and the world they live in.
-          purpose: Builds empathy and grounds the audience in the story.
-          minScenes: 3
-          maxScenes: 5
-        - name: Catalyst
-          key: catalyst
-          keyPoints:
-            - An event that disrupts the status quo.
-          purpose: Propels the protagonist into the main conflict.
-          maxScenes: 1
-        - name: Debate
-          key: debate
-          keyPoints:
-            - The protagonist grapples with the decision to embark on the journey.
-            - Highlights internal conflicts and fears.
-          purpose: Adds depth to the character and heightens tension.
-          minScenes: 2
-          maxScenes: 3
     beats:
       - key: openingImage
         title: Introduction to the Scientific Community

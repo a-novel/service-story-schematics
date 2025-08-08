@@ -26,27 +26,17 @@ func testAppBeatsSheetsPlayground(ctx context.Context, t *testing.T, appConfig T
 
 	loglineSlug := "beats-sheets-playground-integration-test"
 
-	storyPlanSlug := "beats-sheets-playground-integration-test-save-the-cat-partial"
-	planForm := *saveTheCatPartialPlanForm
-	planForm.Slug = apimodels.Slug(storyPlanSlug)
-
 	logline := new(apimodels.Logline)
-	storyPlan := new(apimodels.StoryPlan)
 
 	userLambdaClaims := authmodels.AccessTokenClaims{
 		UserID: lo.ToPtr(uuid.New()),
 		Roles:  []authmodels.Role{authmodels.RoleUser},
-	}
-	userSuperAdminClaims := authmodels.AccessTokenClaims{
-		UserID: lo.ToPtr(uuid.New()),
-		Roles:  []authmodels.Role{authmodels.RoleSuperAdmin},
 	}
 	userAnonClaims := authmodels.AccessTokenClaims{
 		Roles: []authmodels.Role{authmodels.RoleAnon},
 	}
 
 	userLambdaAccessToken := getAccessToken(t, appConfig, userLambdaClaims)
-	userSuperAdminAccessToken := getAccessToken(t, appConfig, userSuperAdminClaims)
 	userAnonAccessToken := getAccessToken(t, appConfig, userAnonClaims)
 
 	t.Log("CreateLogline")
@@ -77,18 +67,6 @@ func testAppBeatsSheetsPlayground(ctx context.Context, t *testing.T, appConfig T
 		*logline = *newLogline
 	}
 
-	t.Log("CreateStoryPlan")
-	{
-		security.SetToken(userSuperAdminAccessToken)
-
-		newStoryPlan, err := ogen.MustGetResponse[apimodels.CreateStoryPlanRes, *apimodels.StoryPlan](
-			client.CreateStoryPlan(t.Context(), &planForm),
-		)
-		require.NoError(t, err)
-
-		*storyPlan = *newStoryPlan
-	}
-
 	beatsSheet := new(apimodels.BeatsSheet)
 
 	t.Log("GenerateBeatsSheet")
@@ -97,9 +75,8 @@ func testAppBeatsSheetsPlayground(ctx context.Context, t *testing.T, appConfig T
 
 		_, err = ogen.MustGetResponse[apimodels.GenerateBeatsSheetRes, *apimodels.ForbiddenError](
 			client.GenerateBeatsSheet(t.Context(), &apimodels.GenerateBeatsSheetForm{
-				LoglineID:   logline.ID,
-				StoryPlanID: storyPlan.ID,
-				Lang:        apimodels.LangEn,
+				LoglineID: logline.ID,
+				Lang:      apimodels.LangEn,
 			}),
 		)
 		require.NoError(t, err)
@@ -108,9 +85,8 @@ func testAppBeatsSheetsPlayground(ctx context.Context, t *testing.T, appConfig T
 
 		generatedBeatsSheet, err := ogen.MustGetResponse[apimodels.GenerateBeatsSheetRes, *apimodels.BeatsSheetIdea](
 			client.GenerateBeatsSheet(t.Context(), &apimodels.GenerateBeatsSheetForm{
-				LoglineID:   logline.ID,
-				StoryPlanID: storyPlan.ID,
-				Lang:        apimodels.LangEn,
+				LoglineID: logline.ID,
+				Lang:      apimodels.LangEn,
 			}),
 		)
 		require.NoError(t, err)
@@ -124,17 +100,15 @@ func testAppBeatsSheetsPlayground(ctx context.Context, t *testing.T, appConfig T
 
 		newBeatsSheet, err := ogen.MustGetResponse[apimodels.CreateBeatsSheetRes, *apimodels.BeatsSheet](
 			client.CreateBeatsSheet(t.Context(), &apimodels.CreateBeatsSheetForm{
-				LoglineID:   logline.ID,
-				StoryPlanID: storyPlan.ID,
-				Content:     beatsSheet.Content,
-				Lang:        apimodels.LangEn,
+				LoglineID: logline.ID,
+				Content:   beatsSheet.Content,
+				Lang:      apimodels.LangEn,
 			}),
 		)
 		require.NoError(t, err)
 
 		require.NotEmpty(t, newBeatsSheet.GetID())
 		require.Equal(t, logline.ID, newBeatsSheet.GetLoglineID())
-		require.Equal(t, storyPlan.ID, newBeatsSheet.GetStoryPlanID())
 		require.Equal(t, beatsSheet.Content, newBeatsSheet.GetContent())
 
 		*beatsSheet = *newBeatsSheet
@@ -154,10 +128,9 @@ func testAppBeatsSheetsPlayground(ctx context.Context, t *testing.T, appConfig T
 
 		newBeatsSheet, err := ogen.MustGetResponse[apimodels.CreateBeatsSheetRes, *apimodels.BeatsSheet](
 			client.CreateBeatsSheet(t.Context(), &apimodels.CreateBeatsSheetForm{
-				LoglineID:   logline.ID,
-				StoryPlanID: storyPlan.ID,
-				Content:     *regeneratedBeatsSheet,
-				Lang:        apimodels.LangEn,
+				LoglineID: logline.ID,
+				Content:   *regeneratedBeatsSheet,
+				Lang:      apimodels.LangEn,
 			}),
 		)
 		require.NoError(t, err)
@@ -183,10 +156,9 @@ func testAppBeatsSheetsPlayground(ctx context.Context, t *testing.T, appConfig T
 
 		newBeatsSheet, err := ogen.MustGetResponse[apimodels.CreateBeatsSheetRes, *apimodels.BeatsSheet](
 			client.CreateBeatsSheet(t.Context(), &apimodels.CreateBeatsSheetForm{
-				LoglineID:   logline.ID,
-				StoryPlanID: storyPlan.ID,
-				Content:     beatsSheet.Content,
-				Lang:        apimodels.LangEn,
+				LoglineID: logline.ID,
+				Content:   beatsSheet.Content,
+				Lang:      apimodels.LangEn,
 			}),
 		)
 		require.NoError(t, err)

@@ -12,10 +12,9 @@ import (
 var regenerateBeatsEnFile []byte
 
 type RegenerateBeatsTestCase struct {
-	Logline        string           `yaml:"logline"`
-	Plan           models.StoryPlan `yaml:"plan"`
-	Beats          []models.Beat    `yaml:"beats"`
-	RegenerateKeys []string         `yaml:"regenerateKeys"`
+	Logline        string        `yaml:"logline"`
+	Beats          []models.Beat `yaml:"beats"`
+	RegenerateKeys []string      `yaml:"regenerateKeys"`
 }
 
 type RegenerateBeatsPromptsType struct {

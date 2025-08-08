@@ -14,6 +14,7 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/services"
 	servicesmocks "github.com/a-novel/service-story-schematics/internal/services/mocks"
 	"github.com/a-novel/service-story-schematics/models"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 func TestExpandBeat(t *testing.T) {
@@ -37,7 +38,7 @@ func TestExpandBeat(t *testing.T) {
 	}
 
 	type selectStoryPlanData struct {
-		resp *dao.StoryPlanEntity
+		resp *storyplanmodel.Plan
 		err  error
 	}
 
@@ -65,9 +66,8 @@ func TestExpandBeat(t *testing.T) {
 
 			selectBeatsSheetData: &selectBeatsSheetData{
 				resp: &dao.BeatsSheetEntity{
-					ID:          uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "beat-1",
@@ -98,12 +98,12 @@ func TestExpandBeat(t *testing.T) {
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
-				resp: &dao.StoryPlanEntity{
-					ID:          uuid.MustParse("00000000-1000-0000-0000-000000000001"),
-					Slug:        "story-plan-1",
-					Name:        "Story Plan 1",
-					Description: "Description 1",
-					Beats: []models.BeatDefinition{
+				resp: &storyplanmodel.Plan{
+					Metadata: storyplanmodel.Metadata{
+						Name: "Test Story Plan",
+						Lang: models.LangEN,
+					},
+					Beats: []storyplanmodel.Beat{
 						{
 							Name: "Beat 1",
 							Key:  "beat-1",
@@ -111,12 +111,9 @@ func TestExpandBeat(t *testing.T) {
 								"Key Point 1",
 								"Key Point 2",
 							},
-							Purpose:   "Purpose 1",
-							MinScenes: 1,
+							Purpose: "Purpose 1",
 						},
 					},
-					Lang:      models.LangEN,
-					CreatedAt: time.Now(),
 				},
 			},
 
@@ -145,9 +142,8 @@ func TestExpandBeat(t *testing.T) {
 
 			selectBeatsSheetData: &selectBeatsSheetData{
 				resp: &dao.BeatsSheetEntity{
-					ID:          uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "beat-1",
@@ -178,12 +174,12 @@ func TestExpandBeat(t *testing.T) {
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
-				resp: &dao.StoryPlanEntity{
-					ID:          uuid.MustParse("00000000-1000-0000-0000-000000000001"),
-					Slug:        "story-plan-1",
-					Name:        "Story Plan 1",
-					Description: "Description 1",
-					Beats: []models.BeatDefinition{
+				resp: &storyplanmodel.Plan{
+					Metadata: storyplanmodel.Metadata{
+						Name: "Test Story Plan",
+						Lang: models.LangEN,
+					},
+					Beats: []storyplanmodel.Beat{
 						{
 							Name: "Beat 1",
 							Key:  "beat-1",
@@ -191,12 +187,9 @@ func TestExpandBeat(t *testing.T) {
 								"Key Point 1",
 								"Key Point 2",
 							},
-							Purpose:   "Purpose 1",
-							MinScenes: 1,
+							Purpose: "Purpose 1",
 						},
 					},
-					Lang:      models.LangEN,
-					CreatedAt: time.Now(),
 				},
 			},
 
@@ -217,9 +210,8 @@ func TestExpandBeat(t *testing.T) {
 
 			selectBeatsSheetData: &selectBeatsSheetData{
 				resp: &dao.BeatsSheetEntity{
-					ID:          uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "beat-1",
@@ -266,9 +258,8 @@ func TestExpandBeat(t *testing.T) {
 
 			selectBeatsSheetData: &selectBeatsSheetData{
 				resp: &dao.BeatsSheetEntity{
-					ID:          uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-					LoglineID:   uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					StoryPlanID: uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+					ID:        uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+					LoglineID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
 					Content: []models.Beat{
 						{
 							Key:     "beat-1",
@@ -334,24 +325,19 @@ func TestExpandBeat(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(mock.Anything, testCase.selectBeatsSheetData.resp.StoryPlanID).
+					SelectStoryPlan(
+						mock.Anything,
+						services.SelectStoryPlanRequest{Lang: testCase.selectBeatsSheetData.resp.Lang},
+					).
 					Return(testCase.selectStoryPlanData.resp, testCase.selectStoryPlanData.err)
 			}
 
 			if testCase.expandBeatData != nil {
 				source.EXPECT().
 					ExpandBeat(mock.Anything, daoai.ExpandBeatRequest{
-						Logline: testCase.selectLoglineData.resp.Name + "\n\n" + testCase.selectLoglineData.resp.Content,
-						Beats:   testCase.selectBeatsSheetData.resp.Content,
-						Plan: models.StoryPlan{
-							ID:          testCase.selectStoryPlanData.resp.ID,
-							Slug:        testCase.selectStoryPlanData.resp.Slug,
-							Name:        testCase.selectStoryPlanData.resp.Name,
-							Description: testCase.selectStoryPlanData.resp.Description,
-							Beats:       testCase.selectStoryPlanData.resp.Beats,
-							Lang:        testCase.selectBeatsSheetData.resp.Lang,
-							CreatedAt:   testCase.selectStoryPlanData.resp.CreatedAt,
-						},
+						Logline:   testCase.selectLoglineData.resp.Name + "\n\n" + testCase.selectLoglineData.resp.Content,
+						Beats:     testCase.selectBeatsSheetData.resp.Content,
+						Plan:      testCase.selectStoryPlanData.resp,
 						Lang:      testCase.selectBeatsSheetData.resp.Lang,
 						TargetKey: testCase.request.TargetKey,
 						UserID:    testCase.request.UserID.String(),

@@ -16,16 +16,11 @@ import (
 	"github.com/a-novel/service-story-schematics/models"
 )
 
-var (
-	//go:embed select_slug_iteration.loglines.sql
-	selectSlugIterationLoglinesQuery string
-	//go:embed select_slug_iteration.story_plans.sql
-	selectSlugIterationStoryPlansQuery string
-)
+//go:embed select_slug_iteration.loglines.sql
+var selectSlugIterationLoglinesQuery string
 
 var TargetsQueries = map[SlugIterationTarget]string{
-	SlugIterationTargetLogline:   selectSlugIterationLoglinesQuery,
-	SlugIterationTargetStoryPlan: selectSlugIterationStoryPlansQuery,
+	SlugIterationTargetLogline: selectSlugIterationLoglinesQuery,
 }
 
 type SelectSlugIterationData struct {

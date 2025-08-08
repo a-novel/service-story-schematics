@@ -13,10 +13,10 @@ import (
 	authpkg "github.com/a-novel/service-authentication/pkg"
 
 	"github.com/a-novel/service-story-schematics/internal/dao"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/internal/services"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/api"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 type CreateBeatsSheetService interface {
@@ -35,9 +35,8 @@ func (api *API) CreateBeatsSheet(
 	}
 
 	beatsSheet, err := api.CreateBeatsSheetService.CreateBeatsSheet(ctx, services.CreateBeatsSheetRequest{
-		LoglineID:   uuid.UUID(req.GetLoglineID()),
-		UserID:      userID,
-		StoryPlanID: uuid.UUID(req.GetStoryPlanID()),
+		LoglineID: uuid.UUID(req.GetLoglineID()),
+		UserID:    userID,
 		Content: lo.Map(req.GetContent(), func(item apimodels.Beat, _ int) models.Beat {
 			return models.Beat{
 				Key:     item.GetKey(),
@@ -49,12 +48,12 @@ func (api *API) CreateBeatsSheet(
 	})
 
 	switch {
-	case errors.Is(err, dao.ErrLoglineNotFound), errors.Is(err, dao.ErrStoryPlanNotFound):
+	case errors.Is(err, dao.ErrLoglineNotFound), errors.Is(err, services.ErrStoryPlanNotFound):
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "")
 
 		return &apimodels.NotFoundError{Error: err.Error()}, nil
-	case errors.Is(err, lib.ErrInvalidStoryPlan):
+	case errors.Is(err, storyplanmodel.ErrInvalidPlan):
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "")
 
@@ -67,9 +66,8 @@ func (api *API) CreateBeatsSheet(
 	}
 
 	return otel.ReportSuccess(span, &apimodels.BeatsSheet{
-		ID:          apimodels.BeatsSheetID(beatsSheet.ID),
-		LoglineID:   apimodels.LoglineID(beatsSheet.LoglineID),
-		StoryPlanID: apimodels.StoryPlanID(beatsSheet.StoryPlanID),
+		ID:        apimodels.BeatsSheetID(beatsSheet.ID),
+		LoglineID: apimodels.LoglineID(beatsSheet.LoglineID),
 		Content: lo.Map(beatsSheet.Content, func(item models.Beat, _ int) apimodels.Beat {
 			return apimodels.Beat{
 				Key:     item.Key,

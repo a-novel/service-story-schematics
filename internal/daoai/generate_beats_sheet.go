@@ -15,10 +15,9 @@ import (
 	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
-	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
-	"github.com/a-novel/service-story-schematics/internal/lib"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 var GenerateBeatsSheetPrompts = struct {
@@ -31,7 +30,7 @@ var ErrInvalidBeatSheet = errors.New("invalid beat sheet")
 
 type GenerateBeatsSheetRequest struct {
 	Logline string
-	Plan    models.StoryPlan
+	Plan    *storyplanmodel.Plan
 	UserID  string
 	Lang    models.Lang
 }
@@ -52,21 +51,14 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 
 	span.SetAttributes(
 		attribute.String("request.logline", request.Logline),
-		attribute.String("request.plan.id", request.Plan.ID.String()),
 		attribute.String("request.lang", request.Lang.String()),
 		attribute.String("request.userID", request.UserID),
 	)
 
-	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Plan)
-	if err != nil {
-		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
-	}
-
 	systemPrompt := new(strings.Builder)
 
-	err = GenerateBeatsSheetPrompts.System.Execute(systemPrompt, map[string]any{
-		"StoryPlan": storyPlanPartialPrompt,
-		"Plan":      request.Plan,
+	err := GenerateBeatsSheetPrompts.System.Execute(systemPrompt, map[string]any{
+		"PlanName": request.Plan.Metadata.Name,
 	})
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("execute system prompt: %w", err))
@@ -85,8 +77,8 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
 						Name:        "story_beats",
-						Description: openai.String(schemas.Beats.Description),
-						Schema:      schemas.Beats.Schema,
+						Description: openai.String("Generated story beats based on the provided logline."),
+						Schema:      request.Plan.OutputSchema(),
 						Strict:      openai.Bool(true),
 					},
 				},
@@ -105,7 +97,7 @@ func (repository *GenerateBeatsSheetRepository) GenerateBeatsSheet(
 		return nil, otel.ReportError(span, err)
 	}
 
-	err = lib.CheckStoryPlan(beats.Beats, request.Plan.Beats)
+	err = request.Plan.Validate(beats.Beats)
 	if err != nil {
 		return nil, otel.ReportError(span, errors.Join(err, ErrInvalidBeatSheet))
 	}

@@ -1,0 +1,123 @@
+metadata:
+  name: Save The Cat
+  lang: en
+beats:
+  - name: Opening Image
+    key: openingImage
+    keyPoints:
+      - Establish the protagonist's world before the journey begins.
+    purpose: Sets the tone, mood, and stakes; offers a visual representation of the starting point.
+    scenes:
+      exact: 1
+  - name: Theme Stated
+    key: themeStated
+    keyPoints:
+      - Introduce the story's central theme or moral.
+    purpose: Often delivered through dialogue; foreshadows the protagonist's transformation.
+    scenes:
+      exact: 1
+  - name: Set-Up
+    key: setup
+    keyPoints:
+      - Introduce the main characters.
+      - Showcase the protagonist's flaws or challenges.
+      - Establish the stakes and the world they live in.
+    purpose: Builds empathy and grounds the audience in the story.
+    scenes:
+      min: 3
+      max: 5
+  - name: Catalyst
+    key: catalyst
+    keyPoints:
+      - An event that disrupts the status quo.
+    purpose: Propels the protagonist into the main conflict.
+    scenes:
+      exact: 1
+  - name: Debate
+    key: debate
+    keyPoints:
+      - The protagonist grapples with the decision to embark on the journey.
+      - Highlights internal conflicts and fears.
+    purpose: Adds depth to the character and heightens tension.
+    scenes:
+      min: 2
+      max: 3
+  - name: Break into Two
+    key: breakIntoTwo
+    keyPoints:
+      - The protagonist commits to the journey.
+    purpose: Marks the transition from the Ordinary World to the Special World (Act I to Act II).
+    scenes:
+      exact: 1
+  - name: B-Story
+    key: bStory
+    keyPoints:
+      - Introduction of a secondary plotline (often a love interest or mentor).
+    purpose: Provides contrast and supports the main storyline.
+    scenes:
+      min: 1
+      max: 2
+  - name: Fun and Games
+    key: funAndGames
+    keyPoints:
+      - Exploration of the new world.
+      - The protagonist faces challenges and enjoys victories and setbacks.
+    purpose: Delivers on the premise and keeps the audience engaged.
+    scenes:
+      min: 5
+      max: 7
+  - name: Midpoint
+    key: midpoint
+    keyPoints:
+      - A significant plot twist (either a false victory or defeat).
+    purpose: Changes the story's direction and raises the stakes.
+    scenes:
+      exact: 1
+  - name: Bad Guys Close In
+    key: badGuysCloseIn
+    keyPoints:
+      - Obstacles intensify.
+      - The protagonist's problems escalate.
+    purpose: Builds tension leading up to the climax.
+    scenes:
+      min: 3
+      max: 5
+  - name: All Is Lost
+    key: allIsLost
+    keyPoints:
+      - The protagonist experiences a major setback.
+    purpose: Creates a moment of despair; often includes a symbolic death.
+    scenes:
+      exact: 1
+  - name: Dark Night of the Soul
+    key: darkNightOfTheSoul
+    keyPoints:
+      - The protagonist reflects on the journey.
+      - Moments of doubt and introspection.
+    purpose: Prepares the protagonist (and audience) for the final act.
+    scenes:
+      min: 1
+      max: 2
+  - name: Break into Three
+    key: breakIntoThree
+    keyPoints:
+      - The protagonist finds a solution or gains new insight.
+    purpose: Transitions into the final act with renewed determination.
+    scenes:
+      exact: 1
+  - name: Finale
+    key: finale
+    keyPoints:
+      - The protagonist confronts the antagonist.
+      - Resolves the story's central conflict.
+    purpose: Provides closure and showcases character growth.
+    scenes:
+      min: 5
+      max: 7
+  - name: Final Image
+    key: finalImage
+    keyPoints:
+      - A mirror of the Opening Image, showing transformation.
+    purpose: Leaves the audience with a lasting impression.
+    scenes:
+      exact: 1

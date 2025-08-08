@@ -301,51 +301,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-			case 's': // Prefix: "story-plan"
-
-				if l := len("story-plan"); len(elem) >= l && elem[0:l] == "story-plan" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch r.Method {
-					case "GET":
-						s.handleGetStoryPlanRequest([0]string{}, elemIsEscaped, w, r)
-					case "PATCH":
-						s.handleUpdateStoryPlanRequest([0]string{}, elemIsEscaped, w, r)
-					case "PUT":
-						s.handleCreateStoryPlanRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "GET,PATCH,PUT")
-					}
-
-					return
-				}
-				switch elem[0] {
-				case 's': // Prefix: "s"
-
-					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleGetStoryPlansRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "GET")
-						}
-
-						return
-					}
-
-				}
-
 			}
 
 		}
@@ -735,71 +690,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					default:
 						return
 					}
-				}
-
-			case 's': // Prefix: "story-plan"
-
-				if l := len("story-plan"); len(elem) >= l && elem[0:l] == "story-plan" {
-					elem = elem[l:]
-				} else {
-					break
-				}
-
-				if len(elem) == 0 {
-					switch method {
-					case "GET":
-						r.name = GetStoryPlanOperation
-						r.summary = "Get a story plan."
-						r.operationID = "getStoryPlan"
-						r.pathPattern = "/story-plan"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "PATCH":
-						r.name = UpdateStoryPlanOperation
-						r.summary = "Update a story plan."
-						r.operationID = "updateStoryPlan"
-						r.pathPattern = "/story-plan"
-						r.args = args
-						r.count = 0
-						return r, true
-					case "PUT":
-						r.name = CreateStoryPlanOperation
-						r.summary = "Create a new story plan."
-						r.operationID = "createStoryPlan"
-						r.pathPattern = "/story-plan"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
-					}
-				}
-				switch elem[0] {
-				case 's': // Prefix: "s"
-
-					if l := len("s"); len(elem) >= l && elem[0:l] == "s" {
-						elem = elem[l:]
-					} else {
-						break
-					}
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "GET":
-							r.name = GetStoryPlansOperation
-							r.summary = "Get all story plans."
-							r.operationID = "getStoryPlans"
-							r.pathPattern = "/story-plans"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
-						}
-					}
-
 				}
 
 			}

@@ -2,89 +2,42 @@ package services
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
-	"github.com/google/uuid"
-	"github.com/samber/lo"
 	"go.opentelemetry.io/otel/attribute"
 
 	"github.com/a-novel/golib/otel"
 
-	"github.com/a-novel/service-story-schematics/internal/dao"
 	"github.com/a-novel/service-story-schematics/models"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
-type SelectStoryPlanSource interface {
-	SelectStoryPlan(ctx context.Context, data uuid.UUID) (*dao.StoryPlanEntity, error)
-	SelectStoryPlanBySlug(ctx context.Context, data models.Slug) (*dao.StoryPlanEntity, error)
-}
-
-func NewSelectStoryPlanServiceSource(
-	selectDAO *dao.SelectStoryPlanRepository,
-	selectBySlugRepository *dao.SelectStoryPlanBySlugRepository,
-) SelectStoryPlanSource {
-	return &struct {
-		*dao.SelectStoryPlanRepository
-		*dao.SelectStoryPlanBySlugRepository
-	}{
-		SelectStoryPlanRepository:       selectDAO,
-		SelectStoryPlanBySlugRepository: selectBySlugRepository,
-	}
-}
+var ErrStoryPlanNotFound = errors.New("story plan not found")
 
 type SelectStoryPlanRequest struct {
-	Slug *models.Slug
-	ID   *uuid.UUID
+	Lang models.Lang
 }
 
-type SelectStoryPlanService struct {
-	source SelectStoryPlanSource
-}
+type SelectStoryPlanService struct{}
 
-func NewSelectStoryPlanService(source SelectStoryPlanSource) *SelectStoryPlanService {
-	return &SelectStoryPlanService{source: source}
+func NewSelectStoryPlanService() *SelectStoryPlanService {
+	return &SelectStoryPlanService{}
 }
 
 func (service *SelectStoryPlanService) SelectStoryPlan(
 	ctx context.Context, request SelectStoryPlanRequest,
-) (*models.StoryPlan, error) {
-	ctx, span := otel.Tracer().Start(ctx, "service.SelectStoryPlan")
+) (*storyplanmodel.Plan, error) {
+	_, span := otel.Tracer().Start(ctx, "service.SelectStoryPlan")
 	defer span.End()
 
 	span.SetAttributes(
-		attribute.String("request.slug", lo.FromPtr(request.Slug).String()),
-		attribute.String("request.id", lo.FromPtr(request.ID).String()),
+		attribute.String("request.lang", request.Lang.String()),
 	)
 
-	if request.Slug != nil {
-		data, err := service.source.SelectStoryPlanBySlug(ctx, lo.FromPtr(request.Slug))
-		if err != nil {
-			return nil, otel.ReportError(span, fmt.Errorf("select story plan by slug: %w", err))
-		}
-
-		return otel.ReportSuccess(span, &models.StoryPlan{
-			ID:          data.ID,
-			Slug:        data.Slug,
-			Name:        data.Name,
-			Description: data.Description,
-			Beats:       data.Beats,
-			Lang:        data.Lang,
-			CreatedAt:   data.CreatedAt,
-		}), nil
+	plan, ok := storyplanmodel.SaveTheCat[request.Lang]
+	if !ok {
+		return nil, ErrStoryPlanNotFound
 	}
 
-	data, err := service.source.SelectStoryPlan(ctx, lo.FromPtr(request.ID))
-	if err != nil {
-		return nil, otel.ReportError(span, fmt.Errorf("select story plan: %w", err))
-	}
-
-	return otel.ReportSuccess(span, &models.StoryPlan{
-		ID:          data.ID,
-		Slug:        data.Slug,
-		Name:        data.Name,
-		Description: data.Description,
-		Beats:       data.Beats,
-		Lang:        data.Lang,
-		CreatedAt:   data.CreatedAt,
-	}), nil
+	return plan, nil
 }

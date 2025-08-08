@@ -14,6 +14,7 @@ import (
 	"github.com/a-novel/service-story-schematics/internal/services"
 	servicesmocks "github.com/a-novel/service-story-schematics/internal/services/mocks"
 	"github.com/a-novel/service-story-schematics/models"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 func TestGenerateBeatsSheet(t *testing.T) {
@@ -32,7 +33,7 @@ func TestGenerateBeatsSheet(t *testing.T) {
 	}
 
 	type selectStoryPlanData struct {
-		resp *dao.StoryPlanEntity
+		resp *storyplanmodel.Plan
 		err  error
 	}
 
@@ -52,10 +53,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			name: "Success",
 
 			request: services.GenerateBeatsSheetRequest{
-				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-				Lang:        models.LangEN,
+				LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:      models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -71,12 +71,12 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
-				resp: &dao.StoryPlanEntity{
-					ID:          uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					Slug:        "story-plan-1",
-					Name:        "Story Plan 1",
-					Description: "Description 1",
-					Beats: []models.BeatDefinition{
+				resp: &storyplanmodel.Plan{
+					Metadata: storyplanmodel.Metadata{
+						Name: "Test Story Plan",
+						Lang: models.LangEN,
+					},
+					Beats: []storyplanmodel.Beat{
 						{
 							Name: "Beat 1",
 							Key:  "beat-1",
@@ -84,12 +84,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 								"Key Point 1",
 								"Key Point 2",
 							},
-							Purpose:   "Purpose 1",
-							MinScenes: 1,
+							Purpose: "Purpose 1",
 						},
 					},
-					Lang:      models.LangEN,
-					CreatedAt: time.Now(),
 				},
 			},
 
@@ -125,10 +122,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			name: "GenerateBeatsSheet/Error",
 
 			request: services.GenerateBeatsSheetRequest{
-				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-				Lang:        models.LangEN,
+				LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:      models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -144,12 +140,12 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			},
 
 			selectStoryPlanData: &selectStoryPlanData{
-				resp: &dao.StoryPlanEntity{
-					ID:          uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-					Slug:        "story-plan-1",
-					Name:        "Story Plan 1",
-					Description: "Description 1",
-					Beats: []models.BeatDefinition{
+				resp: &storyplanmodel.Plan{
+					Metadata: storyplanmodel.Metadata{
+						Name: "Test Story Plan",
+						Lang: models.LangEN,
+					},
+					Beats: []storyplanmodel.Beat{
 						{
 							Name: "Beat 1",
 							Key:  "beat-1",
@@ -157,12 +153,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 								"Key Point 1",
 								"Key Point 2",
 							},
-							Purpose:   "Purpose 1",
-							MinScenes: 1,
+							Purpose: "Purpose 1",
 						},
 					},
-					Lang:      models.LangEN,
-					CreatedAt: time.Now(),
 				},
 			},
 
@@ -176,10 +169,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			name: "SelectStoryPlan/Error",
 
 			request: services.GenerateBeatsSheetRequest{
-				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-				Lang:        models.LangEN,
+				LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:      models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -204,10 +196,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			name: "SelectLogline/Error",
 
 			request: services.GenerateBeatsSheetRequest{
-				LoglineID:   uuid.MustParse("00000000-0000-0000-1000-000000000001"),
-				StoryPlanID: uuid.MustParse("00000000-0000-1000-0000-000000000001"),
-				UserID:      uuid.MustParse("00000000-0000-0000-0000-000000000001"),
-				Lang:        models.LangEN,
+				LoglineID: uuid.MustParse("00000000-0000-0000-1000-000000000001"),
+				UserID:    uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+				Lang:      models.LangEN,
 			},
 
 			selectLoglineData: &selectLoglineData{
@@ -230,17 +221,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 				source.EXPECT().
 					GenerateBeatsSheet(mock.Anything, daoai.GenerateBeatsSheetRequest{
 						Logline: testCase.selectLoglineData.resp.Name + "\n\n" + testCase.selectLoglineData.resp.Content,
-						Plan: models.StoryPlan{
-							ID:          testCase.selectStoryPlanData.resp.ID,
-							Slug:        testCase.selectStoryPlanData.resp.Slug,
-							Name:        testCase.selectStoryPlanData.resp.Name,
-							Description: testCase.selectStoryPlanData.resp.Description,
-							Beats:       testCase.selectStoryPlanData.resp.Beats,
-							Lang:        testCase.selectStoryPlanData.resp.Lang,
-							CreatedAt:   testCase.selectStoryPlanData.resp.CreatedAt,
-						},
-						Lang:   testCase.request.Lang,
-						UserID: testCase.request.UserID.String(),
+						Plan:    testCase.selectStoryPlanData.resp,
+						Lang:    testCase.request.Lang,
+						UserID:  testCase.request.UserID.String(),
 					}).
 					Return(testCase.generateBeatsSheetData.resp, testCase.generateBeatsSheetData.err)
 			}
@@ -256,7 +239,10 @@ func TestGenerateBeatsSheet(t *testing.T) {
 
 			if testCase.selectStoryPlanData != nil {
 				source.EXPECT().
-					SelectStoryPlan(mock.Anything, testCase.request.StoryPlanID).
+					SelectStoryPlan(
+						mock.Anything,
+						services.SelectStoryPlanRequest{Lang: testCase.request.Lang},
+					).
 					Return(testCase.selectStoryPlanData.resp, testCase.selectStoryPlanData.err)
 			}
 

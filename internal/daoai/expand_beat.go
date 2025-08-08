@@ -16,9 +16,9 @@ import (
 	"github.com/a-novel/golib/otel"
 
 	"github.com/a-novel/service-story-schematics/internal/daoai/prompts"
-	"github.com/a-novel/service-story-schematics/internal/daoai/schemas"
 	"github.com/a-novel/service-story-schematics/models"
 	"github.com/a-novel/service-story-schematics/models/config"
+	storyplanmodel "github.com/a-novel/service-story-schematics/models/story_plan"
 )
 
 var ExpandBeatPrompts = struct {
@@ -36,7 +36,7 @@ var ErrUnknownTargetKey = errors.New("unknown target key")
 type ExpandBeatRequest struct {
 	Logline   string
 	Beats     []models.Beat
-	Plan      models.StoryPlan
+	Plan      *storyplanmodel.Plan
 	Lang      models.Lang
 	TargetKey string
 	UserID    string
@@ -58,30 +58,20 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 
 	span.SetAttributes(
 		attribute.String("request.userID", request.UserID),
-		attribute.String("request.storyPlan.id", request.Plan.ID.String()),
-		attribute.String("request.storyPlan.slug", request.Plan.Slug.String()),
-		attribute.String("request.storyPlan.name", request.Plan.Name),
-		attribute.String("request.storyPlan.lang", request.Plan.Lang.String()),
+		attribute.String("request.Lang", request.Lang.String()),
 		attribute.String("request.targetKey", request.TargetKey),
 		attribute.String("request.logline", request.Logline),
 	)
 
-	if !lo.ContainsBy(request.Plan.Beats, func(item models.BeatDefinition) bool {
-		return item.Key == request.TargetKey
-	}) {
-		return nil, otel.ReportError(span, ErrUnknownTargetKey)
-	}
-
-	storyPlanPartialPrompt, err := StoryPlanToPrompt(request.Plan)
+	targetBeat, err := request.Plan.GetBeat(request.TargetKey)
 	if err != nil {
-		return nil, otel.ReportError(span, fmt.Errorf("parse story plan prompt: %w", err))
+		return nil, otel.ReportError(span, fmt.Errorf("get target beat: %w", err))
 	}
 
 	systemPrompt := new(strings.Builder)
 
 	err = ExpandBeatPrompts.System.Execute(systemPrompt, map[string]any{
-		"StoryPlan": storyPlanPartialPrompt,
-		"Plan":      request.Plan,
+		"PlanName": request.Plan.Metadata.Name,
 	})
 	if err != nil {
 		return nil, otel.ReportError(span, fmt.Errorf("parse system message: %w", err))
@@ -115,10 +105,12 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 			ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
 				OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
 					JSONSchema: openai.ResponseFormatJSONSchemaJSONSchemaParam{
-						Name:        "storyBeat",
-						Description: openai.String(schemas.Beat.Description),
-						Schema:      schemas.Beat.Schema,
-						Strict:      openai.Bool(true),
+						Name: "storyBeat",
+						Description: openai.String(
+							fmt.Sprintf("The expanded version of the '%s' beat.", request.TargetKey),
+						),
+						Schema: targetBeat.OutputSchema(),
+						Strict: openai.Bool(true),
 					},
 				},
 			},
@@ -140,11 +132,7 @@ func (repository *ExpandBeatRepository) ExpandBeat(
 func (repository *ExpandBeatRepository) buildBeatsSheetResponse(
 	request ExpandBeatRequest,
 ) openai.ChatCompletionMessageParamUnion {
-	parts := make([]string, len(request.Beats))
-
-	for i, beat := range request.Beats {
-		parts[i] = fmt.Sprintf("%s\n%s", beat.Key, beat.Content)
-	}
-
-	return openai.AssistantMessage(strings.Join(parts, "\n\n"))
+	return openai.AssistantMessage(strings.Join(lo.Map(request.Beats, func(item models.Beat, _ int) string {
+		return item.String()
+	}), "\n\n"))
 }

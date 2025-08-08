@@ -45,9 +45,8 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			name: "Success",
 
 			form: &apimodels.GenerateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.New()),
-				Lang:        apimodels.LangEn,
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				Lang:      apimodels.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
@@ -85,9 +84,8 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			name: "LoglineNotFound",
 
 			form: &apimodels.GenerateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.New()),
-				Lang:        apimodels.LangEn,
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				Lang:      apimodels.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
@@ -100,24 +98,22 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			name: "StoryPlanNotFound",
 
 			form: &apimodels.GenerateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.New()),
-				Lang:        apimodels.LangEn,
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				Lang:      apimodels.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
-				err: dao.ErrStoryPlanNotFound,
+				err: services.ErrStoryPlanNotFound,
 			},
 
-			expect: &apimodels.NotFoundError{Error: dao.ErrStoryPlanNotFound.Error()},
+			expect: &apimodels.NotFoundError{Error: services.ErrStoryPlanNotFound.Error()},
 		},
 		{
 			name: "Error",
 
 			form: &apimodels.GenerateBeatsSheetForm{
-				LoglineID:   apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
-				StoryPlanID: apimodels.StoryPlanID(uuid.New()),
-				Lang:        apimodels.LangEn,
+				LoglineID: apimodels.LoglineID(uuid.MustParse("00000000-0000-0000-1000-000000000001")),
+				Lang:      apimodels.LangEn,
 			},
 
 			generateBeatsSheetData: &generateBeatsSheetData{
@@ -141,10 +137,9 @@ func TestGenerateBeatsSheet(t *testing.T) {
 			if testCase.generateBeatsSheetData != nil {
 				source.EXPECT().
 					GenerateBeatsSheet(mock.Anything, services.GenerateBeatsSheetRequest{
-						LoglineID:   uuid.UUID(testCase.form.GetLoglineID()),
-						StoryPlanID: uuid.UUID(testCase.form.GetStoryPlanID()),
-						UserID:      uuid.MustParse("00000000-1000-0000-0000-000000000001"),
-						Lang:        models.Lang(testCase.form.GetLang()),
+						LoglineID: uuid.UUID(testCase.form.GetLoglineID()),
+						UserID:    uuid.MustParse("00000000-1000-0000-0000-000000000001"),
+						Lang:      models.Lang(testCase.form.GetLang()),
 					}).
 					Return(testCase.generateBeatsSheetData.resp, testCase.generateBeatsSheetData.err)
 			}

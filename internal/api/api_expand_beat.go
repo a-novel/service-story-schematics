@@ -38,7 +38,7 @@ func (api *API) ExpandBeat(ctx context.Context, req *apimodels.ExpandBeatForm) (
 	})
 
 	switch {
-	case errors.Is(err, dao.ErrBeatsSheetNotFound), errors.Is(err, dao.ErrStoryPlanNotFound):
+	case errors.Is(err, dao.ErrBeatsSheetNotFound), errors.Is(err, services.ErrStoryPlanNotFound):
 		span.RecordError(err)
 		span.SetStatus(codes.Error, "")
 
