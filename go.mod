@@ -22,7 +22,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.37.0
 )
 
-require github.com/openai/openai-go/v2 v2.0.1
+require github.com/openai/openai-go/v2 v2.0.2
 
 require (
 	github.com/a-novel-kit/jwt v1.1.6 // indirect
