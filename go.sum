@@ -25,8 +25,8 @@ github.com/a-novel-kit/jwt v1.1.6 h1:YX0leUshckwRH4Oa2TtNhOeGCBC5+3VYuUhHVcdcJhY
 github.com/a-novel-kit/jwt v1.1.6/go.mod h1:1SIH5jCTp2s7riDl1Z+B4ioGvIEgvTRTbg0sccyX1i0=
 github.com/a-novel/golib v0.9.1 h1:CrZwFarX4o/iKpjI73Rq86edq9jZRe/lO4luAV1W8zI=
 github.com/a-novel/golib v0.9.1/go.mod h1:ZDAscJ00iVLWmtal3uCCTNvhFt975s8kikjN4H7Zy0E=
-github.com/a-novel/service-authentication v1.1.4 h1:JwgLrgHq4xgirejP+GQjmYZlSpq02qL5BnNthaNr8HQ=
-github.com/a-novel/service-authentication v1.1.4/go.mod h1:3M4kq0e/kmJy9iucgMjgz+iH9ZHba9a0jyp1v8FQfIE=
+github.com/a-novel/service-authentication v1.2.0 h1:Im+PmT7ZmhMlDJVj5/Z650bT1z/bXuh1XokYu47bznQ=
+github.com/a-novel/service-authentication v1.2.0/go.mod h1:My2TNWLihZVhv6kzmF4ev5Ba7RghUfnRJNHF1VyBH3Y=
 github.com/a-novel/service-json-keys v1.3.0 h1:H2vMLwVoqPdjMbUVJ8god8uppEz9mddWjxvqTjptvI0=
 github.com/a-novel/service-json-keys v1.3.0/go.mod h1:vTbtSt/YiHKaUtJ+hbZ1lZ4Lt7E554KZksHC9d0/8C4=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
