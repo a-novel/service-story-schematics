@@ -7,7 +7,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
-	"go.opentelemetry.io/otel/codes"
 
 	"github.com/a-novel/golib/otel"
 	authpkg "github.com/a-novel/service-authentication/pkg"
@@ -44,13 +43,11 @@ func (api *API) GenerateBeatsSheet(
 
 	switch {
 	case errors.Is(err, dao.ErrLoglineNotFound), errors.Is(err, services.ErrStoryPlanNotFound):
-		span.RecordError(err)
-		span.SetStatus(codes.Error, "")
+		_ = otel.ReportError(span, err)
 
 		return &apimodels.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
-		span.RecordError(err)
-		span.SetStatus(codes.Error, "")
+		_ = otel.ReportError(span, err)
 
 		return nil, fmt.Errorf("generate beats sheet: %w", err)
 	}

@@ -15,7 +15,7 @@ import (
 	"github.com/a-novel/service-story-schematics/models/config"
 )
 
-type TestConfig = config.App[*otelpresets.SentryOtelConfig, postgres.Config]
+type TestConfig = config.App[*otelpresets.LocalOtelConfig, postgres.Config]
 
 func getAccessToken(t *testing.T, appConfig TestConfig, claims authmodels.AccessTokenClaims) string {
 	t.Helper()

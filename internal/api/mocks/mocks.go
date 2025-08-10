@@ -73,15 +73,26 @@ type MockCreateBeatsSheetService_CreateBeatsSheet_Call struct {
 }
 
 // CreateBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.CreateBeatsSheetRequest
 func (_e *MockCreateBeatsSheetService_Expecter) CreateBeatsSheet(ctx interface{}, request interface{}) *MockCreateBeatsSheetService_CreateBeatsSheet_Call {
 	return &MockCreateBeatsSheetService_CreateBeatsSheet_Call{Call: _e.mock.On("CreateBeatsSheet", ctx, request)}
 }
 
 func (_c *MockCreateBeatsSheetService_CreateBeatsSheet_Call) Run(run func(ctx context.Context, request services.CreateBeatsSheetRequest)) *MockCreateBeatsSheetService_CreateBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.CreateBeatsSheetRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.CreateBeatsSheetRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.CreateBeatsSheetRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -157,15 +168,26 @@ type MockCreateLoglineService_CreateLogline_Call struct {
 }
 
 // CreateLogline is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.CreateLoglineRequest
 func (_e *MockCreateLoglineService_Expecter) CreateLogline(ctx interface{}, request interface{}) *MockCreateLoglineService_CreateLogline_Call {
 	return &MockCreateLoglineService_CreateLogline_Call{Call: _e.mock.On("CreateLogline", ctx, request)}
 }
 
 func (_c *MockCreateLoglineService_CreateLogline_Call) Run(run func(ctx context.Context, request services.CreateLoglineRequest)) *MockCreateLoglineService_CreateLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.CreateLoglineRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.CreateLoglineRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.CreateLoglineRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -241,15 +263,26 @@ type MockExpandBeatService_ExpandBeat_Call struct {
 }
 
 // ExpandBeat is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.ExpandBeatRequest
 func (_e *MockExpandBeatService_Expecter) ExpandBeat(ctx interface{}, request interface{}) *MockExpandBeatService_ExpandBeat_Call {
 	return &MockExpandBeatService_ExpandBeat_Call{Call: _e.mock.On("ExpandBeat", ctx, request)}
 }
 
 func (_c *MockExpandBeatService_ExpandBeat_Call) Run(run func(ctx context.Context, request services.ExpandBeatRequest)) *MockExpandBeatService_ExpandBeat_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.ExpandBeatRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.ExpandBeatRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.ExpandBeatRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -325,15 +358,26 @@ type MockExpandLoglineService_ExpandLogline_Call struct {
 }
 
 // ExpandLogline is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.ExpandLoglineRequest
 func (_e *MockExpandLoglineService_Expecter) ExpandLogline(ctx interface{}, request interface{}) *MockExpandLoglineService_ExpandLogline_Call {
 	return &MockExpandLoglineService_ExpandLogline_Call{Call: _e.mock.On("ExpandLogline", ctx, request)}
 }
 
 func (_c *MockExpandLoglineService_ExpandLogline_Call) Run(run func(ctx context.Context, request services.ExpandLoglineRequest)) *MockExpandLoglineService_ExpandLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.ExpandLoglineRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.ExpandLoglineRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.ExpandLoglineRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -409,15 +453,26 @@ type MockGenerateBeatsSheetService_GenerateBeatsSheet_Call struct {
 }
 
 // GenerateBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.GenerateBeatsSheetRequest
 func (_e *MockGenerateBeatsSheetService_Expecter) GenerateBeatsSheet(ctx interface{}, request interface{}) *MockGenerateBeatsSheetService_GenerateBeatsSheet_Call {
 	return &MockGenerateBeatsSheetService_GenerateBeatsSheet_Call{Call: _e.mock.On("GenerateBeatsSheet", ctx, request)}
 }
 
 func (_c *MockGenerateBeatsSheetService_GenerateBeatsSheet_Call) Run(run func(ctx context.Context, request services.GenerateBeatsSheetRequest)) *MockGenerateBeatsSheetService_GenerateBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.GenerateBeatsSheetRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.GenerateBeatsSheetRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.GenerateBeatsSheetRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -493,15 +548,26 @@ type MockGenerateLoglinesService_GenerateLoglines_Call struct {
 }
 
 // GenerateLoglines is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.GenerateLoglinesRequest
 func (_e *MockGenerateLoglinesService_Expecter) GenerateLoglines(ctx interface{}, request interface{}) *MockGenerateLoglinesService_GenerateLoglines_Call {
 	return &MockGenerateLoglinesService_GenerateLoglines_Call{Call: _e.mock.On("GenerateLoglines", ctx, request)}
 }
 
 func (_c *MockGenerateLoglinesService_GenerateLoglines_Call) Run(run func(ctx context.Context, request services.GenerateLoglinesRequest)) *MockGenerateLoglinesService_GenerateLoglines_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.GenerateLoglinesRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.GenerateLoglinesRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.GenerateLoglinesRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -577,15 +643,26 @@ type MockListBeatsSheetsService_ListBeatsSheets_Call struct {
 }
 
 // ListBeatsSheets is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.ListBeatsSheetsRequest
 func (_e *MockListBeatsSheetsService_Expecter) ListBeatsSheets(ctx interface{}, request interface{}) *MockListBeatsSheetsService_ListBeatsSheets_Call {
 	return &MockListBeatsSheetsService_ListBeatsSheets_Call{Call: _e.mock.On("ListBeatsSheets", ctx, request)}
 }
 
 func (_c *MockListBeatsSheetsService_ListBeatsSheets_Call) Run(run func(ctx context.Context, request services.ListBeatsSheetsRequest)) *MockListBeatsSheetsService_ListBeatsSheets_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.ListBeatsSheetsRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.ListBeatsSheetsRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.ListBeatsSheetsRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -661,15 +738,26 @@ type MockListLoglinesService_ListLoglines_Call struct {
 }
 
 // ListLoglines is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.ListLoglinesRequest
 func (_e *MockListLoglinesService_Expecter) ListLoglines(ctx interface{}, request interface{}) *MockListLoglinesService_ListLoglines_Call {
 	return &MockListLoglinesService_ListLoglines_Call{Call: _e.mock.On("ListLoglines", ctx, request)}
 }
 
 func (_c *MockListLoglinesService_ListLoglines_Call) Run(run func(ctx context.Context, request services.ListLoglinesRequest)) *MockListLoglinesService_ListLoglines_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.ListLoglinesRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.ListLoglinesRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.ListLoglinesRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -745,15 +833,26 @@ type MockRegenerateBeatsService_RegenerateBeats_Call struct {
 }
 
 // RegenerateBeats is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.RegenerateBeatsRequest
 func (_e *MockRegenerateBeatsService_Expecter) RegenerateBeats(ctx interface{}, request interface{}) *MockRegenerateBeatsService_RegenerateBeats_Call {
 	return &MockRegenerateBeatsService_RegenerateBeats_Call{Call: _e.mock.On("RegenerateBeats", ctx, request)}
 }
 
 func (_c *MockRegenerateBeatsService_RegenerateBeats_Call) Run(run func(ctx context.Context, request services.RegenerateBeatsRequest)) *MockRegenerateBeatsService_RegenerateBeats_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.RegenerateBeatsRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.RegenerateBeatsRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.RegenerateBeatsRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -829,15 +928,26 @@ type MockSelectBeatsSheetService_SelectBeatsSheet_Call struct {
 }
 
 // SelectBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.SelectBeatsSheetRequest
 func (_e *MockSelectBeatsSheetService_Expecter) SelectBeatsSheet(ctx interface{}, request interface{}) *MockSelectBeatsSheetService_SelectBeatsSheet_Call {
 	return &MockSelectBeatsSheetService_SelectBeatsSheet_Call{Call: _e.mock.On("SelectBeatsSheet", ctx, request)}
 }
 
 func (_c *MockSelectBeatsSheetService_SelectBeatsSheet_Call) Run(run func(ctx context.Context, request services.SelectBeatsSheetRequest)) *MockSelectBeatsSheetService_SelectBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.SelectBeatsSheetRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.SelectBeatsSheetRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.SelectBeatsSheetRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -913,15 +1023,26 @@ type MockSelectLoglineService_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.SelectLoglineRequest
 func (_e *MockSelectLoglineService_Expecter) SelectLogline(ctx interface{}, request interface{}) *MockSelectLoglineService_SelectLogline_Call {
 	return &MockSelectLoglineService_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, request)}
 }
 
 func (_c *MockSelectLoglineService_SelectLogline_Call) Run(run func(ctx context.Context, request services.SelectLoglineRequest)) *MockSelectLoglineService_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.SelectLoglineRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.SelectLoglineRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.SelectLoglineRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }

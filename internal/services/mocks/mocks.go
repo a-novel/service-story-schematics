@@ -77,15 +77,26 @@ type MockCreateBeatsSheetSource_InsertBeatsSheet_Call struct {
 }
 
 // InsertBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.InsertBeatsSheetData
 func (_e *MockCreateBeatsSheetSource_Expecter) InsertBeatsSheet(ctx interface{}, data interface{}) *MockCreateBeatsSheetSource_InsertBeatsSheet_Call {
 	return &MockCreateBeatsSheetSource_InsertBeatsSheet_Call{Call: _e.mock.On("InsertBeatsSheet", ctx, data)}
 }
 
 func (_c *MockCreateBeatsSheetSource_InsertBeatsSheet_Call) Run(run func(ctx context.Context, data dao.InsertBeatsSheetData)) *MockCreateBeatsSheetSource_InsertBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.InsertBeatsSheetData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.InsertBeatsSheetData
+		if args[1] != nil {
+			arg1 = args[1].(dao.InsertBeatsSheetData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -134,15 +145,26 @@ type MockCreateBeatsSheetSource_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineData
 func (_e *MockCreateBeatsSheetSource_Expecter) SelectLogline(ctx interface{}, data interface{}) *MockCreateBeatsSheetSource_SelectLogline_Call {
 	return &MockCreateBeatsSheetSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
 func (_c *MockCreateBeatsSheetSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockCreateBeatsSheetSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -191,15 +213,26 @@ type MockCreateBeatsSheetSource_SelectStoryPlan_Call struct {
 }
 
 // SelectStoryPlan is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.SelectStoryPlanRequest
 func (_e *MockCreateBeatsSheetSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
 	return &MockCreateBeatsSheetSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
 func (_c *MockCreateBeatsSheetSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockCreateBeatsSheetSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.SelectStoryPlanRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.SelectStoryPlanRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -275,15 +308,26 @@ type MockCreateLoglineSource_InsertLogline_Call struct {
 }
 
 // InsertLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.InsertLoglineData
 func (_e *MockCreateLoglineSource_Expecter) InsertLogline(ctx interface{}, data interface{}) *MockCreateLoglineSource_InsertLogline_Call {
 	return &MockCreateLoglineSource_InsertLogline_Call{Call: _e.mock.On("InsertLogline", ctx, data)}
 }
 
 func (_c *MockCreateLoglineSource_InsertLogline_Call) Run(run func(ctx context.Context, data dao.InsertLoglineData)) *MockCreateLoglineSource_InsertLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.InsertLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.InsertLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.InsertLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -336,15 +380,26 @@ type MockCreateLoglineSource_SelectSlugIteration_Call struct {
 }
 
 // SelectSlugIteration is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectSlugIterationData
 func (_e *MockCreateLoglineSource_Expecter) SelectSlugIteration(ctx interface{}, data interface{}) *MockCreateLoglineSource_SelectSlugIteration_Call {
 	return &MockCreateLoglineSource_SelectSlugIteration_Call{Call: _e.mock.On("SelectSlugIteration", ctx, data)}
 }
 
 func (_c *MockCreateLoglineSource_SelectSlugIteration_Call) Run(run func(ctx context.Context, data dao.SelectSlugIterationData)) *MockCreateLoglineSource_SelectSlugIteration_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectSlugIterationData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectSlugIterationData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectSlugIterationData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -420,15 +475,26 @@ type MockExpandBeatSource_ExpandBeat_Call struct {
 }
 
 // ExpandBeat is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request daoai.ExpandBeatRequest
 func (_e *MockExpandBeatSource_Expecter) ExpandBeat(ctx interface{}, request interface{}) *MockExpandBeatSource_ExpandBeat_Call {
 	return &MockExpandBeatSource_ExpandBeat_Call{Call: _e.mock.On("ExpandBeat", ctx, request)}
 }
 
 func (_c *MockExpandBeatSource_ExpandBeat_Call) Run(run func(ctx context.Context, request daoai.ExpandBeatRequest)) *MockExpandBeatSource_ExpandBeat_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(daoai.ExpandBeatRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 daoai.ExpandBeatRequest
+		if args[1] != nil {
+			arg1 = args[1].(daoai.ExpandBeatRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -477,15 +543,26 @@ type MockExpandBeatSource_SelectBeatsSheet_Call struct {
 }
 
 // SelectBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data uuid.UUID
 func (_e *MockExpandBeatSource_Expecter) SelectBeatsSheet(ctx interface{}, data interface{}) *MockExpandBeatSource_SelectBeatsSheet_Call {
 	return &MockExpandBeatSource_SelectBeatsSheet_Call{Call: _e.mock.On("SelectBeatsSheet", ctx, data)}
 }
 
 func (_c *MockExpandBeatSource_SelectBeatsSheet_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockExpandBeatSource_SelectBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 uuid.UUID
+		if args[1] != nil {
+			arg1 = args[1].(uuid.UUID)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -534,15 +611,26 @@ type MockExpandBeatSource_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineData
 func (_e *MockExpandBeatSource_Expecter) SelectLogline(ctx interface{}, data interface{}) *MockExpandBeatSource_SelectLogline_Call {
 	return &MockExpandBeatSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
 func (_c *MockExpandBeatSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockExpandBeatSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -591,15 +679,26 @@ type MockExpandBeatSource_SelectStoryPlan_Call struct {
 }
 
 // SelectStoryPlan is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.SelectStoryPlanRequest
 func (_e *MockExpandBeatSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockExpandBeatSource_SelectStoryPlan_Call {
 	return &MockExpandBeatSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
 func (_c *MockExpandBeatSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockExpandBeatSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.SelectStoryPlanRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.SelectStoryPlanRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -675,15 +774,26 @@ type MockExpandLoglineSource_ExpandLogline_Call struct {
 }
 
 // ExpandLogline is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request daoai.ExpandLoglineRequest
 func (_e *MockExpandLoglineSource_Expecter) ExpandLogline(ctx interface{}, request interface{}) *MockExpandLoglineSource_ExpandLogline_Call {
 	return &MockExpandLoglineSource_ExpandLogline_Call{Call: _e.mock.On("ExpandLogline", ctx, request)}
 }
 
 func (_c *MockExpandLoglineSource_ExpandLogline_Call) Run(run func(ctx context.Context, request daoai.ExpandLoglineRequest)) *MockExpandLoglineSource_ExpandLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(daoai.ExpandLoglineRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 daoai.ExpandLoglineRequest
+		if args[1] != nil {
+			arg1 = args[1].(daoai.ExpandLoglineRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -759,15 +869,26 @@ type MockGenerateBeatsSheetSource_GenerateBeatsSheet_Call struct {
 }
 
 // GenerateBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request daoai.GenerateBeatsSheetRequest
 func (_e *MockGenerateBeatsSheetSource_Expecter) GenerateBeatsSheet(ctx interface{}, request interface{}) *MockGenerateBeatsSheetSource_GenerateBeatsSheet_Call {
 	return &MockGenerateBeatsSheetSource_GenerateBeatsSheet_Call{Call: _e.mock.On("GenerateBeatsSheet", ctx, request)}
 }
 
 func (_c *MockGenerateBeatsSheetSource_GenerateBeatsSheet_Call) Run(run func(ctx context.Context, request daoai.GenerateBeatsSheetRequest)) *MockGenerateBeatsSheetSource_GenerateBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(daoai.GenerateBeatsSheetRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 daoai.GenerateBeatsSheetRequest
+		if args[1] != nil {
+			arg1 = args[1].(daoai.GenerateBeatsSheetRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -816,15 +937,26 @@ type MockGenerateBeatsSheetSource_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineData
 func (_e *MockGenerateBeatsSheetSource_Expecter) SelectLogline(ctx interface{}, data interface{}) *MockGenerateBeatsSheetSource_SelectLogline_Call {
 	return &MockGenerateBeatsSheetSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
 func (_c *MockGenerateBeatsSheetSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockGenerateBeatsSheetSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -873,15 +1005,26 @@ type MockGenerateBeatsSheetSource_SelectStoryPlan_Call struct {
 }
 
 // SelectStoryPlan is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.SelectStoryPlanRequest
 func (_e *MockGenerateBeatsSheetSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
 	return &MockGenerateBeatsSheetSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
 func (_c *MockGenerateBeatsSheetSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockGenerateBeatsSheetSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.SelectStoryPlanRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.SelectStoryPlanRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -957,15 +1100,26 @@ type MockGenerateLoglinesSource_GenerateLoglines_Call struct {
 }
 
 // GenerateLoglines is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request daoai.GenerateLoglinesRequest
 func (_e *MockGenerateLoglinesSource_Expecter) GenerateLoglines(ctx interface{}, request interface{}) *MockGenerateLoglinesSource_GenerateLoglines_Call {
 	return &MockGenerateLoglinesSource_GenerateLoglines_Call{Call: _e.mock.On("GenerateLoglines", ctx, request)}
 }
 
 func (_c *MockGenerateLoglinesSource_GenerateLoglines_Call) Run(run func(ctx context.Context, request daoai.GenerateLoglinesRequest)) *MockGenerateLoglinesSource_GenerateLoglines_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(daoai.GenerateLoglinesRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 daoai.GenerateLoglinesRequest
+		if args[1] != nil {
+			arg1 = args[1].(daoai.GenerateLoglinesRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1041,15 +1195,26 @@ type MockListBeatsSheetsSource_ListBeatsSheets_Call struct {
 }
 
 // ListBeatsSheets is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.ListBeatsSheetsData
 func (_e *MockListBeatsSheetsSource_Expecter) ListBeatsSheets(ctx interface{}, data interface{}) *MockListBeatsSheetsSource_ListBeatsSheets_Call {
 	return &MockListBeatsSheetsSource_ListBeatsSheets_Call{Call: _e.mock.On("ListBeatsSheets", ctx, data)}
 }
 
 func (_c *MockListBeatsSheetsSource_ListBeatsSheets_Call) Run(run func(ctx context.Context, data dao.ListBeatsSheetsData)) *MockListBeatsSheetsSource_ListBeatsSheets_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.ListBeatsSheetsData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.ListBeatsSheetsData
+		if args[1] != nil {
+			arg1 = args[1].(dao.ListBeatsSheetsData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1098,15 +1263,26 @@ type MockListBeatsSheetsSource_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineData
 func (_e *MockListBeatsSheetsSource_Expecter) SelectLogline(ctx interface{}, data interface{}) *MockListBeatsSheetsSource_SelectLogline_Call {
 	return &MockListBeatsSheetsSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
 func (_c *MockListBeatsSheetsSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockListBeatsSheetsSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1182,15 +1358,26 @@ type MockListLoglinesSource_ListLoglines_Call struct {
 }
 
 // ListLoglines is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.ListLoglinesData
 func (_e *MockListLoglinesSource_Expecter) ListLoglines(ctx interface{}, data interface{}) *MockListLoglinesSource_ListLoglines_Call {
 	return &MockListLoglinesSource_ListLoglines_Call{Call: _e.mock.On("ListLoglines", ctx, data)}
 }
 
 func (_c *MockListLoglinesSource_ListLoglines_Call) Run(run func(ctx context.Context, data dao.ListLoglinesData)) *MockListLoglinesSource_ListLoglines_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.ListLoglinesData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.ListLoglinesData
+		if args[1] != nil {
+			arg1 = args[1].(dao.ListLoglinesData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1266,15 +1453,26 @@ type MockRegenerateBeatsSource_RegenerateBeats_Call struct {
 }
 
 // RegenerateBeats is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request daoai.RegenerateBeatsRequest
 func (_e *MockRegenerateBeatsSource_Expecter) RegenerateBeats(ctx interface{}, request interface{}) *MockRegenerateBeatsSource_RegenerateBeats_Call {
 	return &MockRegenerateBeatsSource_RegenerateBeats_Call{Call: _e.mock.On("RegenerateBeats", ctx, request)}
 }
 
 func (_c *MockRegenerateBeatsSource_RegenerateBeats_Call) Run(run func(ctx context.Context, request daoai.RegenerateBeatsRequest)) *MockRegenerateBeatsSource_RegenerateBeats_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(daoai.RegenerateBeatsRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 daoai.RegenerateBeatsRequest
+		if args[1] != nil {
+			arg1 = args[1].(daoai.RegenerateBeatsRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1323,15 +1521,26 @@ type MockRegenerateBeatsSource_SelectBeatsSheet_Call struct {
 }
 
 // SelectBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data uuid.UUID
 func (_e *MockRegenerateBeatsSource_Expecter) SelectBeatsSheet(ctx interface{}, data interface{}) *MockRegenerateBeatsSource_SelectBeatsSheet_Call {
 	return &MockRegenerateBeatsSource_SelectBeatsSheet_Call{Call: _e.mock.On("SelectBeatsSheet", ctx, data)}
 }
 
 func (_c *MockRegenerateBeatsSource_SelectBeatsSheet_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockRegenerateBeatsSource_SelectBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 uuid.UUID
+		if args[1] != nil {
+			arg1 = args[1].(uuid.UUID)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1380,15 +1589,26 @@ type MockRegenerateBeatsSource_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineData
 func (_e *MockRegenerateBeatsSource_Expecter) SelectLogline(ctx interface{}, data interface{}) *MockRegenerateBeatsSource_SelectLogline_Call {
 	return &MockRegenerateBeatsSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
 func (_c *MockRegenerateBeatsSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockRegenerateBeatsSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1437,15 +1657,26 @@ type MockRegenerateBeatsSource_SelectStoryPlan_Call struct {
 }
 
 // SelectStoryPlan is a helper method to define mock.On call
-//   - ctx
-//   - request
+//   - ctx context.Context
+//   - request services.SelectStoryPlanRequest
 func (_e *MockRegenerateBeatsSource_Expecter) SelectStoryPlan(ctx interface{}, request interface{}) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
 	return &MockRegenerateBeatsSource_SelectStoryPlan_Call{Call: _e.mock.On("SelectStoryPlan", ctx, request)}
 }
 
 func (_c *MockRegenerateBeatsSource_SelectStoryPlan_Call) Run(run func(ctx context.Context, request services.SelectStoryPlanRequest)) *MockRegenerateBeatsSource_SelectStoryPlan_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(services.SelectStoryPlanRequest))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 services.SelectStoryPlanRequest
+		if args[1] != nil {
+			arg1 = args[1].(services.SelectStoryPlanRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1521,15 +1752,26 @@ type MockSelectBeatsSheetSource_SelectBeatsSheet_Call struct {
 }
 
 // SelectBeatsSheet is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data uuid.UUID
 func (_e *MockSelectBeatsSheetSource_Expecter) SelectBeatsSheet(ctx interface{}, data interface{}) *MockSelectBeatsSheetSource_SelectBeatsSheet_Call {
 	return &MockSelectBeatsSheetSource_SelectBeatsSheet_Call{Call: _e.mock.On("SelectBeatsSheet", ctx, data)}
 }
 
 func (_c *MockSelectBeatsSheetSource_SelectBeatsSheet_Call) Run(run func(ctx context.Context, data uuid.UUID)) *MockSelectBeatsSheetSource_SelectBeatsSheet_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(uuid.UUID))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 uuid.UUID
+		if args[1] != nil {
+			arg1 = args[1].(uuid.UUID)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1578,15 +1820,26 @@ type MockSelectBeatsSheetSource_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineData
 func (_e *MockSelectBeatsSheetSource_Expecter) SelectLogline(ctx interface{}, data interface{}) *MockSelectBeatsSheetSource_SelectLogline_Call {
 	return &MockSelectBeatsSheetSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
 func (_c *MockSelectBeatsSheetSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockSelectBeatsSheetSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1662,15 +1915,26 @@ type MockSelectLoglineSource_SelectLogline_Call struct {
 }
 
 // SelectLogline is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineData
 func (_e *MockSelectLoglineSource_Expecter) SelectLogline(ctx interface{}, data interface{}) *MockSelectLoglineSource_SelectLogline_Call {
 	return &MockSelectLoglineSource_SelectLogline_Call{Call: _e.mock.On("SelectLogline", ctx, data)}
 }
 
 func (_c *MockSelectLoglineSource_SelectLogline_Call) Run(run func(ctx context.Context, data dao.SelectLoglineData)) *MockSelectLoglineSource_SelectLogline_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }
@@ -1719,15 +1983,26 @@ type MockSelectLoglineSource_SelectLoglineBySlug_Call struct {
 }
 
 // SelectLoglineBySlug is a helper method to define mock.On call
-//   - ctx
-//   - data
+//   - ctx context.Context
+//   - data dao.SelectLoglineBySlugData
 func (_e *MockSelectLoglineSource_Expecter) SelectLoglineBySlug(ctx interface{}, data interface{}) *MockSelectLoglineSource_SelectLoglineBySlug_Call {
 	return &MockSelectLoglineSource_SelectLoglineBySlug_Call{Call: _e.mock.On("SelectLoglineBySlug", ctx, data)}
 }
 
 func (_c *MockSelectLoglineSource_SelectLoglineBySlug_Call) Run(run func(ctx context.Context, data dao.SelectLoglineBySlugData)) *MockSelectLoglineSource_SelectLoglineBySlug_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(dao.SelectLoglineBySlugData))
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 dao.SelectLoglineBySlugData
+		if args[1] != nil {
+			arg1 = args[1].(dao.SelectLoglineBySlugData)
+		}
+		run(
+			arg0,
+			arg1,
+		)
 	})
 	return _c
 }

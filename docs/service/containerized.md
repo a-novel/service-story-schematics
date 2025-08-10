@@ -184,7 +184,6 @@ Generic configuration.
 | ---------- | ----------------------------------------------- | -------------------------- |
 | `APP_NAME` | Name of the application, used for tracing.      | `story-schematics-service` |
 | `ENV`      | Provide information on the current environment. |                            |
-| `DEBUG`    | Activate debug mode for logs.                   | `false`                    |
 
 API configuration.
 
@@ -202,15 +201,12 @@ API configuration.
 | `API_CORS_ALLOW_CREDENTIALS` | Whether to allow credentials in CORS requests.                                          | `false` |
 | `API_CORS_MAX_AGE`           | CORS max age for the API.<br/>Provided as a number of seconds.                          | `3600`  |
 
-Tracing configuration (with [Sentry](https://sentry.io/)).
+Tracing configuration.
 
-| Variable               | Description                                                          | Default                               |
-| ---------------------- | -------------------------------------------------------------------- | ------------------------------------- |
-| `SENTRY_DSN`           | Sentry DSN for tracing.<br/>Tracing will be disabled if omitted.     |                                       |
-| `SENTRY_RELEASE`       | Release information for Sentry logs.                                 |                                       |
-| `SENTRY_FLUSH_TIMEOUT` | Timeout for flushing Sentry logs.<br/>Provided as a duration string. | `2s`                                  |
-| `SENTRY_ENVIRONMENT`   | Which environment to attach logs to.                                 | Uses the value from `ENV` variable.   |
-| `SENTRY_DEBUG`         | Activate debug mode for Sentry.                                      | Uses the value from `DEBUG` variable. |
+| Variable            | Description                                                                                                                      | Default |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `GCLOUD_PROJECT_ID` | A Google Cloud Platform project ID. Note this activate Google Cloud tracing.                                                     |         |
+| `PRETTY_CONSOLE`    | When using local (default) tracing, set it to false to turn off colors in the console. Ineffective if `GCLOUD_PROJECT_ID` is set | `true`  |
 
 We use [Groq](https://console.groq.com/home) for AI processing. Their platform is based of OpenAI's API, so you can
 interchange them with an actual OpenAI token, or any other OpenAI-compatible API.

@@ -1,15 +1,13 @@
 package config
 
 import (
-	"github.com/samber/lo"
-
 	"github.com/a-novel/golib/config"
 	otelpresets "github.com/a-novel/golib/otel/presets"
 	"github.com/a-novel/golib/postgres"
 )
 
-func AppPresetTest(port int) App[*otelpresets.SentryOtelConfig, postgres.Config] {
-	return App[*otelpresets.SentryOtelConfig, postgres.Config]{
+func AppPresetTest(port int) App[*otelpresets.LocalOtelConfig, postgres.Config] {
+	return App[*otelpresets.LocalOtelConfig, postgres.Config]{
 		App: Main{
 			Name: config.LoadEnv(getEnv("APP_NAME"), AppName, config.StringParser),
 		},
@@ -44,15 +42,8 @@ func AppPresetTest(port int) App[*otelpresets.SentryOtelConfig, postgres.Config]
 		},
 		PermissionsConfig: PermissionsConfigDefault,
 
-		OpenAI: OpenAIPresetDefault,
-		Otel: &otelpresets.SentryOtelConfig{
-			DSN:          getEnv("SENTRY_DSN"),
-			ServerName:   config.LoadEnv(getEnv("APP_NAME"), AppName, config.StringParser),
-			Release:      getEnv("SENTRY_RELEASE"),
-			Environment:  lo.CoalesceOrEmpty(getEnv("SENTRY_ENVIRONMENT"), getEnv("ENV")),
-			FlushTimeout: config.LoadEnv(getEnv("SENTRY_FLUSH_TIMEOUT"), SentryFlushTimeout, config.DurationParser),
-			Debug:        isDebug,
-		},
+		OpenAI:   OpenAIPresetDefault,
+		Otel:     &OtelDev,
 		Postgres: PostgresPresetTest,
 	}
 }

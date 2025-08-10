@@ -7,7 +7,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
-	"go.opentelemetry.io/otel/codes"
 
 	"github.com/a-novel/golib/otel"
 	authpkg "github.com/a-novel/service-authentication/pkg"
@@ -39,13 +38,11 @@ func (api *API) GetLogline(ctx context.Context, params apimodels.GetLoglineParam
 
 	switch {
 	case errors.Is(err, dao.ErrLoglineNotFound):
-		span.RecordError(err)
-		span.SetStatus(codes.Error, "")
+		_ = otel.ReportError(span, err)
 
 		return &apimodels.NotFoundError{Error: err.Error()}, nil
 	case err != nil:
-		span.RecordError(err)
-		span.SetStatus(codes.Error, "")
+		_ = otel.ReportError(span, err)
 
 		return nil, fmt.Errorf("get logline: %w", err)
 	}
