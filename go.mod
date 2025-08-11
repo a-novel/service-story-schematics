@@ -3,7 +3,7 @@ module github.com/a-novel/service-story-schematics
 go 1.24.6
 
 require (
-	github.com/a-novel/golib v0.9.3
+	github.com/a-novel/golib v0.9.4
 	github.com/a-novel/service-authentication v1.2.1
 	github.com/a-novel/service-json-keys v1.3.0
 	github.com/go-chi/chi/v5 v5.2.2
