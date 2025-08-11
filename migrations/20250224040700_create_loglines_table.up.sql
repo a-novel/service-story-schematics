@@ -1,14 +1,10 @@
-CREATE TABLE loglines
-(
+CREATE TABLE loglines (
   id uuid PRIMARY KEY NOT NULL,
   user_id uuid NOT NULL,
   slug text NOT NULL,
-
   name text NOT NULL,
   content text NOT NULL,
-
   CONSTRAINT unique_slug_per_user UNIQUE (user_id, slug),
-
   created_at timestamp(6) with time zone NOT NULL
 );
 

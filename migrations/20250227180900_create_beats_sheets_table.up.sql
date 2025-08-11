@@ -1,10 +1,7 @@
-CREATE TABLE beats_sheets
-(
+CREATE TABLE beats_sheets (
   id uuid PRIMARY KEY NOT NULL,
   logline_id uuid NOT NULL,
-
   content jsonb NOT NULL,
-
   created_at timestamp(6) with time zone NOT NULL
 );
 

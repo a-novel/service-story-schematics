@@ -5,20 +5,13 @@ test:
 # Check code quality.
 lint:
 	go tool golangci-lint run
-	npx prettier . --check
-	sqlfluff lint
-
-# Generate mocked interfaces for Go tests.
-mocks:
-	rm -rf `find . -type d -name mocks`
-	go run github.com/vektra/mockery/v3@v3.5.2
+	pnpm lint
 
 # Reformat code so it passes the code style lint checks.
 format:
 	go mod tidy
 	go tool golangci-lint run --fix
-	npx prettier . --write
-	sqlfluff fix
+	pnpm format
 
 # Lint OpenAPI specs.
 openapi-lint:
@@ -38,7 +31,3 @@ run-infra-down:
 run-api:
 	bash -c "set -m; bash '$(CURDIR)/scripts/run.sh'"
 
-install:
-	pipx install sqlfluff
-
-.PHONY: api
