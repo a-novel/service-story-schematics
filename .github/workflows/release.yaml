@@ -127,7 +127,7 @@ jobs:
       OPENAI_TOKEN: ${{ secrets.GROQ_TOKEN }}
       DEBUG: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/run-migrations
       - uses: a-novel-kit/workflows/build-actions/docker@master
         with:
@@ -192,7 +192,7 @@ jobs:
       OPENAI_TOKEN: ${{ secrets.GROQ_TOKEN }}
       DEBUG: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/run-migrations
       - uses: a-novel-kit/workflows/build-actions/docker@master
         with:
