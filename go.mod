@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/a-novel/golib v0.10.1
-	github.com/a-novel/service-authentication v1.2.7
+	github.com/a-novel/service-authentication v1.2.8
 	github.com/a-novel/service-json-keys v1.3.1
 	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-chi/cors v1.2.2
@@ -47,7 +47,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/propagator v0.53.0 // indirect
 	github.com/Masterminds/semver/v3 v3.3.1 // indirect
 	github.com/OpenPeeDeeP/depguard/v2 v2.2.1 // indirect
-	github.com/a-novel-kit/jwt v1.1.7 // indirect
+	github.com/a-novel-kit/jwt v1.1.8 // indirect
 	github.com/alecthomas/chroma/v2 v2.20.0 // indirect
 	github.com/alecthomas/go-check-sumtype v0.3.1 // indirect
 	github.com/alexkohler/nakedret/v2 v2.0.6 // indirect
