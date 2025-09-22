@@ -26,14 +26,14 @@ beats:
     scenes:
       min: 3
       max: 5
-  - name: Déclencheur
+  - name: Élément Déclencheur
     key: catalyst
     keyPoints:
       - Un événement qui vient bouleverser l’ordre établi.
     purpose: Lance le protagoniste dans le conflit principal.
     scenes:
       exact: 1
-  - name: Doute
+  - name: Débat
     key: debate
     keyPoints:
       - Le protagoniste hésite à s’engager dans l’aventure.
@@ -42,7 +42,7 @@ beats:
     scenes:
       min: 2
       max: 3
-  - name: Passage à l’acte deux
+  - name: Passage à l’Acte Deux
     key: breakIntoTwo
     keyPoints:
       - Le protagoniste prend la décision irréversible de se lancer.
@@ -57,7 +57,7 @@ beats:
     scenes:
       min: 1
       max: 2
-  - name: Plaisir et obstacles
+  - name: Jeux et Aventures
     key: funAndGames
     keyPoints:
       - Exploration du nouveau monde.
@@ -73,7 +73,7 @@ beats:
     purpose: Redirige l’histoire et augmente la tension dramatique.
     scenes:
       exact: 1
-  - name: Les obstacles se resserrent
+  - name: Les Ennemis se Rapprochent
     key: badGuysCloseIn
     keyPoints:
       - Les difficultés s’intensifient.
@@ -82,14 +82,14 @@ beats:
     scenes:
       min: 3
       max: 5
-  - name: Tout est perdu
+  - name: Tout est Perdu
     key: allIsLost
     keyPoints:
       - Un échec majeur frappe le protagoniste.
     purpose: Moment de désespoir total ; souvent accompagné d’une perte symbolique.
     scenes:
       exact: 1
-  - name: Nuit noire de l’âme
+  - name: Nuit Noire de l’Âme
     key: darkNightOfTheSoul
     keyPoints:
       - Le protagoniste réfléchit à tout son parcours.
@@ -98,7 +98,7 @@ beats:
     scenes:
       min: 1
       max: 2
-  - name: Passage à l’acte trois
+  - name: Passage à l’Acte Trois
     key: breakIntoThree
     keyPoints:
       - Le protagoniste trouve une idée, une ressource ou une révélation décisive.
