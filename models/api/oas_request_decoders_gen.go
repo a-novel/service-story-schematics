@@ -3,19 +3,20 @@
 package apimodels
 
 import (
+	"bytes"
 	"io"
 	"mime"
 	"net/http"
 
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
-
 	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/ogen-go/ogen/validate"
 )
 
 func (s *Server) decodeCreateBeatsSheetRequest(r *http.Request) (
 	req *CreateBeatsSheetForm,
+	rawBody []byte,
 	close func() error,
 	rerr error,
 ) {
@@ -36,22 +37,29 @@ func (s *Server) decodeCreateBeatsSheetRequest(r *http.Request) (
 	}()
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
 	}
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
+		defer func() {
+			_ = r.Body.Close()
+		}()
 		if err != nil {
-			return req, close, err
+			return req, rawBody, close, err
 		}
+
+		// Reset the body to allow for downstream reading.
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
 
 		if len(buf) == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 
+		rawBody = append(rawBody, buf...)
 		d := jx.DecodeBytes(buf)
 
 		var request CreateBeatsSheetForm
@@ -69,7 +77,7 @@ func (s *Server) decodeCreateBeatsSheetRequest(r *http.Request) (
 				Body:        buf,
 				Err:         err,
 			}
-			return req, close, err
+			return req, rawBody, close, err
 		}
 		if err := func() error {
 			if err := request.Validate(); err != nil {
@@ -77,16 +85,17 @@ func (s *Server) decodeCreateBeatsSheetRequest(r *http.Request) (
 			}
 			return nil
 		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
+			return req, rawBody, close, errors.Wrap(err, "validate")
 		}
-		return &request, close, nil
+		return &request, rawBody, close, nil
 	default:
-		return req, close, validate.InvalidContentType(ct)
+		return req, rawBody, close, validate.InvalidContentType(ct)
 	}
 }
 
 func (s *Server) decodeCreateLoglineRequest(r *http.Request) (
 	req *CreateLoglineForm,
+	rawBody []byte,
 	close func() error,
 	rerr error,
 ) {
@@ -107,22 +116,29 @@ func (s *Server) decodeCreateLoglineRequest(r *http.Request) (
 	}()
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
 	}
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
+		defer func() {
+			_ = r.Body.Close()
+		}()
 		if err != nil {
-			return req, close, err
+			return req, rawBody, close, err
 		}
+
+		// Reset the body to allow for downstream reading.
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
 
 		if len(buf) == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 
+		rawBody = append(rawBody, buf...)
 		d := jx.DecodeBytes(buf)
 
 		var request CreateLoglineForm
@@ -140,7 +156,7 @@ func (s *Server) decodeCreateLoglineRequest(r *http.Request) (
 				Body:        buf,
 				Err:         err,
 			}
-			return req, close, err
+			return req, rawBody, close, err
 		}
 		if err := func() error {
 			if err := request.Validate(); err != nil {
@@ -148,16 +164,17 @@ func (s *Server) decodeCreateLoglineRequest(r *http.Request) (
 			}
 			return nil
 		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
+			return req, rawBody, close, errors.Wrap(err, "validate")
 		}
-		return &request, close, nil
+		return &request, rawBody, close, nil
 	default:
-		return req, close, validate.InvalidContentType(ct)
+		return req, rawBody, close, validate.InvalidContentType(ct)
 	}
 }
 
 func (s *Server) decodeExpandBeatRequest(r *http.Request) (
 	req *ExpandBeatForm,
+	rawBody []byte,
 	close func() error,
 	rerr error,
 ) {
@@ -178,22 +195,29 @@ func (s *Server) decodeExpandBeatRequest(r *http.Request) (
 	}()
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
 	}
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
+		defer func() {
+			_ = r.Body.Close()
+		}()
 		if err != nil {
-			return req, close, err
+			return req, rawBody, close, err
 		}
+
+		// Reset the body to allow for downstream reading.
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
 
 		if len(buf) == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 
+		rawBody = append(rawBody, buf...)
 		d := jx.DecodeBytes(buf)
 
 		var request ExpandBeatForm
@@ -211,7 +235,7 @@ func (s *Server) decodeExpandBeatRequest(r *http.Request) (
 				Body:        buf,
 				Err:         err,
 			}
-			return req, close, err
+			return req, rawBody, close, err
 		}
 		if err := func() error {
 			if err := request.Validate(); err != nil {
@@ -219,16 +243,17 @@ func (s *Server) decodeExpandBeatRequest(r *http.Request) (
 			}
 			return nil
 		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
+			return req, rawBody, close, errors.Wrap(err, "validate")
 		}
-		return &request, close, nil
+		return &request, rawBody, close, nil
 	default:
-		return req, close, validate.InvalidContentType(ct)
+		return req, rawBody, close, validate.InvalidContentType(ct)
 	}
 }
 
 func (s *Server) decodeExpandLoglineRequest(r *http.Request) (
 	req *LoglineIdea,
+	rawBody []byte,
 	close func() error,
 	rerr error,
 ) {
@@ -249,22 +274,29 @@ func (s *Server) decodeExpandLoglineRequest(r *http.Request) (
 	}()
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
 	}
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
+		defer func() {
+			_ = r.Body.Close()
+		}()
 		if err != nil {
-			return req, close, err
+			return req, rawBody, close, err
 		}
+
+		// Reset the body to allow for downstream reading.
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
 
 		if len(buf) == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 
+		rawBody = append(rawBody, buf...)
 		d := jx.DecodeBytes(buf)
 
 		var request LoglineIdea
@@ -282,7 +314,7 @@ func (s *Server) decodeExpandLoglineRequest(r *http.Request) (
 				Body:        buf,
 				Err:         err,
 			}
-			return req, close, err
+			return req, rawBody, close, err
 		}
 		if err := func() error {
 			if err := request.Validate(); err != nil {
@@ -290,16 +322,17 @@ func (s *Server) decodeExpandLoglineRequest(r *http.Request) (
 			}
 			return nil
 		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
+			return req, rawBody, close, errors.Wrap(err, "validate")
 		}
-		return &request, close, nil
+		return &request, rawBody, close, nil
 	default:
-		return req, close, validate.InvalidContentType(ct)
+		return req, rawBody, close, validate.InvalidContentType(ct)
 	}
 }
 
 func (s *Server) decodeGenerateBeatsSheetRequest(r *http.Request) (
 	req *GenerateBeatsSheetForm,
+	rawBody []byte,
 	close func() error,
 	rerr error,
 ) {
@@ -320,22 +353,29 @@ func (s *Server) decodeGenerateBeatsSheetRequest(r *http.Request) (
 	}()
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
 	}
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
+		defer func() {
+			_ = r.Body.Close()
+		}()
 		if err != nil {
-			return req, close, err
+			return req, rawBody, close, err
 		}
+
+		// Reset the body to allow for downstream reading.
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
 
 		if len(buf) == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 
+		rawBody = append(rawBody, buf...)
 		d := jx.DecodeBytes(buf)
 
 		var request GenerateBeatsSheetForm
@@ -353,7 +393,7 @@ func (s *Server) decodeGenerateBeatsSheetRequest(r *http.Request) (
 				Body:        buf,
 				Err:         err,
 			}
-			return req, close, err
+			return req, rawBody, close, err
 		}
 		if err := func() error {
 			if err := request.Validate(); err != nil {
@@ -361,16 +401,17 @@ func (s *Server) decodeGenerateBeatsSheetRequest(r *http.Request) (
 			}
 			return nil
 		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
+			return req, rawBody, close, errors.Wrap(err, "validate")
 		}
-		return &request, close, nil
+		return &request, rawBody, close, nil
 	default:
-		return req, close, validate.InvalidContentType(ct)
+		return req, rawBody, close, validate.InvalidContentType(ct)
 	}
 }
 
 func (s *Server) decodeGenerateLoglinesRequest(r *http.Request) (
 	req *GenerateLoglinesForm,
+	rawBody []byte,
 	close func() error,
 	rerr error,
 ) {
@@ -391,22 +432,29 @@ func (s *Server) decodeGenerateLoglinesRequest(r *http.Request) (
 	}()
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
 	}
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
+		defer func() {
+			_ = r.Body.Close()
+		}()
 		if err != nil {
-			return req, close, err
+			return req, rawBody, close, err
 		}
+
+		// Reset the body to allow for downstream reading.
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
 
 		if len(buf) == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 
+		rawBody = append(rawBody, buf...)
 		d := jx.DecodeBytes(buf)
 
 		var request GenerateLoglinesForm
@@ -424,7 +472,7 @@ func (s *Server) decodeGenerateLoglinesRequest(r *http.Request) (
 				Body:        buf,
 				Err:         err,
 			}
-			return req, close, err
+			return req, rawBody, close, err
 		}
 		if err := func() error {
 			if err := request.Validate(); err != nil {
@@ -432,16 +480,17 @@ func (s *Server) decodeGenerateLoglinesRequest(r *http.Request) (
 			}
 			return nil
 		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
+			return req, rawBody, close, errors.Wrap(err, "validate")
 		}
-		return &request, close, nil
+		return &request, rawBody, close, nil
 	default:
-		return req, close, validate.InvalidContentType(ct)
+		return req, rawBody, close, validate.InvalidContentType(ct)
 	}
 }
 
 func (s *Server) decodeRegenerateBeatsRequest(r *http.Request) (
 	req *RegenerateBeatsForm,
+	rawBody []byte,
 	close func() error,
 	rerr error,
 ) {
@@ -462,22 +511,29 @@ func (s *Server) decodeRegenerateBeatsRequest(r *http.Request) (
 	}()
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
+		return req, rawBody, close, errors.Wrap(err, "parse media type")
 	}
 	switch {
 	case ct == "application/json":
 		if r.ContentLength == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 		buf, err := io.ReadAll(r.Body)
+		defer func() {
+			_ = r.Body.Close()
+		}()
 		if err != nil {
-			return req, close, err
+			return req, rawBody, close, err
 		}
+
+		// Reset the body to allow for downstream reading.
+		r.Body = io.NopCloser(bytes.NewBuffer(buf))
 
 		if len(buf) == 0 {
-			return req, close, validate.ErrBodyRequired
+			return req, rawBody, close, validate.ErrBodyRequired
 		}
 
+		rawBody = append(rawBody, buf...)
 		d := jx.DecodeBytes(buf)
 
 		var request RegenerateBeatsForm
@@ -495,7 +551,7 @@ func (s *Server) decodeRegenerateBeatsRequest(r *http.Request) (
 				Body:        buf,
 				Err:         err,
 			}
-			return req, close, err
+			return req, rawBody, close, err
 		}
 		if err := func() error {
 			if err := request.Validate(); err != nil {
@@ -503,10 +559,10 @@ func (s *Server) decodeRegenerateBeatsRequest(r *http.Request) (
 			}
 			return nil
 		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
+			return req, rawBody, close, errors.Wrap(err, "validate")
 		}
-		return &request, close, nil
+		return &request, rawBody, close, nil
 	default:
-		return req, close, validate.InvalidContentType(ct)
+		return req, rawBody, close, validate.InvalidContentType(ct)
 	}
 }
