@@ -8,16 +8,15 @@ import (
 	"time"
 
 	"github.com/go-faster/errors"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/metric"
-	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
-	"go.opentelemetry.io/otel/trace"
-
 	ht "github.com/ogen-go/ogen/http"
 	"github.com/ogen-go/ogen/middleware"
 	"github.com/ogen-go/ogen/ogenerrors"
 	"github.com/ogen-go/ogen/otelogen"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/metric"
+	semconv "go.opentelemetry.io/otel/semconv/v1.34.0"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type codeRecorder struct {
@@ -86,7 +85,7 @@ func (s *Server) handleCreateBeatsSheetRequest(args [0]string, argsEscaped bool,
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -150,7 +149,9 @@ func (s *Server) handleCreateBeatsSheetRequest(args [0]string, argsEscaped bool,
 			return
 		}
 	}
-	request, close, err := s.decodeCreateBeatsSheetRequest(r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeCreateBeatsSheetRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -174,6 +175,7 @@ func (s *Server) handleCreateBeatsSheetRequest(args [0]string, argsEscaped bool,
 			OperationSummary: "Create a new beats sheet.",
 			OperationID:      "createBeatsSheet",
 			Body:             request,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -281,7 +283,7 @@ func (s *Server) handleCreateLoglineRequest(args [0]string, argsEscaped bool, w 
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -345,7 +347,9 @@ func (s *Server) handleCreateLoglineRequest(args [0]string, argsEscaped bool, w 
 			return
 		}
 	}
-	request, close, err := s.decodeCreateLoglineRequest(r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeCreateLoglineRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -369,6 +373,7 @@ func (s *Server) handleCreateLoglineRequest(args [0]string, argsEscaped bool, w 
 			OperationSummary: "Create a new logline.",
 			OperationID:      "createLogline",
 			Body:             request,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -476,7 +481,7 @@ func (s *Server) handleExpandBeatRequest(args [0]string, argsEscaped bool, w htt
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -540,7 +545,9 @@ func (s *Server) handleExpandBeatRequest(args [0]string, argsEscaped bool, w htt
 			return
 		}
 	}
-	request, close, err := s.decodeExpandBeatRequest(r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeExpandBeatRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -564,6 +571,7 @@ func (s *Server) handleExpandBeatRequest(args [0]string, argsEscaped bool, w htt
 			OperationSummary: "Expand a beat in a beats sheet.",
 			OperationID:      "expandBeat",
 			Body:             request,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -671,7 +679,7 @@ func (s *Server) handleExpandLoglineRequest(args [0]string, argsEscaped bool, w 
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -735,7 +743,9 @@ func (s *Server) handleExpandLoglineRequest(args [0]string, argsEscaped bool, w 
 			return
 		}
 	}
-	request, close, err := s.decodeExpandLoglineRequest(r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeExpandLoglineRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -759,6 +769,7 @@ func (s *Server) handleExpandLoglineRequest(args [0]string, argsEscaped bool, w 
 			OperationSummary: "Expand a logline idea.",
 			OperationID:      "expandLogline",
 			Body:             request,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -866,7 +877,7 @@ func (s *Server) handleGenerateBeatsSheetRequest(args [0]string, argsEscaped boo
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -930,7 +941,9 @@ func (s *Server) handleGenerateBeatsSheetRequest(args [0]string, argsEscaped boo
 			return
 		}
 	}
-	request, close, err := s.decodeGenerateBeatsSheetRequest(r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeGenerateBeatsSheetRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -954,6 +967,7 @@ func (s *Server) handleGenerateBeatsSheetRequest(args [0]string, argsEscaped boo
 			OperationSummary: "Generate a new beats sheet.",
 			OperationID:      "generateBeatsSheet",
 			Body:             request,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -1061,7 +1075,7 @@ func (s *Server) handleGenerateLoglinesRequest(args [0]string, argsEscaped bool,
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -1125,7 +1139,9 @@ func (s *Server) handleGenerateLoglinesRequest(args [0]string, argsEscaped bool,
 			return
 		}
 	}
-	request, close, err := s.decodeGenerateLoglinesRequest(r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeGenerateLoglinesRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -1149,6 +1165,7 @@ func (s *Server) handleGenerateLoglinesRequest(args [0]string, argsEscaped bool,
 			OperationSummary: "Generate new loglines.",
 			OperationID:      "generateLoglines",
 			Body:             request,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -1256,7 +1273,7 @@ func (s *Server) handleGetBeatsSheetRequest(args [0]string, argsEscaped bool, w 
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -1331,6 +1348,8 @@ func (s *Server) handleGetBeatsSheetRequest(args [0]string, argsEscaped bool, w 
 		return
 	}
 
+	var rawBody []byte
+
 	var response GetBeatsSheetRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
@@ -1339,6 +1358,7 @@ func (s *Server) handleGetBeatsSheetRequest(args [0]string, argsEscaped bool, w 
 			OperationSummary: "Get a beats sheet.",
 			OperationID:      "getBeatsSheet",
 			Body:             nil,
+			RawBody:          rawBody,
 			Params: middleware.Parameters{
 				{
 					Name: "beatsSheetID",
@@ -1451,7 +1471,7 @@ func (s *Server) handleGetBeatsSheetsRequest(args [0]string, argsEscaped bool, w
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -1526,6 +1546,8 @@ func (s *Server) handleGetBeatsSheetsRequest(args [0]string, argsEscaped bool, w
 		return
 	}
 
+	var rawBody []byte
+
 	var response GetBeatsSheetsRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
@@ -1534,6 +1556,7 @@ func (s *Server) handleGetBeatsSheetsRequest(args [0]string, argsEscaped bool, w
 			OperationSummary: "Get all beats sheets.",
 			OperationID:      "getBeatsSheets",
 			Body:             nil,
+			RawBody:          rawBody,
 			Params: middleware.Parameters{
 				{
 					Name: "loglineID",
@@ -1654,7 +1677,7 @@ func (s *Server) handleGetLoglineRequest(args [0]string, argsEscaped bool, w htt
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -1729,6 +1752,8 @@ func (s *Server) handleGetLoglineRequest(args [0]string, argsEscaped bool, w htt
 		return
 	}
 
+	var rawBody []byte
+
 	var response GetLoglineRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
@@ -1737,6 +1762,7 @@ func (s *Server) handleGetLoglineRequest(args [0]string, argsEscaped bool, w htt
 			OperationSummary: "Get a logline.",
 			OperationID:      "getLogline",
 			Body:             nil,
+			RawBody:          rawBody,
 			Params: middleware.Parameters{
 				{
 					Name: "id",
@@ -1853,7 +1879,7 @@ func (s *Server) handleGetLoglinesRequest(args [0]string, argsEscaped bool, w ht
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -1928,6 +1954,8 @@ func (s *Server) handleGetLoglinesRequest(args [0]string, argsEscaped bool, w ht
 		return
 	}
 
+	var rawBody []byte
+
 	var response GetLoglinesRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
@@ -1936,6 +1964,7 @@ func (s *Server) handleGetLoglinesRequest(args [0]string, argsEscaped bool, w ht
 			OperationSummary: "Get all loglines.",
 			OperationID:      "getLoglines",
 			Body:             nil,
+			RawBody:          rawBody,
 			Params: middleware.Parameters{
 				{
 					Name: "limit",
@@ -2052,7 +2081,7 @@ func (s *Server) handleHealthcheckRequest(args [0]string, argsEscaped bool, w ht
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -2067,6 +2096,8 @@ func (s *Server) handleHealthcheckRequest(args [0]string, argsEscaped bool, w ht
 		err error
 	)
 
+	var rawBody []byte
+
 	var response HealthcheckRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
@@ -2075,6 +2106,7 @@ func (s *Server) handleHealthcheckRequest(args [0]string, argsEscaped bool, w ht
 			OperationSummary: "Check the health of the service.",
 			OperationID:      "healthcheck",
 			Body:             nil,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -2182,7 +2214,7 @@ func (s *Server) handlePingRequest(args [0]string, argsEscaped bool, w http.Resp
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -2197,6 +2229,8 @@ func (s *Server) handlePingRequest(args [0]string, argsEscaped bool, w http.Resp
 		err error
 	)
 
+	var rawBody []byte
+
 	var response PingRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
@@ -2205,6 +2239,7 @@ func (s *Server) handlePingRequest(args [0]string, argsEscaped bool, w http.Resp
 			OperationSummary: "Check the status of the service.",
 			OperationID:      "ping",
 			Body:             nil,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
@@ -2312,7 +2347,7 @@ func (s *Server) handleRegenerateBeatsRequest(args [0]string, argsEscaped bool, 
 			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
 			// max redirects exceeded), in which case status MUST be set to Error.
 			code := statusWriter.status
-			if code >= 100 && code < 500 {
+			if code < 100 || code >= 500 {
 				span.SetStatus(codes.Error, stage)
 			}
 
@@ -2376,7 +2411,9 @@ func (s *Server) handleRegenerateBeatsRequest(args [0]string, argsEscaped bool, 
 			return
 		}
 	}
-	request, close, err := s.decodeRegenerateBeatsRequest(r)
+
+	var rawBody []byte
+	request, rawBody, close, err := s.decodeRegenerateBeatsRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -2400,6 +2437,7 @@ func (s *Server) handleRegenerateBeatsRequest(args [0]string, argsEscaped bool, 
 			OperationSummary: "Regenerate beats in a beats sheet.",
 			OperationID:      "regenerateBeats",
 			Body:             request,
+			RawBody:          rawBody,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
