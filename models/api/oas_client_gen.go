@@ -172,7 +172,7 @@ func (c *Client) sendCreateBeatsSheet(ctx context.Context, request *CreateBeatsS
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("createBeatsSheet"),
 		semconv.HTTPRequestMethodKey.String("PUT"),
-		semconv.HTTPRouteKey.String("/beats-sheet"),
+		semconv.URLTemplateKey.String("/beats-sheet"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -281,7 +281,7 @@ func (c *Client) sendCreateLogline(ctx context.Context, request *CreateLoglineFo
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("createLogline"),
 		semconv.HTTPRequestMethodKey.String("PUT"),
-		semconv.HTTPRouteKey.String("/logline"),
+		semconv.URLTemplateKey.String("/logline"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -390,7 +390,7 @@ func (c *Client) sendExpandBeat(ctx context.Context, request *ExpandBeatForm) (r
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("expandBeat"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/beats-sheet/expand"),
+		semconv.URLTemplateKey.String("/beats-sheet/expand"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -499,7 +499,7 @@ func (c *Client) sendExpandLogline(ctx context.Context, request *LoglineIdea) (r
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("expandLogline"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/logline/expand"),
+		semconv.URLTemplateKey.String("/logline/expand"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -608,7 +608,7 @@ func (c *Client) sendGenerateBeatsSheet(ctx context.Context, request *GenerateBe
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("generateBeatsSheet"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/beats-sheet/generate"),
+		semconv.URLTemplateKey.String("/beats-sheet/generate"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -717,7 +717,7 @@ func (c *Client) sendGenerateLoglines(ctx context.Context, request *GenerateLogl
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("generateLoglines"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/loglines/generate"),
+		semconv.URLTemplateKey.String("/loglines/generate"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -826,7 +826,7 @@ func (c *Client) sendGetBeatsSheet(ctx context.Context, params GetBeatsSheetPara
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("getBeatsSheet"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/beats-sheet"),
+		semconv.URLTemplateKey.String("/beats-sheet"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -953,7 +953,7 @@ func (c *Client) sendGetBeatsSheets(ctx context.Context, params GetBeatsSheetsPa
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("getBeatsSheets"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/beats-sheets"),
+		semconv.URLTemplateKey.String("/beats-sheets"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1114,7 +1114,7 @@ func (c *Client) sendGetLogline(ctx context.Context, params GetLoglineParams) (r
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("getLogline"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/logline"),
+		semconv.URLTemplateKey.String("/logline"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1264,7 +1264,7 @@ func (c *Client) sendGetLoglines(ctx context.Context, params GetLoglinesParams) 
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("getLoglines"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/loglines"),
+		semconv.URLTemplateKey.String("/loglines"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1408,7 +1408,7 @@ func (c *Client) sendHealthcheck(ctx context.Context) (res HealthcheckRes, err e
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("healthcheck"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/healthcheck"),
+		semconv.URLTemplateKey.String("/healthcheck"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1481,7 +1481,7 @@ func (c *Client) sendPing(ctx context.Context) (res PingRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("ping"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/ping"),
+		semconv.URLTemplateKey.String("/ping"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
@@ -1554,7 +1554,7 @@ func (c *Client) sendRegenerateBeats(ctx context.Context, request *RegenerateBea
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("regenerateBeats"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/beats-sheet/regenerate"),
+		semconv.URLTemplateKey.String("/beats-sheet/regenerate"),
 	}
 	otelAttrs = append(otelAttrs, c.cfg.Attributes...)
 
