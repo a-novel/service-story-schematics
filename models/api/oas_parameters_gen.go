@@ -84,9 +84,9 @@ type GetBeatsSheetsParams struct {
 	// The unique identifier of the logline.
 	LoglineID LoglineID
 	// The maximum number of items to return.
-	Limit OptInt
+	Limit OptInt `json:",omitempty,omitzero"`
 	// The number of items to skip before starting to collect the result set.
-	Offset OptInt
+	Offset OptInt `json:",omitempty,omitzero"`
 }
 
 func unpackGetBeatsSheetsParams(packed middleware.Parameters) (params GetBeatsSheetsParams) {
@@ -308,8 +308,8 @@ func decodeGetBeatsSheetsParams(args [0]string, argsEscaped bool, r *http.Reques
 
 // GetLoglineParams is parameters of getLogline operation.
 type GetLoglineParams struct {
-	ID   OptLoglineID
-	Slug OptSlug
+	ID   OptLoglineID `json:",omitempty,omitzero"`
+	Slug OptSlug      `json:",omitempty,omitzero"`
 }
 
 func unpackGetLoglineParams(packed middleware.Parameters) (params GetLoglineParams) {
@@ -453,9 +453,9 @@ func decodeGetLoglineParams(args [0]string, argsEscaped bool, r *http.Request) (
 // GetLoglinesParams is parameters of getLoglines operation.
 type GetLoglinesParams struct {
 	// The maximum number of items to return.
-	Limit OptInt
+	Limit OptInt `json:",omitempty,omitzero"`
 	// The number of items to skip before starting to collect the result set.
-	Offset OptInt
+	Offset OptInt `json:",omitempty,omitzero"`
 }
 
 func unpackGetLoglinesParams(packed middleware.Parameters) (params GetLoglinesParams) {
