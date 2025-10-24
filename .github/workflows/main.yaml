@@ -79,7 +79,7 @@ jobs:
           --health-retries 5
 
       postgres-json-keys:
-        image: ghcr.io/a-novel/service-json-keys/database:v1.3.16
+        image: ghcr.io/a-novel/service-json-keys/database:v1.3.17
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
@@ -93,7 +93,7 @@ jobs:
           --health-retries 5
 
       json-keys:
-        image: ghcr.io/a-novel/service-json-keys/standalone:v1.3.16
+        image: ghcr.io/a-novel/service-json-keys/standalone:v1.3.17
         ports:
           - "4001:8080"
         credentials:
@@ -235,7 +235,7 @@ jobs:
           POSTGRES_INITDB_ARGS: --auth=scram-sha-256
 
       postgres-json-keys:
-        image: ghcr.io/a-novel/service-json-keys/database:v1.3.16
+        image: ghcr.io/a-novel/service-json-keys/database:v1.3.17
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
@@ -249,7 +249,7 @@ jobs:
           --health-retries 5
 
       json-keys:
-        image: ghcr.io/a-novel/service-json-keys/standalone:v1.3.16
+        image: ghcr.io/a-novel/service-json-keys/standalone:v1.3.17
         ports:
           - "4001:8080"
         credentials:
@@ -300,7 +300,7 @@ jobs:
           POSTGRES_INITDB_ARGS: --auth=scram-sha-256
 
       postgres-json-keys:
-        image: ghcr.io/a-novel/service-json-keys/database:v1.3.16
+        image: ghcr.io/a-novel/service-json-keys/database:v1.3.17
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
@@ -314,7 +314,7 @@ jobs:
           --health-retries 5
 
       json-keys:
-        image: ghcr.io/a-novel/service-json-keys/standalone:v1.3.16
+        image: ghcr.io/a-novel/service-json-keys/standalone:v1.3.17
         ports:
           - "4001:8080"
         credentials:
