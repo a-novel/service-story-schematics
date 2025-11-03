@@ -94,8 +94,8 @@ github.com/a-novel-kit/jwt v1.1.8 h1:773R9xzbQ8XLNtbFOx3dX7TNMe4JTF+ooORL3WOyNBU
 github.com/a-novel-kit/jwt v1.1.8/go.mod h1:vnKtv+WNjuPRnfLVOgkfy0bCqo30f3D+gO+TGeMRKi8=
 github.com/a-novel/golib v0.10.14 h1:DMR5ozGtsBW3upmCJ3kewNJq7wJWcZXsetZPkDZMdRU=
 github.com/a-novel/golib v0.10.14/go.mod h1:6J136RBA6NiWHbeLl0Rt86AYbtcyGPnwxceCUP7cKpw=
-github.com/a-novel/service-authentication v1.2.25 h1:uX2wKIF9zp4dUUM5g2kAvGfB0jvLvTXQabOBWYT1evs=
-github.com/a-novel/service-authentication v1.2.25/go.mod h1:Rwb2PXeaHXW/DSeUDedbAMfQP/gZMkUooSBg/GHtyc4=
+github.com/a-novel/service-authentication v1.2.26 h1:v37FEzQYkkRqPweumoSLIQfQn4hJvS0p6ABGnais2BU=
+github.com/a-novel/service-authentication v1.2.26/go.mod h1:JResNBVMQgAOqjE//mFCEpxjprM0BDe/JOiUCuuGkkI=
 github.com/a-novel/service-json-keys v1.3.19 h1:hX9RotP8NxD83cpWt0/vq/K7gjfIEwR5CFsikKRl1co=
 github.com/a-novel/service-json-keys v1.3.19/go.mod h1:o7B12gDI1TbudVhVXOPIY7MDmlk7Ko8p0qF66oy2pA8=
 github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
