@@ -1,6 +1,6 @@
 module github.com/a-novel/service-story-schematics
 
-go 1.25.3
+go 1.25.4
 
 require (
 	github.com/a-novel/golib v0.10.14
