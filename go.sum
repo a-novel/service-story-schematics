@@ -92,8 +92,8 @@ github.com/OpenPeeDeeP/depguard/v2 v2.2.1 h1:vckeWVESWp6Qog7UZSARNqfu/cZqvki8zsu
 github.com/OpenPeeDeeP/depguard/v2 v2.2.1/go.mod h1:q4DKzC4UcVaAvcfd41CZh0PWpGgzrVxUYBlgKNGquUo=
 github.com/a-novel-kit/jwt v1.1.8 h1:773R9xzbQ8XLNtbFOx3dX7TNMe4JTF+ooORL3WOyNBU=
 github.com/a-novel-kit/jwt v1.1.8/go.mod h1:vnKtv+WNjuPRnfLVOgkfy0bCqo30f3D+gO+TGeMRKi8=
-github.com/a-novel/golib v0.10.14 h1:DMR5ozGtsBW3upmCJ3kewNJq7wJWcZXsetZPkDZMdRU=
-github.com/a-novel/golib v0.10.14/go.mod h1:6J136RBA6NiWHbeLl0Rt86AYbtcyGPnwxceCUP7cKpw=
+github.com/a-novel/golib v0.11.1 h1:M1pLcxQ3RVj6UkEeoj96x/5LJv3lFqZEUk1kZyhnzNY=
+github.com/a-novel/golib v0.11.1/go.mod h1:LYV2CsPJBj/I76F5jL1oqJRL81oFhGPGyyQaElaUZXo=
 github.com/a-novel/service-authentication v1.2.27 h1:TuHmxJLtVjwoVy9tbyUXH1EvnivddP20xue/T039IRI=
 github.com/a-novel/service-authentication v1.2.27/go.mod h1:9KhCyrK09ydXLvOiqEJnKoxbT6ZHEvA5AeJIkBrd+Ts=
 github.com/a-novel/service-json-keys v1.3.20 h1:6E7TziyXUUY20T9Umzd+FKeD7CGVUyh30JvvbwWrfj8=
