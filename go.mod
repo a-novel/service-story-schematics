@@ -3,9 +3,9 @@ module github.com/a-novel/service-story-schematics
 go 1.25.4
 
 require (
-	github.com/a-novel/golib v0.11.1
+	github.com/a-novel/golib v0.11.3
 	github.com/a-novel/service-authentication v1.2.27
-	github.com/a-novel/service-json-keys v1.3.21
+	github.com/a-novel/service-json-keys v1.3.22
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/go-chi/cors v1.2.2
 	github.com/go-faster/errors v0.7.1
